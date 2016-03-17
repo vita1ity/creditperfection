@@ -5,11 +5,14 @@
 
 create table user (
   id                            integer not null,
-  username                      varchar(255),
+  first_name                    varchar(255),
+  last_name                     varchar(255),
   email                         varchar(255),
+  zip                           varchar(255),
   password                      varchar(255),
+  token                         varchar(255),
   active                        boolean,
-  constraint uq_user_username unique (username),
+  constraint uq_user_first_name unique (first_name),
   constraint pk_user primary key (id)
 );
 create sequence user_seq;

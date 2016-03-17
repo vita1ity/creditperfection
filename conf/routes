@@ -7,6 +7,8 @@ GET     /                           controllers.Global.index
 POST    /login                      controllers.Global.login
 POST    /register                   controllers.Global.register
 GET     /logout                     controllers.Global.logout
+GET     /registertoken/:token       controllers.Global.registerToken(token: String)
+POST    /forgotpassword             controllers.Global.forgotPassword
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
