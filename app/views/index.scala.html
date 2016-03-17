@@ -8,9 +8,11 @@
     @if(flash.get("message")!=null){
         <h4><i>@flash.get("message")</i></h4>
     }
-    @if(session.get("username")!=null){
-        @session.get("username") is logged in <br>
-        <a href="@routes.Global.logout">Log out</a>
+    @if(session.get("email")!=null){
+        @if(session.get("name")!=null){
+            Welcome, @session.get("name")<br>
+        }
+        <a href="@routes.Global.logout">Logout</a>
     }else{
         @login.render
         @forgotpassword.render
