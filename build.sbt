@@ -10,6 +10,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
+  "mysql" % "mysql-connector-java" % "5.1.18",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "javax.mail" % "mail" % "1.5.0-b01"
 )
