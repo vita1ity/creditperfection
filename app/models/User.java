@@ -13,6 +13,10 @@ public class User extends Model {
     public String last_name;
     @Column(unique = true)
     public String email;
+    public String phone;
+    public String address;
+    public String city;
+    public String state;
     public String zip;
     public String password;
     public String token;
