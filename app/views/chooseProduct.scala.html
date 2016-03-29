@@ -1,0 +1,24 @@
+
+@(productList: java.util.List[models.Product])
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Choose product</title>
+</head>
+<body>
+	<form method="post" action="@routes.Global.chooseProduct">
+    <h4>Choose product</h4>
+    
+    <select name="product">
+    	<option value="" default>Choose product</option>
+        @for(product <- productList) {
+    		<option value="@product.id">@product.name - @product.price</option>
+		}
+    </select>
+    <br>
+    
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

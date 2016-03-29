@@ -37,9 +37,7 @@ create table payment_gateway (
 
 create table product (
   id                            integer auto_increment not null,
-  type                          varchar(255),
   name                          varchar(255),
-  description                   varchar(255),
   price                         varchar(255),
   sale_price                    varchar(255),
   constraint pk_product primary key (id)
