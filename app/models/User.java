@@ -1,16 +1,25 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 import com.avaje.ebean.Model;
 
-import javax.persistence.*;
-import java.util.List;
+import play.data.validation.ValidationError;
 
 @Entity
 public class User extends Model {
+	
     @Id
     public int id;
-    public String first_name;
-    public String last_name;
+    public String firstName;
+    public String lastName;
     @Column(unique = true)
     public String email;
     public String phone;
@@ -21,8 +30,32 @@ public class User extends Model {
     public String password;
     public String token;
     public boolean active;
+    
     @OneToMany(cascade = CascadeType.ALL)
-    public List<CreditCard> credit_cards;
+    public List<CreditCard> creditCards;
+    
     @OneToMany(cascade = CascadeType.ALL)
     public List<Transaction> transactions;
+    
+    public static Finder<Long, User> find = new Finder<Long, User>(User.class);
+    
+    public static User findByEmail(String email) {
+		User user = User.find.where().eq("email", email).findUnique();
+		return user;
+	}
+
+    public List<ValidationError> validate() {
+		
+		List<ValidationError> errors = new ArrayList<ValidationError>();
+		
+		User userByEmail = findByEmail(this.email);
+		if (userByEmail != null) {
+			errors.add(new ValidationError("email", "User with such email is already registered"));
+			return errors;
+		}
+		
+		return null;
+	    
+	}
+    
 }

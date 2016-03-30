@@ -1,5 +1,7 @@
 package controllers;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -7,13 +9,18 @@ import javax.inject.Singleton;
 
 import com.avaje.ebean.Ebean;
 
+import models.CardType;
+import models.CreditCard;
 import models.Product;
 import models.User;
+import play.Configuration;
 import play.data.DynamicForm;
+import play.data.Form;
 import play.data.FormFactory;
 import play.libs.ws.WSClient;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.CreditCardService;
 import services.MailService;
 import utils.Tokener;
 import views.html.index;
@@ -23,24 +30,40 @@ public class Global extends Controller {
 
     @Inject
     private FormFactory formFactory;
+    
     @Inject
     private WSClient ws;
     
     @Inject
     private MailService mailService;
     
+    @Inject
+    private CreditCardService creditCardService;
+    
+    @Inject
+	private Configuration conf;
 
     public Result index(){
-        return ok(index.render());
+    	Form<User> userForm = formFactory.form(User.class);
+        return ok(index.render(userForm));
     }
-
+    
     public Result register() throws Exception {
-        User user = formFactory.form(User.class).bindFromRequest().get();
-        user.token = Tokener.randomString(48);
-        user.save();
-        mailService.sendEmailToken(user.email, user.token);
-        flash("message", "Email verification sent");
+        //User user = formFactory.form(User.class).bindFromRequest().get();
+        Form<User> userForm = formFactory.form(User.class).bindFromRequest();
         
+        if (userForm.hasErrors()) {
+    		return badRequest(views.html.index.render(userForm));
+    	} 
+        else {
+        	User user = userForm.get();
+        	user.token = Tokener.randomString(48);
+        	user.save();
+        	session("userEmail", user.email);
+        	//mailService.sendEmailToken(user.email, user.token);
+        	flash("message", "Email verification sent");
+        	return redirect(routes.Global.chooseProductPage()); 
+        }
         /*DynamicForm form = formFactory.form().bindFromRequest();
         StringBuilder builder = new StringBuilder();
         builder.append("partnerCode=CRDPRF");
@@ -64,7 +87,7 @@ public class Global extends Controller {
         return ws.url(feedUrl).post(builder.toString()).thenApply(response ->
                         ok(response.getBody())
         );*/
-        return redirect(routes.Global.chooseProductPage()); 
+        
     }
 
     public Result chooseProductPage() {
@@ -81,7 +104,49 @@ public class Global extends Controller {
     }
     
     public Result paymentDetailsPage() {
-    	return ok();
+    	
+    	CardType[] allTypes = CardType.values();
+    	
+    	return ok(views.html.paymentDetails.render(allTypes));
+    }
+    
+    public Result processPayment() {
+    	
+    	//save credit card info
+    	DynamicForm form = formFactory.form().bindFromRequest();
+    	
+    	//TODO add form validations
+    	
+    	String name = form.get("name");
+    	String cardType = form.get("cardType");
+    	String digits = form.get("digits");
+    	String month = form.get("month");
+    	String year = form.get("year");
+    	String cvv = form.get("cvv");
+    	
+    	String expDateStr = month + "/" + year;
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
+    	
+    	CardType type = CardType.valueOf(CardType.class, cardType);
+    	
+    	int cvvCode = Integer.parseInt(cvv);
+    	
+    	String userEmail = session().get("userEmail");
+    	User user = User.findByEmail(userEmail);
+    	
+    	CreditCard creditCard = new CreditCard(name, type, digits, ym, cvvCode, user);
+    	creditCard.save();
+    	
+    	//charge amount for the product from credit card
+    	long productId = Long.parseLong(session().get("productId"));
+    	Product product = Product.getById(productId);
+    	
+    	final String loginId = conf.getString("authorise.net.login.id");
+    	final String transactionKey = conf.getString("authorise.net.transaction.key");
+    	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
+    	
+    	return ok("Credit Card was saved");
     }
     
     public Result login(){
@@ -90,8 +155,8 @@ public class Global extends Controller {
         User user = Ebean.find(User.class).where().eq("email", email).findUnique();
         if (user!=null){
             if (user.password.equals(form.get("password")) && user.active == true){
-                session("email",email);
-                session("name",user.first_name);
+                session("email", email);
+                session("name", user.firstName);
             }else{
                 mailService.sendEmailToken(user.email,user.token);
                 flash("message","Account not verified - Email verification sent");
@@ -99,11 +164,13 @@ public class Global extends Controller {
         } else {
             flash("message","invalid credentials");
         }
+        
         return redirect(routes.Global.index());
     }
 
     public Result logout(){
         session().clear();
+        
         return redirect(routes.Global.index());
     }
 
@@ -118,6 +185,7 @@ public class Global extends Controller {
         }else{
             flash("error", "Account not verified, please try again");
         }
+       
         return redirect(routes.Global.index());
     }
 
@@ -132,6 +200,7 @@ public class Global extends Controller {
         else {
             flash("message","Could not find account with that email");
         }
+        
         return redirect(routes.Global.index());
     }
 

@@ -5,13 +5,13 @@
 
 create table credit_card (
   id                            integer auto_increment not null,
+  name                          varchar(255),
+  card_type                     integer,
   digits                        varchar(255),
-  exp_date                      varchar(255),
-  cvv                           varchar(255),
+  exp_date                      date,
+  cvv                           integer,
   user_id                       integer,
-  address                       varchar(255),
-  zip                           varchar(255),
-  state                         varchar(255),
+  constraint ck_credit_card_card_type check (card_type in (0,1,2,3)),
   constraint pk_credit_card primary key (id)
 );
 
@@ -38,8 +38,8 @@ create table payment_gateway (
 create table product (
   id                            integer auto_increment not null,
   name                          varchar(255),
-  price                         varchar(255),
-  sale_price                    varchar(255),
+  price                         double,
+  sale_price                    double,
   constraint pk_product primary key (id)
 );
 

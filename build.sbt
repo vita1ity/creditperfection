@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
   javaWs,
   "mysql" % "mysql-connector-java" % "5.1.18",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "javax.mail" % "mail" % "1.5.0-b01"
+  "javax.mail" % "mail" % "1.5.0-b01",
+  "net.authorize" % "anet-java-sdk" % "1.8.8"
 )
 
 // Java project. Don't expect Scala IDE
