@@ -1,13 +1,7 @@
-
 @(productList: java.util.List[models.Product])
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Choose product</title>
-</head>
-<body>
-	<form method="post" action="@routes.Global.chooseProduct">
+
+<div class="choose-product-form hidden">
+	
     <h4>Choose product</h4>
     
     <select name="product">
@@ -18,7 +12,6 @@
     </select>
     <br>
     
-    <button type="submit">Submit</button>
-</form>
-</body>
-</html>
+    <button id="chooseProduct" type="submit" data-url="@routes.SignUpFlowController.chooseProduct()" >Continue</button>
+
+</div>

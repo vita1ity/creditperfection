@@ -1,73 +1,66 @@
 @(allTypes: Array[models.CardType])
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Payment Details</title>
-</head>
-<body>
+<div class="payment-form hidden">
 	<h4>Enter Payment Details</h4>
-	<form method="post" action="@routes.Global.processPayment">
-		<p>
-		<input type="text" name="name" placeholder="Card Holder Name" required />
-		</p>
-		<p>
-		<select name="cardType" required>
-	    	<option value="" default>Choose Card Type</option>
-	        @for(cardType <- allTypes) {
-	    		<option value="@cardType">@cardType.value</option>
-			}
-	    </select>
-	    </p>
-	    <p>
-	    <input type="text" name="digits" placeholder="Card Number" required/>
-	    </p>
-	    <p>
-	    
-		<!-- <input type="text" name="expDate" placeholder="Expiration Date" required/> -->
-		<span>Expiration Date</span>
-		<select id="ccmonth" name="month" class="width5 expiry-field gray-text">
-			<option value="zero">Month</option>
-			<option value="01">01-Jan</option>
-			<option value="02">02-Feb</option>
-			<option value="03">03-Mar</option>
-			<option value="04">04-Apr</option>
-			<option value="05">05-May</option>
-			<option value="06">06-Jun</option>
-			<option value="07">07-Jul</option>
-			<option value="08">08-Aug</option>
-			<option value="09">09-Sep</option>
-			<option value="10">10-Oct</option>
-			<option value="11">11-Nov</option>
-			<option value="12">12-Dec</option>
-		</select>
-		
-		<select id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
-			<option value="zero">Year</option>
-			<option value="2016">2016</option>
-			<option value="2017">2017</option>
-			<option value="2018">2018</option>
-			<option value="2019">2019</option>
-			<option value="2020">2020</option>
-			<option value="2021">2021</option>
-			<option value="2022">2022</option>
-			<option value="2023">2023</option>
-			<option value="2024">2024</option>
-			<option value="2025">2025</option>
-			<option value="2026">2026</option>
-			<option value="2027">2027</option>
-			<option value="2028">2028</option>
-			<option value="2029">2029</option>
-			<option value="2030">2030</option>
-		</select>
-		
-		</p>
-		<p>
-		<input type="text" name="cvv" placeholder="CVV Number" required/>
-		</p>
-		
-		
-		<button type="submit">Confirm Credit Card</button>
-	</form>
-</body>
-</html>
+
+	<p>
+	<input type="text" name="name" placeholder="Card Holder Name" required />
+	</p>
+	<p>
+	<select name="cardType" required>
+    	<option value="" default>Choose Card Type</option>
+        @for(cardType <- allTypes) {
+    		<option value="@cardType">@cardType.value</option>
+		}
+    </select>
+    </p>
+    <p>
+    <input type="text" name="digits" placeholder="Card Number" required/>
+    </p>
+    <p>
+    
+	<!-- <input type="text" name="expDate" placeholder="Expiration Date" required/> -->
+	<span>Expiration Date</span>
+	<select id="ccmonth" name="month" class="width5 expiry-field gray-text">
+		<option value="zero">Month</option>
+		<option value="01">01-Jan</option>
+		<option value="02">02-Feb</option>
+		<option value="03">03-Mar</option>
+		<option value="04">04-Apr</option>
+		<option value="05">05-May</option>
+		<option value="06">06-Jun</option>
+		<option value="07">07-Jul</option>
+		<option value="08">08-Aug</option>
+		<option value="09">09-Sep</option>
+		<option value="10">10-Oct</option>
+		<option value="11">11-Nov</option>
+		<option value="12">12-Dec</option>
+	</select>
+	
+	<select id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+		<option value="zero">Year</option>
+		<option value="2016">2016</option>
+		<option value="2017">2017</option>
+		<option value="2018">2018</option>
+		<option value="2019">2019</option>
+		<option value="2020">2020</option>
+		<option value="2021">2021</option>
+		<option value="2022">2022</option>
+		<option value="2023">2023</option>
+		<option value="2024">2024</option>
+		<option value="2025">2025</option>
+		<option value="2026">2026</option>
+		<option value="2027">2027</option>
+		<option value="2028">2028</option>
+		<option value="2029">2029</option>
+		<option value="2030">2030</option>
+	</select>
+	
+	</p>
+	<p>
+	<input type="text" name="cvv" placeholder="CVV Number" required/>
+	</p>
+	
+	
+	<button id="processPayment" type="submit" data-url="@routes.SignUpFlowController.processPayment()">Process Payment</button>
+
+</div>

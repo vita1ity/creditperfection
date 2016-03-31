@@ -2,18 +2,18 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                           controllers.Global.index
-POST    /login                      controllers.Global.login
-POST    /register                   controllers.Global.register
-GET     /logout                     controllers.Global.logout
-GET     /registertoken/:token       controllers.Global.registerToken(token: String)
-POST    /forgotpassword             controllers.Global.forgotPassword
-GET     /choose-product             controllers.Global.chooseProductPage
-POST    /choose-product             controllers.Global.chooseProduct
-GET     /payment-details            controllers.Global.paymentDetailsPage
-POST    /payment-details           controllers.Global.processPayment
+# signup flow
+GET     /                           controllers.SignUpFlowController.index
+POST    /register                   controllers.SignUpFlowController.register
+GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
 
+POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
+POST    /payment-details            controllers.SignUpFlowController.processPayment
+
+#login
+POST    /login                      controllers.LoginController.login
+GET     /logout                     controllers.LoginController.logout
+POST    /forgotpassword             controllers.LoginController.forgotPassword
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

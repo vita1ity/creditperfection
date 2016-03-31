@@ -41,7 +41,12 @@ public class CreditCard extends Model {
 		this.cvv = cvv;
 		this.user = user;
 	}
-    
+
+	@Override
+	public String toString() {
+		return "CreditCard [id=" + id + ", name=" + name + ", cardType=" + cardType + ", digits=" + digits
+				+ ", expDate=" + expDate + ", cvv=" + cvv + "]";
+	}
     
     
     

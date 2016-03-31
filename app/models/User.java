@@ -11,14 +11,17 @@ import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
 
-import play.data.validation.ValidationError;
+import play.data.validation.Constraints.Required;
+import errors.ValidationError;
 
 @Entity
 public class User extends Model {
 	
     @Id
     public int id;
+    @Required
     public String firstName;
+    @Required
     public String lastName;
     @Column(unique = true)
     public String email;
@@ -57,5 +60,14 @@ public class User extends Model {
 		return null;
 	    
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", phone=" + phone + ", address=" + address + ", city=" + city + ", state=" + state + ", zip=" + zip
+				+ ", password=" + password + "]";
+	}
+    
+    
     
 }

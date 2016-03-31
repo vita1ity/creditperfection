@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import models.CardType;
 import models.CreditCard;
@@ -17,7 +18,9 @@ import play.Configuration;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
-import play.libs.ws.WSClient;
+import errors.ValidationError;
+import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.CreditCardService;
@@ -26,13 +29,13 @@ import utils.Tokener;
 import views.html.index;
 
 @Singleton
-public class Global extends Controller {
+public class SignUpFlowController extends Controller {
 
     @Inject
     private FormFactory formFactory;
     
-    @Inject
-    private WSClient ws;
+    /*@Inject
+    private WSClient ws;*/
     
     @Inject
     private MailService mailService;
@@ -44,16 +47,49 @@ public class Global extends Controller {
 	private Configuration conf;
 
     public Result index(){
+    	
     	Form<User> userForm = formFactory.form(User.class);
-        return ok(index.render(userForm));
+    	List<Product> productList = Product.getAllProducts();
+    	CardType[] allTypes = CardType.values();
+    	
+        return ok(index.render(userForm, productList, allTypes));
     }
     
+    @BodyParser.Of(BodyParser.Json.class)
     public Result register() throws Exception {
+    	
+    	JsonNode json = request().body().asJson();
+    	 
+    	User user = Json.fromJson(json, User.class);
+	    if(user == null) {
+	        return badRequest("{message: Cannot parse JSON to user}");
+	    } else {
+	    	
+	    	//TODO validate user
+	    	List<ValidationError> errors = user.validate();
+	    	if (errors != null) {
+	    		
+	    		for (ValidationError err: errors) {
+	    			System.out.println(err);
+	    		}
+	    		
+	    		return badRequest(Json.toJson(errors));
+	    	}
+	    	
+	    	
+	    	user.token = Tokener.randomString(48);
+        	user.save();
+        	session("userEmail", user.email);
+	        return ok(Json.toJson("{message: success}"));
+	    }
+    	
         //User user = formFactory.form(User.class).bindFromRequest().get();
-        Form<User> userForm = formFactory.form(User.class).bindFromRequest();
+        /*Form<User> userForm = formFactory.form(User.class).bindFromRequest();
         
         if (userForm.hasErrors()) {
-    		return badRequest(views.html.index.render(userForm));
+        	List<Product> productList = Product.getAllProducts();
+        	CardType[] allTypes = CardType.values();
+    		return badRequest(views.html.index.render(userForm, productList, allTypes));
     	} 
         else {
         	User user = userForm.get();
@@ -62,8 +98,9 @@ public class Global extends Controller {
         	session("userEmail", user.email);
         	//mailService.sendEmailToken(user.email, user.token);
         	flash("message", "Email verification sent");
-        	return redirect(routes.Global.chooseProductPage()); 
-        }
+        	return redirect(routes.SignUpFlowController.chooseProductPage()); 
+        }*/
+    	
         /*DynamicForm form = formFactory.form().bindFromRequest();
         StringBuilder builder = new StringBuilder();
         builder.append("partnerCode=CRDPRF");
@@ -90,30 +127,56 @@ public class Global extends Controller {
         
     }
 
-    public Result chooseProductPage() {
-    	List<Product> productList = Product.getAllProducts();
-    	return ok(views.html.chooseProduct.render(productList));
-    }
-    
     public Result chooseProduct() {
     	DynamicForm form = formFactory.form().bindFromRequest();
-    	String productId = form.get("product");
-    	session("productId", productId);
-        return redirect(routes.Global.paymentDetailsPage());
-    	
-    }
-    
-    public Result paymentDetailsPage() {
-    	
-    	CardType[] allTypes = CardType.values();
-    	
-    	return ok(views.html.paymentDetails.render(allTypes));
+    	String product = form.get("product");
+    	session("productId", product);
+    	return ok("success");
+        
     }
     
     public Result processPayment() {
     	
+    	JsonNode json = request().body().asJson();
+   	 
+    	CreditCard creditCard = Json.fromJson(json, CreditCard.class);
+    	
+	    if(creditCard == null) {
+	        return badRequest("Cannot parse JSON to CreditCard");
+	    } else {
+	    	
+	    	System.out.println(creditCard);
+	    	String month = json.findPath("month").textValue();
+	    	String year = json.findPath("year").textValue();
+	    	
+	    	String expDateStr = month + "/" + year;
+	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+	    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
+	    	
+	    	String userEmail = session().get("userEmail");
+	    	User user = User.findByEmail(userEmail);
+	    	
+	    	creditCard.expDate = ym;
+	    	creditCard.user = user;
+	    	creditCard.save();
+	    	
+	    	//charge amount for the product from credit card
+	    	long productId = Long.parseLong(session().get("productId"));
+	    	Product product = Product.getById(productId);
+	    	
+	    	final String loginId = conf.getString("authorise.net.sandbox.login.id");
+	    	final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
+	    	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
+	    	
+	    	return ok("success");
+	    	
+	    }
+	    
+	    
+	    
+	    
     	//save credit card info
-    	DynamicForm form = formFactory.form().bindFromRequest();
+    	/*DynamicForm form = formFactory.form().bindFromRequest();
     	
     	//TODO add form validations
     	
@@ -142,37 +205,14 @@ public class Global extends Controller {
     	long productId = Long.parseLong(session().get("productId"));
     	Product product = Product.getById(productId);
     	
-    	final String loginId = conf.getString("authorise.net.login.id");
-    	final String transactionKey = conf.getString("authorise.net.transaction.key");
+    	final String loginId = conf.getString("authorise.net.sandbox.login.id");
+    	final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
     	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
     	
-    	return ok("Credit Card was saved");
+    	return ok("Credit Card was saved"); */
     }
     
-    public Result login(){
-        DynamicForm form = formFactory.form().bindFromRequest();
-        String email = form.get("email");
-        User user = Ebean.find(User.class).where().eq("email", email).findUnique();
-        if (user!=null){
-            if (user.password.equals(form.get("password")) && user.active == true){
-                session("email", email);
-                session("name", user.firstName);
-            }else{
-                mailService.sendEmailToken(user.email,user.token);
-                flash("message","Account not verified - Email verification sent");
-            }
-        } else {
-            flash("message","invalid credentials");
-        }
-        
-        return redirect(routes.Global.index());
-    }
-
-    public Result logout(){
-        session().clear();
-        
-        return redirect(routes.Global.index());
-    }
+    
 
 
 
@@ -186,23 +226,10 @@ public class Global extends Controller {
             flash("error", "Account not verified, please try again");
         }
        
-        return redirect(routes.Global.index());
+        return redirect(routes.SignUpFlowController.index());
     }
 
-    public Result forgotPassword(){
-        DynamicForm form = formFactory.form().bindFromRequest();
-        String email = form.get("email");
-        User user = Ebean.find(User.class).where().eq("email", email).findUnique();
-        if (user != null) {
-            flash("message", "Password sent to email");
-            mailService.sendEmailPassword(user.email, user.password);
-        }
-        else {
-            flash("message","Could not find account with that email");
-        }
-        
-        return redirect(routes.Global.index());
-    }
+    
 
     private boolean authorizePayment() {
         return true;

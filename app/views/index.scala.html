@@ -1,4 +1,4 @@
-@(userForm: Form[models.User])
+@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.CardType])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +9,7 @@
     @if(flash.get("message")!=null){
         <h4><i>@flash.get("message")</i></h4>
     }
+    
    	@if(userForm.hasGlobalErrors) {
 		<ul>
 			@for(error <- userForm.globalErrors) {
@@ -16,15 +17,19 @@
 			}
 		</ul>
 	}
+	
     @if(session.get("email")!=null){
         @if(session.get("name")!=null){
             Welcome, @session.get("name")<br>
         }
-        <a href="@routes.Global.logout">Logout</a>
+        <a href="@routes.LoginController.logout">Logout</a>
     }else{
         <!-- @login.render --> 
         <!-- @forgotpassword.render -->
+        
         @register.render(userForm)
+        @chooseProduct.render(productList)
+        @paymentDetails(allTypes)
     }
 </body>
 </html>

@@ -42,6 +42,7 @@ public class CreditCardService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
         String expDateStr = userCreditCard.expDate.format(formatter);
         creditCard.setExpirationDate(expDateStr);
+        creditCard.setCardCode(Integer.toString(userCreditCard.cvv));
         paymentType.setCreditCard(creditCard);
 
         // Create the payment transaction request
@@ -74,6 +75,7 @@ public class CreditCardService {
                 else
                 {
                     System.out.println("Failed Transaction"+result.getResponseCode());
+                    System.out.println(result.getMessages());
                 }
             }
             else
