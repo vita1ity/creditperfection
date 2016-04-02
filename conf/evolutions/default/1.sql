@@ -56,7 +56,6 @@ create table user (
   first_name                    varchar(255),
   last_name                     varchar(255),
   email                         varchar(255),
-  phone                         varchar(255),
   address                       varchar(255),
   city                          varchar(255),
   state                         varchar(255),

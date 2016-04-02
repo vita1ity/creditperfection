@@ -3,13 +3,16 @@
 <div class="choose-product-form hidden">
 	
     <h4>Choose product</h4>
-    
-    <select name="product">
-    	<option value="" default>Choose product</option>
-        @for(product <- productList) {
-    		<option value="@product.id">@product.name - @product.price</option>
-		}
-    </select>
+    <div>
+	    <select name="product">
+	    	<option value="" >Choose product</option>
+	        @for(product <- productList) {
+	    		<option value="@product.id">@product.name - @product.price</option>
+			}
+	    </select>
+	    </br>
+	    <span class="error" id="product-error"></span>
+    </div>
     <br>
     
     <button id="chooseProduct" type="submit" data-url="@routes.SignUpFlowController.chooseProduct()" >Continue</button>

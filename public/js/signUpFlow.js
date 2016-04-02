@@ -14,9 +14,6 @@ $(document).ready(function() {
 		var zip = $('[name="zip"]').val();
 		var password = $('[name="password"]').val();
 		
-		console.log(url, ", " + firstName + ", " + lastName + ", " + email + ", " + address + ", " +
-				city + ", " + state + ", " + zip + ", " + password);
-		
 		var userJSON =  {firstName: firstName, lastName: lastName, email: email, address: address,
 				city: city, state: state, zip: zip, password: password};
 		
@@ -30,34 +27,55 @@ $(document).ready(function() {
 		
 	    }).done (function(data) {
 	    	
+	    	console.log(data);
 	    	$('#register').addClass('hidden');
 	    	$('.choose-product-form').removeClass('hidden');
 	    
 	    }).fail (function(err) {
 			
-	    	console.error(err)
+	    	//console.error(err)
+			processErrors(err);
 			
-			for (var i = 0; i < err.responseJSON.length; i++) {
-				var error = err.responseJSON[i];
-				var field = error.field;
-				var errorMessage = error.error;
-				
-				if (field == "email") {
-					var errors = $('#email-error').html();
-					errors += errorMessage + "</br>";
-					$('#email-error').html(errors);
-					
-				}
-				//TODO other fields
-			}
 	    });
 	});
+	
+	function processErrors(err) { 
+		for (var i = 0; i < err.responseJSON.length; i++) {
+			var error = err.responseJSON[i];
+			var field = error.field;
+			var errorMessage = error.error;
+			
+			$('.form-input').each(function(i, obj) {
+				
+				if (field == $(obj).attr('name')) {
+					var errorsHtml = $(obj).parent().find('.error').html();
+					
+					errorsHtml += errorMessage + "</br>";
+					
+					$(obj).parent().find('.error').html(errorsHtml);
+					
+				}
+			});
+			
+		}
+	}
 	
 	//choose product
 	$(document).on('click', '#chooseProduct', function (e) {
 		
+		clearErrors();
+		
 		var url = $(this).data("url");
 		var product = $('[name="product"]').val();
+		
+		if (product == "") {
+			var errorsHtml = $(this).parent().find('.error').html();
+			
+			errorsHtml += "Please choose the product" + "</br>";
+			
+			$(this).parent().find('.error').html(errorsHtml);
+			return;
+		}
 		
 		$.ajax({
 			
@@ -79,6 +97,12 @@ $(document).ready(function() {
 	//choose product
 	$(document).on('click', '#processPayment', function (e) {
 		
+		clearErrors();
+		 
+		if (!validateCreditCard()) {
+			return;
+		}
+		
 		var url = $(this).data("url");
 		
 		var name = $('[name="name"]').val();
@@ -97,14 +121,16 @@ $(document).ready(function() {
 	        url: url,
 	        contentType: 'application/json',
 	        data: JSON.stringify(creditCardJSON),
-	        dataType: 'text'
+	        dataType: 'JSON'
 		
 	    }).done (function(data) {
 	    	
-	    	console.log("Payment processed successfully");
+	    	console.log(data);
 	    
 	    }).fail (function(err) {
 			console.error(err)
+			
+			processErrors(err);
 	    });
 	});
 	
@@ -114,6 +140,33 @@ $(document).ready(function() {
 		$('.error').each(function(i, obj) {
 			$(obj).html("");
 		});
+	}
+	
+	function validateCreditCard() {
+		var validated = true;
+		$('.form-input').each(function(i, obj) {
+			
+			var val = $(obj).val();
+			if (val == "") {
+				var errorsHtml = $(obj).parent().find('.error').html();
+				
+				errorsHtml += "Field is required" + "</br>";
+				
+				$(obj).parent().find('.error').html(errorsHtml);
+				validated = false;
+			}
+			
+		});
+		
+		var cvv = $('[name="cvv"]').val();
+		
+		if(!cvv.match(/^\d+$/)) {
+			var errorsHtml = $('#cvv-error').html();
+			errorsHtml += "CVV should contain only digits" + "</br>";
+			$('#cvv-error').html(errorsHtml);
+			validated = false;
+		}
+		return validated;
 	}
 	
 });

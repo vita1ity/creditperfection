@@ -65,17 +65,11 @@ public class SignUpFlowController extends Controller {
 	        return badRequest("{message: Cannot parse JSON to user}");
 	    } else {
 	    	
-	    	//TODO validate user
 	    	List<ValidationError> errors = user.validate();
 	    	if (errors != null) {
 	    		
-	    		for (ValidationError err: errors) {
-	    			System.out.println(err);
-	    		}
-	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
-	    	
 	    	
 	    	user.token = Tokener.randomString(48);
         	user.save();
@@ -145,7 +139,12 @@ public class SignUpFlowController extends Controller {
 	        return badRequest("Cannot parse JSON to CreditCard");
 	    } else {
 	    	
-	    	System.out.println(creditCard);
+	    	List<ValidationError> errors = creditCard.validate();
+	    	if (errors != null) {
+	    		
+	    		return badRequest(Json.toJson(errors));
+	    	}
+	    	
 	    	String month = json.findPath("month").textValue();
 	    	String year = json.findPath("year").textValue();
 	    	
@@ -168,48 +167,11 @@ public class SignUpFlowController extends Controller {
 	    	final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
 	    	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
 	    	
-	    	return ok("success");
+	    	return ok(Json.toJson("{message: success}"));
 	    	
 	    }
 	    
 	    
-	    
-	    
-    	//save credit card info
-    	/*DynamicForm form = formFactory.form().bindFromRequest();
-    	
-    	//TODO add form validations
-    	
-    	String name = form.get("name");
-    	String cardType = form.get("cardType");
-    	String digits = form.get("digits");
-    	String month = form.get("month");
-    	String year = form.get("year");
-    	String cvv = form.get("cvv");
-    	
-    	String expDateStr = month + "/" + year;
-    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
-    	
-    	CardType type = CardType.valueOf(CardType.class, cardType);
-    	
-    	int cvvCode = Integer.parseInt(cvv);
-    	
-    	String userEmail = session().get("userEmail");
-    	User user = User.findByEmail(userEmail);
-    	
-    	CreditCard creditCard = new CreditCard(name, type, digits, ym, cvvCode, user);
-    	creditCard.save();
-    	
-    	//charge amount for the product from credit card
-    	long productId = Long.parseLong(session().get("productId"));
-    	Product product = Product.getById(productId);
-    	
-    	final String loginId = conf.getString("authorise.net.sandbox.login.id");
-    	final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
-    	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
-    	
-    	return ok("Credit Card was saved"); */
     }
     
     
