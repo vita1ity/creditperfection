@@ -1,4 +1,4 @@
-package models.CreditReportInputModel;
+package models.CreditReportDetailsInputModel;
 
 public class AccountHistory {
 

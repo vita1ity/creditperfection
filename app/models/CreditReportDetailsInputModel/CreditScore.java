@@ -1,4 +1,5 @@
-package models.CreditReportInputModel;
+package models.CreditReportDetailsInputModel;
+
 
 public class CreditScore {
 
