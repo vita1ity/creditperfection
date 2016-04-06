@@ -15,7 +15,7 @@ public class Product extends Model {
     public String name;
     
     public double price;
-    public double sale_price;
+    public double salePrice;
     
     public static Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
     
