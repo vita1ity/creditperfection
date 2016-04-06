@@ -1,20 +1,29 @@
 @(productList: java.util.List[models.Product])
 
-<div class="choose-product-form hidden">
+<form class="form-horizontal choose-product-form register-flow-form hidden" 
+	data-url="@routes.SignUpFlowController.chooseProduct()" role="form">
 	
-    <h4>Choose product</h4>
-    <div>
-	    <select name="product">
-	    	<option value="" >Choose product</option>
-	        @for(product <- productList) {
-	    		<option value="@product.id">@product.name - @product.price</option>
-			}
-	    </select>
-	    </br>
-	    <span class="error" id="product-error"></span>
+    <h3 class="text-center form-title">Choose product</h3>
+    <div class="row form-group">
+    	
+    	<div class="col-sm-4">
+    		<label class="control-label" for="product">Choose Product:</label>
+    	</div>
+    	
+    	<div class="col-sm-8">
+		    <select name="product" class="form-input form-control">
+		    	<option value="">Choose product</option>
+		        @for(product <- productList) {
+		    		<option value="@product.id">@product.name - @product.price</option>
+				}
+		    </select>
+		    <span class="error" id="product-error"></span>
+	    </div>
     </div>
-    <br>
     
-    <button id="chooseProduct" type="submit" data-url="@routes.SignUpFlowController.chooseProduct()" >Continue</button>
-
-</div>
+    <div class="row form-group">  
+	    <div class="col-sm-12 text-center">
+    		<button class="btn btn-warning btn-center" id="chooseProduct" type="submit">Continue</button>
+		</div>
+	</div>
+</form>

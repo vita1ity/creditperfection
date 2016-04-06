@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	//register new user
-	$(document).on('click', '#register', function (e) {
+	$(document).on('submit', '.register-form', function (e) {
+		
+		e.preventDefault();
 		
 		clearErrors();
 		
@@ -61,7 +63,9 @@ $(document).ready(function() {
 	}
 	
 	//choose product
-	$(document).on('click', '#chooseProduct', function (e) {
+	$(document).on('submit', '.choose-product-form', function (e) {
+		
+		e.preventDefault();
 		
 		clearErrors();
 		
@@ -95,7 +99,9 @@ $(document).ready(function() {
 	});
 	
 	//choose product
-	$(document).on('click', '#processPayment', function (e) {
+	$(document).on('submit', '.payment-form', function (e) {
+		
+		e.preventDefault();
 		
 		clearErrors();
 		 

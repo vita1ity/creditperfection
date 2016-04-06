@@ -5,31 +5,33 @@
     @head.render
 </head>
 <body>
-    <h1>Credit Perfection</h1>
-    @if(flash.get("message")!=null){
-        <h4><i>@flash.get("message")</i></h4>
-    }
-    
-   	@if(userForm.hasGlobalErrors) {
-		<ul>
-			@for(error <- userForm.globalErrors) {
-				<li>@error.message</li>
-			}
-		</ul>
-	}
-	
-    @if(session.get("email")!=null){
-        @if(session.get("name")!=null){
-            Welcome, @session.get("name")<br>
-        }
-        <a href="@routes.LoginController.logout">Logout</a>
-    }else{
-        <!-- @login.render --> 
-        <!-- @forgotpassword.render -->
-        
-        @register.render(userForm)
-        @chooseProduct.render(productList)
-        @paymentDetails(allTypes)
-    }
+	<div class="container">
+	    <h2>Credit Perfection</h2>
+	    @if(flash.get("message")!=null){
+	        <h4><i>@flash.get("message")</i></h4>
+	    }
+	    
+	   	@if(userForm.hasGlobalErrors) {
+			<ul>
+				@for(error <- userForm.globalErrors) {
+					<li>@error.message</li>
+				}
+			</ul>
+		}
+		
+	    @if(session.get("email")!=null){
+	        @if(session.get("name")!=null){
+	            Welcome, @session.get("name")<br>
+	        }
+	        <a href="@routes.LoginController.logout">Logout</a>
+	    }else{
+	        <!-- @login.render --> 
+	        <!-- @forgotpassword.render -->
+	        
+	        @register.render(userForm)
+	        @chooseProduct.render(productList)
+	        @paymentDetails(allTypes)
+	    }
+    </div>
 </body>
 </html>

@@ -4,3 +4,16 @@
 .error {
 	color: red;
 }
+.register-flow-form {
+	width: 60%;
+	margin: 60px auto 0 auto; 
+}
+
+.form-title {
+	color: #EC971F;
+	margin-bottom: 35px;
+}
+.btn-center {
+	margin: 25px auto 0 auto;
+	width: 150px;
+}

@@ -1,71 +1,109 @@
 @(allTypes: Array[models.CardType])
-<div class="payment-form hidden">
-	<h4>Enter Payment Details</h4>
+<form class="payment-form horizontal-form register-flow-form hidden"
+	 role="form" data-url="@routes.SignUpFlowController.processPayment()">
+	<h3 class="text-center form-title">Payment Details</h3>
 
-	<div>
-		<input class="form-input" type="text" name="name" placeholder="Card Holder Name" required /></br>
-		<span class="error" id="name-error"></span>
-	</div>
-	<div>
-		<select class="form-input" name="cardType" required>
-	    	<option value="" >Choose Card Type</option>
-	        @for(cardType <- allTypes) {
-	    		<option value="@cardType">@cardType.value</option>
-			}
-   		 </select>
-    	<span class="error" id="cardtype-error"></span>
-    </div>
-    <div>
-   	 	<input class="form-input" type="text" name="digits" placeholder="Card Number" required/></br>
-   	 	<span class="error" id="digits-error"></span>
-    </div>
-    <div>
-    
-		<!-- <input type="text" name="expDate" placeholder="Expiration Date" required/> -->
-		<span>Expiration Date</span>
-		<select class="form-input" id="ccmonth" name="month" class="width5 expiry-field gray-text">
-			<option value="">Month</option>
-			<option value="01">01-Jan</option>
-			<option value="02">02-Feb</option>
-			<option value="03">03-Mar</option>
-			<option value="04">04-Apr</option>
-			<option value="05">05-May</option>
-			<option value="06">06-Jun</option>
-			<option value="07">07-Jul</option>
-			<option value="08">08-Aug</option>
-			<option value="09">09-Sep</option>
-			<option value="10">10-Oct</option>
-			<option value="11">11-Nov</option>
-			<option value="12">12-Dec</option>
-		</select>
+	<div class="row form-group">
+	
+		<div class="col-sm-2">
+			<label class="control-label" for="name">Card Holder Name:</label>
+		</div>
+	
+		<div class="col-sm-4">
+			<input class="form-input form-control" type="text" name="name" placeholder="Card Holder Name"/>
+			<span class="error" id="name-error"></span>
+		</div>
 		
-		<select class="form-input" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
-			<option value="">Year</option>
-			<option value="2016">2016</option>
-			<option value="2017">2017</option>
-			<option value="2018">2018</option>
-			<option value="2019">2019</option>
-			<option value="2020">2020</option>
-			<option value="2021">2021</option>
-			<option value="2022">2022</option>
-			<option value="2023">2023</option>
-			<option value="2024">2024</option>
-			<option value="2025">2025</option>
-			<option value="2026">2026</option>
-			<option value="2027">2027</option>
-			<option value="2028">2028</option>
-			<option value="2029">2029</option>
-			<option value="2030">2030</option>
-		</select>
-		</br>
-		<span class="error" id="monthyear-error"></span>
+		<div class="col-sm-2">
+			<label class="control-label" for="cardType">Card Type:</label>
+		</div>
+		
+		<div class="col-sm-4">
+			<select class="form-input form-control" name="cardType">
+		    	<option value="" >Choose Card Type</option>
+		        @for(cardType <- allTypes) {
+		    		<option value="@cardType">@cardType.value</option>
+				}
+	   		 </select>
+	    	<span class="error" id="cardtype-error"></span>
+	    </div>
+	    
+    </div>
+    
+    <div class="row form-group">
+    	
+    	<div class="col-sm-2">
+			<label class="control-label" for="digits">Card Number:</label>
+		</div>
+    	
+	    <div class="col-sm-4">
+	   	 	<input class="form-input form-control" type="text" name="digits" placeholder="Card Number"/>
+	   	 	<span class="error" id="digits-error"></span>
+	    </div>
+	    
+	    <div class="col-sm-2">
+			<label class="control-label" for="cardType">CVV Number:</label>
+		</div>
+	    
+	    <div class="col-sm-4">
+			<input class="form-input form-control" type="text" name="cvv" placeholder="CVV Number" />
+			<span class="error" id="cvv-error"></span>
+		</div>
+		
 	</div>
-	<div>
-		<input class="form-input" type="text" name="cvv" placeholder="CVV Number" required/></br>
-		<span class="error" id="cvv-error"></span>
-	</div>
-	
-	
-	<button id="processPayment" type="submit" data-url="@routes.SignUpFlowController.processPayment()">Process Payment</button>
+	    
+	<div class="row form-group">    
+	    
+	    <div class="col-sm-2">
+	    	<label class="control-label" >Expiration Date:</label>
+	    </div>
+    	
+    	<div class="col-sm-2">
 
-</div>
+			<select class="form-input form-control" id="ccmonth" name="month" class="width5 expiry-field gray-text">
+				<option value="">Month</option>
+				<option value="01">01-Jan</option>
+				<option value="02">02-Feb</option>
+				<option value="03">03-Mar</option>
+				<option value="04">04-Apr</option>
+				<option value="05">05-May</option>
+				<option value="06">06-Jun</option>
+				<option value="07">07-Jul</option>
+				<option value="08">08-Aug</option>
+				<option value="09">09-Sep</option>
+				<option value="10">10-Oct</option>
+				<option value="11">11-Nov</option>
+				<option value="12">12-Dec</option>
+			</select>
+		</div>
+		<div class="col-sm-2">
+			<select class="form-input form-control" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+				<option value="">Year</option>
+				<option value="2016">2016</option>
+				<option value="2017">2017</option>
+				<option value="2018">2018</option>
+				<option value="2019">2019</option>
+				<option value="2020">2020</option>
+				<option value="2021">2021</option>
+				<option value="2022">2022</option>
+				<option value="2023">2023</option>
+				<option value="2024">2024</option>
+				<option value="2025">2025</option>
+				<option value="2026">2026</option>
+				<option value="2027">2027</option>
+				<option value="2028">2028</option>
+				<option value="2029">2029</option>
+				<option value="2030">2030</option>
+			</select>
+			
+			<span class="error" id="monthyear-error"></span>
+		</div>
+	
+	</div>
+	
+	<div class="row form-group">
+		<div class="col-sm-12 text-center">
+			<button class="btn btn-warning btn-center" id="processPayment" type="submit" >Process Payment</button>
+		</div>
+	</div>
+</form>
