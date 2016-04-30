@@ -60,7 +60,7 @@ public class CreditCardService {
 
         CreateTransactionResponse response = controller.getApiResponse();
 
-        if (response!=null) {
+        if (response != null) {
 
             // If API Response is ok, go ahead and check the transaction response
             if (response.getMessages().getResultCode() == MessageTypeEnum.OK) {
@@ -74,13 +74,13 @@ public class CreditCardService {
                 }
                 else
                 {
-                    System.out.println("Failed Transaction"+result.getResponseCode());
+                    System.out.println("Failed Transaction" + result.getResponseCode());
                     System.out.println(result.getMessages());
                 }
             }
             else
             {
-                System.out.println("Failed Transaction:  "+response.getMessages().getResultCode());
+                System.out.println("Failed Transaction:  " + response.getMessages().getResultCode());
             }
         }
         else {
@@ -89,5 +89,40 @@ public class CreditCardService {
 		return response;
 
     }
+	
+	public boolean checkTransaction(CreateTransactionResponse response) {
+		
+		if (response != null) {
+
+            // If API Response is ok, go ahead and check the transaction response
+            if (response.getMessages().getResultCode() == MessageTypeEnum.OK) {
+
+                TransactionResponse result = response.getTransactionResponse();
+                if (result.getResponseCode().equals("1")) {
+                    System.out.println(result.getResponseCode());
+                    System.out.println("Successful Credit Card Transaction");
+                    System.out.println(result.getAuthCode());
+                    System.out.println(result.getTransId());
+                    return true;
+                }
+                else
+                {
+                    System.out.println("Failed Transaction" + result.getResponseCode());
+                    System.out.println(result.getMessages());
+                    return false;
+                }
+            }
+            else
+            {
+                System.out.println("Failed Transaction:  " + response.getMessages().getResultCode());
+                return false;
+            }
+        }
+        else {
+        	System.out.println("Response is null");
+        	return false;
+        }
+		
+	}
 	
 }

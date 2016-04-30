@@ -1,6 +1,6 @@
 @(allTypes: Array[models.CardType])
 <form class="payment-form horizontal-form register-flow-form hidden"
-	 role="form" data-url="@routes.SignUpFlowController.processPayment()">
+	 role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()">
 	<h3 class="text-center form-title">Payment Details</h3>
 
 	<div class="row form-group">
@@ -100,7 +100,11 @@
 		</div>
 	
 	</div>
-	
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<span class="error" id="transactionReportError"></span>
+		</div>
+	</div>
 	<div class="row form-group">
 		<div class="col-sm-12 text-center">
 			<button class="btn btn-warning btn-center" id="processPayment" type="submit" >Process Payment</button>

@@ -8,7 +8,7 @@ POST    /register                   controllers.SignUpFlowController.register
 GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
 
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
-POST    /payment-details            controllers.SignUpFlowController.processPayment
+POST    /payment-details            controllers.SignUpFlowController.processPaymentAndGetReport
 
 #login
 POST    /login                      controllers.LoginController.login

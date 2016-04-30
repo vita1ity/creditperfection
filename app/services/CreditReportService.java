@@ -1,5 +1,7 @@
 package services;
 
+import java.util.Iterator;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.soap.MessageFactory;
@@ -9,30 +11,33 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathExpressionException;
 
-import javax.xml.soap.Name;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import models.User;
+import models.json.CreditReportSuccessResponse;
+import models.json.ErrorResponse;
+import models.json.JSONResponse;
 import play.Configuration;
 
 @Singleton
 public class CreditReportService {
-
+	
 	@Inject
 	private Configuration conf;
 	
-	public static void main(String args[]) {
-		
-        CreditReportService reportService = new CreditReportService();
-        reportService.getCreditReport();
-    }
-	
-	public void getCreditReport() {
+	public JSONResponse getCreditReport(User user) {
 		
 		try {
             // Create SOAP Connection
@@ -40,119 +45,192 @@ public class CreditReportService {
             SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
             // Send SOAP Message to SOAP Server
-            //TODO change with conf parameter
-            String url = "https://xml.idcreditservices.com/IDSWebServicesNG/IDSEnrollment.asmx";
-            SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(), url);
-
-            // Process the SOAP Response
+            String url = conf.getString("credit.report.url");
+            
+            SOAPMessage soapResponse = soapConnection.call(createSOAPRequestString(user), url);
+            
+            JSONResponse response = parseSOAPResponse(soapResponse);
+            
+            //TODO log it or delete - Print the SOAP Response
             printSOAPResponse(soapResponse);
 
             soapConnection.close();
+            
+            return response;
+            
         } catch (Exception e) {
             System.err.println("Error occurred while sending SOAP Request to Server");
             e.printStackTrace();
+            
+            JSONResponse response = new ErrorResponse("ERROR", "104", "Error occurred while sending SOAP Request to Server");
+            return response;
+            
         }
 		
 	}
-
-    private SOAPMessage createSOAPRequest() throws Exception {
-        MessageFactory messageFactory = MessageFactory.newInstance();
+	
+	private SOAPMessage createSOAPRequestString(User user) throws Exception {
+		
+		MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
+      
         SOAPPart soapPart = soapMessage.getSOAPPart();
-
-        String serverURI = "http://tempuri.org/";
+        
+        String serverURI = conf.getString("credit.report.server.uri");
 
         // SOAP Envelope
         SOAPEnvelope envelope = soapPart.getEnvelope();
-        envelope.addNamespaceDeclaration("report", serverURI);
-
-        /*
-        Constructed SOAP Request Message:
-        <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:example="http://ws.cdyne.com/">
-            <SOAP-ENV:Header/>
-            <SOAP-ENV:Body>
-                <example:VerifyEmail>
-                    <example:email>mutantninja@gmail.com</example:email>
-                    <example:LicenseKey>123</example:LicenseKey>
-                </example:VerifyEmail>
-            </SOAP-ENV:Body>
-        </SOAP-ENV:Envelope>
-         */
-
+        envelope.setPrefix("soap12");
+        envelope.removeNamespaceDeclaration("SOAP-ENV");
+        envelope.addNamespaceDeclaration("soap12", "http://www.w3.org/2003/05/soap-envelope");
+        envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
+        
+        //SOAP header
+        SOAPHeader header = envelope.getHeader();
+        header.detachNode();
+        
         // SOAP Body
         SOAPBody soapBody = envelope.getBody();
+        soapBody.setPrefix("soap12");
         
-        SOAPElement idsEnrollmentString = soapBody.addChildElement("IDSEnrollmentString");
+        SOAPElement idsEnrollmentString = soapBody.addChildElement("IDSEnrollmentString", "", serverURI );
+        //idsEnrollmentString.addNamespaceDeclaration("", serverURI);
+        
+        String requestSource = conf.getString("credit.report.request.source");
+        String packageId = conf.getString("credit.report.package.id");
+        String partnerPass = conf.getString("credit.report.partner.password");
+        
         SOAPElement strRequest = idsEnrollmentString.addChildElement("strRequest");
-        strRequest.addTextNode("CRDPRF");
+        strRequest.addTextNode("<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+    		" <Request xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">&#xD;" +
+    		  "<RequestSource>" + requestSource + "</RequestSource>&#xD;" +
+    		  "<Product>&#xD;" +
+    		    "<PackageId>" + packageId + "</PackageId>&#xD;" +
+    		    "<ProductUser>&#xD;" +
+    		      "<Memberid>" + user.email + "</Memberid>&#xD;" +
+    		      "<EmailAddress>" + user.email + "</EmailAddress>&#xD;" +
+    		      "<Password>" + user.password + "</Password>&#xD;" +
+    		      "<Address>&#xD;" +
+    		        "<Address1>" + user.address + "</Address1>&#xD;" +
+    		        "<Address2 xsi:type=\"xsd:string\" />&#xD;" +
+    		        "<City>" + user.city + "</City>&#xD;" +
+    		        "<State>" + user.state + "</State>&#xD;" +
+    		        "<ZipCode>" + user.zip + "</ZipCode>&#xD;" +
+    		      "</Address>&#xD;" +
+    		      "<Phone>&#xD;" +
+    		        "<PhoneNumber></PhoneNumber>&#xD;" +
+    		        "<PhoneType xsi:type=\"xsd:string\"></PhoneType>&#xD;" +
+    		      "</Phone>&#xD;" +
+    		      "<Person>&#xD;" +
+    		        "<FirstName>" + user.firstName + "</FirstName>&#xD;" +
+    		        "<LastName>" + user.lastName + "</LastName>&#xD;" +
+    		        "<MiddleName></MiddleName>&#xD;" +
+    		      "</Person>&#xD;" +
+    		    "</ProductUser>&#xD;" +
+    		  "</Product>&#xD;" +
+    		  "<Partner>&#xD;" +
+    		    "<partnerAccount>" + requestSource + "</partnerAccount>&#xD;" +
+    		    "<partnerCode>" + requestSource + "</partnerCode>&#xD;" +
+    		    "<partnerPassword>" + partnerPass + "</partnerPassword>&#xD;" +
+    		    "<Branding>" + requestSource + "</Branding>&#xD;" +
+    		  "</Partner>&#xD;" +
+    		"</Request>");
         
-        /*
-        SOAPElement request = strRequest.addChildElement("Request");
-        
-        SOAPElement requestSource = request.addChildElement("RequestSource");
-        requestSource.addTextNode("CRDPRF");
-        SOAPElement product = request.addChildElement("Product");
-        SOAPElement packageId = product.addChildElement("PackageId");
-        packageId.addTextNode("476");
-        SOAPElement productUser = product.addChildElement("ProductUser");
-        SOAPElement memberId = productUser.addChildElement("MemberId");
-        memberId.addTextNode("vitalii.oleksiv@gmail.com");
-        SOAPElement emailAddress = productUser.addChildElement("EmailAddress");
-        emailAddress.addTextNode("vitalii.oleksiv@gmail.com");
-        SOAPElement password = productUser.addChildElement("Password");
-        password.addTextNode("123456");
-        SOAPElement address = productUser.addChildElement("Address");
-        SOAPElement address1 = address.addChildElement("Address1");
-        address1.addTextNode("Skovorody 19");
-        SOAPElement city = address.addChildElement("City");
-        city.addTextNode("Kyiv");
-        SOAPElement state = address.addChildElement("State");
-        state.addTextNode("AK");
-        SOAPElement zipCode = address.addChildElement("ZipCode");
-        zipCode.addTextNode("22209");
-        SOAPElement phone = productUser.addChildElement("Phone");
-        SOAPElement phoneNumber = phone.addChildElement("PhoneNumber");
-        phoneNumber.addTextNode("7148884550");
-        SOAPElement phoneType = phone.addChildElement("PhoneType");
-        phoneType.addTextNode("Home");
-        SOAPElement person = productUser.addChildElement("Person");
-        SOAPElement firstName = person.addChildElement("FirstName");
-        firstName.addTextNode("John");
-        SOAPElement lastName = person.addChildElement("LastName");
-        lastName.addTextNode("Smith");
-        SOAPElement middleName = person.addChildElement("MiddleName");
-        middleName.addTextNode("M");
-        SOAPElement partner = request.addChildElement("Partner");
-        SOAPElement partnerAccount = partner.addChildElement("partnerAccount");
-        partnerAccount.addTextNode("PartnerAccount");
-        SOAPElement partnerCode = partner.addChildElement("partnerCode");
-        partnerCode.addTextNode("CRDPRF");
-        SOAPElement partnerPassword = partner.addChildElement("partnerPassword");
-        partnerPassword.addTextNode("kYmfR5@23");
-        SOAPElement branding = partner.addChildElement("Branding");
-        branding.addTextNode("CRDPRF");*/
         
         MimeHeaders headers = soapMessage.getMimeHeaders();
         headers.addHeader("SOAPAction", serverURI + "IDSEnrollmentString");
 
         soapMessage.saveChanges();
 
-        /* Print the request message */
-        System.out.print("Request SOAP Message = ");
         soapMessage.writeTo(System.out);
         System.out.println();
 
         return soapMessage;
-    }
-    
-    
-    private static void printSOAPResponse(SOAPMessage soapResponse) throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        Source sourceContent = soapResponse.getSOAPPart().getContent();
-        System.out.print("\nResponse SOAP Message = ");
-        StreamResult result = new StreamResult(System.out);
-        transformer.transform(sourceContent, result);
-    }
+	}
+
+	@SuppressWarnings("rawtypes")
+	private JSONResponse parseSOAPResponse(SOAPMessage soapResponse) throws SOAPException, 
+		TransformerException, XPathExpressionException {
+			
+		JSONResponse response = null;
+		 
+    	Iterator itr = soapResponse.getSOAPBody().getChildElements();
+    	while (itr.hasNext()) {
+    	    Node node = (Node)itr.next();
+    	    
+    	    if (node.getNodeType() == Node.ELEMENT_NODE) {
+    	        Element ele = (Element)node;
+    	        System.out.println(ele.getNodeName() + " = " + ele.getTextContent());
+    	        if (ele.getNodeName().equals("IDSEnrollmentStringResponse")) {
+    	        	
+    	        	String responseStr = ele.getTextContent();
+    	        	//handle success
+    	        	if (responseStr.contains("<Status>SUCCESS</Status>")) {
+    	        		
+    	    	        if (responseStr.contains("<CreditReportUrl>")) {
+    	    	        	String url = responseStr.substring(responseStr.indexOf("<CreditReportUrl>") + "<CreditReportUrl>".length(), 
+    	    	        			responseStr.indexOf("</CreditReportUrl>"));
+    	    	        	System.out.println(url);
+    	    	        	
+    	    	        	response = new CreditReportSuccessResponse("SUCCESS", url); 
+    	    	        	return response;
+    	    	        }
+    	    	        
+    	    	        else {
+    	    	        	System.out.println("No credit report link");
+    	    	        	
+    	    	        	response = new ErrorResponse("ERROR", "101", "User with such is already registered"); 
+    	    	        	return response;
+    	    	        }
+    	    	        
+    	        	}
+    	        	
+    	        	else if (responseStr.contains("<Status>FAIL</Status>")) {
+    	        		if (responseStr.contains("<ErrorCode>") && responseStr.contains("<ErrorMessage>")) {
+    	        			String errorCode = responseStr.substring(responseStr.indexOf("<ErrorCode>") + "<ErrorCode>".length(), 
+    	    	        			responseStr.indexOf("</ErrorCode>"));
+    	        			String errorMessage = responseStr.substring(responseStr.indexOf("<ErrorMessage>") + "<ErrorMessage>".length(), 
+    	    	        			responseStr.indexOf("</ErrorMessage>"));
+    	        			
+    	        			System.out.println(errorCode);
+    	        			System.out.println(errorMessage);
+    	        			
+    	        			response = new ErrorResponse("ERROR", errorCode, errorMessage); 
+    	    	        	return response;
+    	        		}
+    	        		else {
+    	        			System.out.println("Unknown error");
+    	        			
+    	        			response = new ErrorResponse("ERROR", "102", "Unknown error"); 
+    	    	        	return response;
+    	        		}
+    	        	}
+    	        	else {
+    	        		response = new ErrorResponse("ERROR", "102", "Unknown error"); 
+	    	        	return response;
+    	        	}
+    	        	
+	    	        
+    	        }
+    	        
+    	    } else if (node.getNodeType() == Node.TEXT_NODE) {
+    	        
+    	    }
+    	}
+    	
+    	response = new ErrorResponse("ERROR", "103", "Invalid response"); 
+    	return response;
+	    
+	}
 	
+	private void printSOAPResponse(SOAPMessage soapResponse) throws Exception {
+	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	    Transformer transformer = transformerFactory.newTransformer();
+	    Source sourceContent = soapResponse.getSOAPPart().getContent();
+	    
+	    StreamResult result = new StreamResult(System.out);
+	    transformer.transform(sourceContent, result);
+	}
+
 }

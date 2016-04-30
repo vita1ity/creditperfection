@@ -104,6 +104,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		clearErrors();
+		$('#transactionReportError').text('');
 		 
 		if (!validateCreditCard()) {
 			return;
@@ -127,16 +128,28 @@ $(document).ready(function() {
 	        url: url,
 	        contentType: 'application/json',
 	        data: JSON.stringify(creditCardJSON),
-	        dataType: 'JSON'
+	        dataType: 'json'
 		
 	    }).done (function(data) {
 	    	
 	    	console.log(data);
+	    	
+	    	var url = data.reportUrl;
+	    	window.location.href = url;
+	    	
 	    
 	    }).fail (function(err) {
 			console.error(err)
 			
-			processErrors(err);
+			//transaction or report error
+			$('#transactionReportError').text(err.responseJSON.errorMessage);
+			
+			//validation errors
+			if (err.responseJSON.length != 1) {
+				processErrors(err);
+			}
+			
+			
 	    });
 	});
 	

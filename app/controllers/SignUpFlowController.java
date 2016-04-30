@@ -10,20 +10,24 @@ import javax.inject.Singleton;
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import errors.ValidationError;
 import models.CardType;
 import models.CreditCard;
 import models.Product;
 import models.User;
+import models.json.ErrorResponse;
+import models.json.JSONResponse;
+import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Configuration;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
-import errors.ValidationError;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.CreditCardService;
+import services.CreditReportService;
 import services.MailService;
 import utils.Tokener;
 import views.html.index;
@@ -42,6 +46,9 @@ public class SignUpFlowController extends Controller {
     
     @Inject
     private CreditCardService creditCardService;
+    
+    @Inject
+    private CreditReportService creditReportService;
     
     @Inject
 	private Configuration conf;
@@ -129,7 +136,7 @@ public class SignUpFlowController extends Controller {
         
     }
     
-    public Result processPayment() {
+    public Result processPaymentAndGetReport() {
     	
     	JsonNode json = request().body().asJson();
    	 
@@ -165,9 +172,25 @@ public class SignUpFlowController extends Controller {
 	    	
 	    	final String loginId = conf.getString("authorise.net.sandbox.login.id");
 	    	final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
-	    	creditCardService.charge(loginId, transactionKey, product.price, creditCard);
-	    	
-	    	return ok(Json.toJson("{message: success}"));
+	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
+	    			transactionKey, product.price, creditCard);
+	    	boolean transactionPassed = creditCardService.checkTransaction(response);
+	    	if (transactionPassed) {
+	    		
+	    		JSONResponse reportResponse = creditReportService.getCreditReport(user);
+	    		if (reportResponse instanceof ErrorResponse) {
+	    			return badRequest(Json.toJson(reportResponse));
+	    		}
+	    		else {
+	    			return ok(Json.toJson(reportResponse));
+	    		}
+	    		
+	    	}
+	    	else {
+	    		//TODO add more concrete message about the problem
+	    		JSONResponse transactionError = new ErrorResponse("ERROR", "201", "Transaction Failed");
+	    		return badRequest(Json.toJson(transactionError));
+	    	}
 	    	
 	    }
 	    
@@ -189,12 +212,6 @@ public class SignUpFlowController extends Controller {
         }
        
         return redirect(routes.SignUpFlowController.index());
-    }
-
-    
-
-    private boolean authorizePayment() {
-        return true;
     }
 
 }
