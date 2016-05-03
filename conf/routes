@@ -10,6 +10,8 @@ GET     /registertoken/:token       controllers.SignUpFlowController.registerTok
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
 POST    /payment-details            controllers.SignUpFlowController.processPaymentAndGetReport
 
+POST		/get-report					 controllers.CreditReportController.processUrl
+
 #login
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout

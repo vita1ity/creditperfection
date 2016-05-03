@@ -117,8 +117,8 @@ public class CreditReportServiceTest {
     		  "<Product>&#xD;" +
     		    "<PackageId>476</PackageId>&#xD;" +
     		    "<ProductUser>&#xD;" +
-    		      "<Memberid>vitalii.oleksiv@gmail.com.test.7</Memberid>&#xD;" +
-    		      "<EmailAddress>vitalii.oleksiv@gmail.com.test.7</EmailAddress>&#xD;" +
+    		      "<Memberid>vitalii.oleksiv@gmail.com.test.11</Memberid>&#xD;" +
+    		      "<EmailAddress>vitalii.oleksiv@gmail.com.test.11</EmailAddress>&#xD;" +
     		      "<Password>123456</Password>&#xD;" +
     		      "<Address>&#xD;" +
     		        "<Address1>Skovorody 19</Address1>&#xD;" +
@@ -354,6 +354,7 @@ public class CreditReportServiceTest {
     	    	        if (responseStr.contains("<CreditReportUrl>")) {
     	    	        	String url = responseStr.substring(responseStr.indexOf("<CreditReportUrl>") + "<CreditReportUrl>".length(), 
     	    	        			responseStr.indexOf("</CreditReportUrl>"));
+    	    	        	url = url.replaceAll("&amp;", "&");
     	    	        	System.out.println(url);
     	    	        	
     	    	        }

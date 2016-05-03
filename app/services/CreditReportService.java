@@ -171,6 +171,7 @@ public class CreditReportService {
     	    	        if (responseStr.contains("<CreditReportUrl>")) {
     	    	        	String url = responseStr.substring(responseStr.indexOf("<CreditReportUrl>") + "<CreditReportUrl>".length(), 
     	    	        			responseStr.indexOf("</CreditReportUrl>"));
+    	    	        	url = url.replaceAll("&amp;", "&");
     	    	        	System.out.println(url);
     	    	        	
     	    	        	response = new CreditReportSuccessResponse("SUCCESS", url); 

@@ -15,6 +15,7 @@ import models.CardType;
 import models.CreditCard;
 import models.Product;
 import models.User;
+import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
@@ -26,6 +27,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import controllers.CreditReportController;
 import services.CreditCardService;
 import services.CreditReportService;
 import services.MailService;
@@ -182,6 +184,10 @@ public class SignUpFlowController extends Controller {
 	    			return badRequest(Json.toJson(reportResponse));
 	    		}
 	    		else {
+	    			CreditReportSuccessResponse successResponse = (CreditReportSuccessResponse)reportResponse;
+	    			String url = successResponse.getReportUrl();
+	    			
+	    			//return redirect(routes.CreditReportController.processUrl(url));
 	    			return ok(Json.toJson(reportResponse));
 	    		}
 	    		

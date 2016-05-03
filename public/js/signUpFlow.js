@@ -1,4 +1,8 @@
 $(document).ready(function() {
+	
+	//var url = 'https://xml.idcreditservices.com/FAMSUserInterface/default.aspx?passId=dNh%2bYBC26BjV6LwG7Y2XvO74wkZhJj0LFBxiEcnZ%2bLE%3d&custId=GXhy359WfvvqEgVFCNsy86VGxluc0ZrU0HMIpOZz8Do%3d';
+	//$.redirect('/get-report', {'url': url});
+	
 	//register new user
 	$(document).on('submit', '.register-form', function (e) {
 		
@@ -135,7 +139,10 @@ $(document).ready(function() {
 	    	console.log(data);
 	    	
 	    	var url = data.reportUrl;
-	    	window.location.href = url;
+	    	
+	    	$.redirect('/get-report', {'url': url});
+	    	
+	    	//window.location.href = "/get-report?url= " + url;
 	    	
 	    
 	    }).fail (function(err) {
