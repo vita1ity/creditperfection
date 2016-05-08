@@ -1,3 +1,10 @@
+.container-full {
+  margin: 0 auto;
+  width: 100%;
+}
+.header {
+	
+}
 .hidden {
 	display: none;
 }
@@ -13,7 +20,90 @@
 	color: #EC971F;
 	margin-bottom: 35px;
 }
+.form-label {
+	margin-bottom: 5px;
+}
+.title {
+	color: #EC971F;
+}
 .btn-center {
 	margin: 25px auto 0 auto;
 	width: 150px;
 }
+.add-btn-center {
+	margin: 25px 0 25px 44%;
+	width: 150px;
+}
+.left-button {
+	margin-right: 20px;
+}
+#login .modal-dialog  {
+	width:25%;
+}
+
+.flipper.rotate .login-form {
+    -moz-transform: perspective(800px) rotateY(-180deg);
+    -ms-transform: perspective(800px) rotateY(-180deg);
+    -webkit-transform: perspective(800px) rotateY(-180deg);
+    transform: perspective(800px) rotateY(-180deg)
+}
+
+.flipper.rotate .login-form.forgot-pass {
+    -moz-transform: perspective(800px) rotateY(0deg);
+    -ms-transform: perspective(800px) rotateY(0deg);
+    -webkit-transform: perspective(800px) rotateY(0deg);
+    transform: perspective(800px) rotateY(0deg)
+}
+
+.flipper .login-form {
+    
+    width:100%;
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5); 
+    box-shadow: 0 5px 15px rgba(0,0,0,.5); 
+    border-radius: 5px; 
+    background-color: #fff;
+     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-style: preserve-3d;
+    -moz-transition: -moz-transform .6s;
+    -o-transition: -o-transform .6s;
+    -webkit-transition: -webkit-transform .6s;
+    transition: transform .6s;
+    -moz-transform: perspective(800px) rotateY(0deg);
+    -ms-transform: perspective(800px) rotateY(0deg);
+    -webkit-transform: perspective(800px) rotateY(0deg);
+    transform: perspective(800px) rotateY(0deg)
+}
+
+.flipper .login-form.forgot-pass {
+    background-color: #fff;
+    display: block;
+    -moz-transform: perspective(800px) rotateY(180deg);
+    -ms-transform: perspective(800px) rotateY(180deg);
+    -webkit-transform: perspective(800px) rotateY(180deg);
+    transform: perspective(800px) rotateY(180deg)
+}
+
+.alert-small {
+	padding: 5px;
+    margin: 5px 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.navbar-brand {
+	margin-right: 40px;	
+}
+.panel {
+	width: 80%;
+	margin: 0 auto;
+}
+.edit-user-form {
+	width: 80%;
+	margin: 20px auto 0 auto; 
+}
+ 

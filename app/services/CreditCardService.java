@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import models.CreditCard;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
-import models.json.TransactionSuccessResponse;
+import models.json.MessageResponse;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.ANetApiResponse;
 import net.authorize.api.contract.v1.CreateTransactionRequest;
@@ -87,7 +87,7 @@ public class CreditCardService {
                     System.out.println(result.getAuthCode());
                     System.out.println(result.getTransId());
                     
-                    jsonResponse = new TransactionSuccessResponse("SUCCESS", "Successful Credit Card Transaction");
+                    jsonResponse = new MessageResponse("SUCCESS", "Successful Credit Card Transaction");
                     
                     return jsonResponse;
                 }

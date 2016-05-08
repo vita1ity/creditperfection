@@ -1,0 +1,8 @@
+- &roleUser !!models.Role
+ id: 1 
+ name: user
+ 
+- &roleAdmin !!models.Role
+ id: 2 
+ name: admin
+ 

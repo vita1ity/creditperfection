@@ -9,6 +9,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
@@ -21,7 +23,7 @@ import utils.EmailValidator;
 public class User extends Model {
 	
     @Id
-    public int id;
+    public long id;
     @Required
     public String firstName;
     @Required
@@ -36,6 +38,10 @@ public class User extends Model {
     public String token;
     public boolean active;
     
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role")
+    public List<Role> roles;
+    
     @OneToMany(cascade = CascadeType.ALL)
     public List<CreditCard> creditCards;
     
@@ -49,7 +55,7 @@ public class User extends Model {
 		return user;
 	}
 
-    public List<ValidationError> validate() {
+    public List<ValidationError> validate(boolean isEdit) {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		
@@ -91,11 +97,12 @@ public class User extends Model {
 			errors.add(error);
 	    }
 	    
-		
-		User userByEmail = findByEmail(this.email);
-		if (userByEmail != null) {
-			errors.add(new ValidationError("email", "User with such email is already registered"));
-			
+		if (!isEdit) {
+			User userByEmail = findByEmail(this.email);
+			if (userByEmail != null) {
+				errors.add(new ValidationError("email", "User with such email is already registered"));
+				
+			}
 		}
 		
 		if (errors.size() != 0) {
@@ -110,6 +117,19 @@ public class User extends Model {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", address=" + address + ", city=" + city + ", state=" + state + ", zip=" + zip
 				+ ", password=" + password + "]";
+	}
+
+	public void updateUserInfo(User user) {
+		
+		this.firstName = user.firstName;
+		this.lastName = user.lastName;
+		this.address = user.address;
+		this.city = user.city;
+		this.state = user.state;
+		this.email = user.email;
+		this.zip = user.zip;
+		this.active = user.active;
+		
 	}
     
     

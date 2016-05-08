@@ -2,6 +2,7 @@ package controllers;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,11 +15,12 @@ import errors.ValidationError;
 import models.CardType;
 import models.CreditCard;
 import models.Product;
+import models.Role;
 import models.Transaction;
 import models.User;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
-import models.json.TransactionSuccessResponse;
+import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Configuration;
 import play.data.DynamicForm;
@@ -63,6 +65,14 @@ public class SignUpFlowController extends Controller {
     	
         return ok(index.render(userForm, productList, allTypes));
     }
+    public Result index(String login){
+    	
+    	Form<User> userForm = formFactory.form(User.class);
+    	List<Product> productList = Product.getAllProducts();
+    	CardType[] allTypes = CardType.values();
+    	
+        return ok(index.render(userForm, productList, allTypes));
+    }
     
     @BodyParser.Of(BodyParser.Json.class)
     public Result register() throws Exception {
@@ -71,19 +81,27 @@ public class SignUpFlowController extends Controller {
     	 
     	User user = Json.fromJson(json, User.class);
 	    if(user == null) {
-	        return badRequest("{message: Cannot parse JSON to user}");
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = user.validate();
+	    	List<ValidationError> errors = user.validate(false);
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
 	    	user.token = Tokener.randomString(48);
+	    	List<Role> roles = new ArrayList<Role>();
+	    	Role userRole = Role.findByName("user");
+	    	roles.add(userRole);
+	    	user.roles = roles;
         	user.save();
+        	
+        	mailService.sendEmailToken(user.email, user.token);
+        	flash("message", "Email verification sent");
+        	
         	session("userEmail", user.email);
-	        return ok(Json.toJson("{message: success}"));
+	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was registered")));
 	    }
     	
         //User user = formFactory.form(User.class).bindFromRequest().get();
@@ -129,6 +147,20 @@ public class SignUpFlowController extends Controller {
         );*/
         
     }
+    
+    public Result registerToken(String token) {
+        User user = Ebean.find(User.class).where().eq("token", token).findUnique();
+        if (user != null) {
+            user.active = true;
+            user.update();
+            flash("message", "Account verified, please login");
+        } 
+        else {
+            flash("error", "Account not verified, please try again");
+        }
+       
+        return redirect(routes.SignUpFlowController.index());
+    }
 
     public Result chooseProduct() {
     	DynamicForm form = formFactory.form().bindFromRequest();
@@ -145,7 +177,7 @@ public class SignUpFlowController extends Controller {
     	CreditCard creditCard = Json.fromJson(json, CreditCard.class);
     	
 	    if(creditCard == null) {
-	        return badRequest("Cannot parse JSON to CreditCard");
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCard")));
 	    } else {
 	    	
 	    	List<ValidationError> errors = creditCard.validate();
@@ -180,7 +212,7 @@ public class SignUpFlowController extends Controller {
 	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
 	    			transactionKey, product.price, creditCard);
 	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
-	    	if (transactionResponse instanceof TransactionSuccessResponse) {
+	    	if (transactionResponse instanceof MessageResponse) {
 	    		
 	    		//save transaction in the db
 	    		Transaction transaction = new Transaction(user, creditCard, product);
@@ -207,19 +239,5 @@ public class SignUpFlowController extends Controller {
     
     
 
-
-
-    public Result registerToken(String token){
-        User user = Ebean.find(User.class).where().eq("token", token).findUnique();
-        if (user!=null){
-            user.active = true;
-            user.update();
-            flash("message", "Account verified, please login");
-        }else{
-            flash("error", "Account not verified, please try again");
-        }
-       
-        return redirect(routes.SignUpFlowController.index());
-    }
 
 }

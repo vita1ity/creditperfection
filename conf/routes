@@ -6,16 +6,26 @@
 GET     /                           controllers.SignUpFlowController.index
 POST    /register                   controllers.SignUpFlowController.register
 GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
-
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
 POST    /payment-details            controllers.SignUpFlowController.processPaymentAndGetReport
 
-POST		/get-report					 controllers.CreditReportController.processUrl
+# report
+POST	/get-report					controllers.CreditReportController.processUrl
 
-#login
+# login
+
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
 POST    /forgotpassword             controllers.LoginController.forgotPassword
+
+# user
+GET    /account                     controllers.UserController.userPage
+
+# admin
+GET    /admin/users                       controllers.AdminController.users
+POST   /admin/users/edit-user             controllers.AdminController.editUser
+POST   /admin/users/delete-user           controllers.AdminController.deleteUser
+POST   /admin/users/add-user              controllers.AdminController.addUser
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
