@@ -50,7 +50,7 @@ create table security_role (
 );
 
 create table transaction (
-  id                            integer auto_increment not null,
+  id                            bigint auto_increment not null,
   user_id                       bigint,
   credit_card_id                bigint,
   product_id                    bigint,

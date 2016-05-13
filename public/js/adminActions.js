@@ -509,6 +509,45 @@ $(document).ready(function() {
 		return validated;
 	}
 	
+	//TRANSACTIONS
+	$(document).on('change', '#user', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		var userId = $(this).find(":selected").val();
+		
+		console.log(userId);
+		
+		$.ajax({
+			
+			type: 'GET',
+	        url: url,
+	        data: {'userId': userId},
+	        dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			var optionsHtml = '<option value=\"\">Select Card Owner</option>\n';
+			for (var i = 0; i < data.length; i++) {
+				var creditCard = data[i];
+				optionsHtml += "<option value=\"" + creditCard.id + "\"> " + (i + 1) + ". " + creditCard.cardType + 
+					": " + creditCard.digits + " </option> \n";
+				
+			}
+			$('#creditCard').html(optionsHtml);
+			$('#creditCard').prop("disabled", false);
+			
+		}).fail (function(err) {
+			
+			console.error(err);
+			
+		});
+		
+	});
+	
 	//remove error messages
 	function clearErrors() {
 		

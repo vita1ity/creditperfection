@@ -37,5 +37,11 @@ POST   /admin/credit-cards/edit-card      controllers.AdminController.editCredit
 POST   /admin/credit-cards/delete-card    controllers.AdminController.deleteCreditCard
 POST   /admin/credit-cards/add-card       controllers.AdminController.addCreditCard
 
+GET    /admin/transactions                			controllers.AdminController.transactions
+GET    /admin/transactions/get-credit-cards        	controllers.AdminController.getUserCreditCards
+POST   /admin/transactions/edit-transaction         controllers.AdminController.editTransaction
+POST   /admin/transactions/delete-transaction       controllers.AdminController.deleteTransaction
+POST   /admin/transactions/add-transaction          controllers.AdminController.addTransaction
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

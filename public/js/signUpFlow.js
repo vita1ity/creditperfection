@@ -154,10 +154,7 @@ $(document).ready(function() {
 			$('#transactionReportError').text(err.responseJSON.errorMessage);
 			
 			//validation errors
-			if (err.responseJSON.length != 1) {
-				processErrors(err);
-			}
-			
+			processErrors(err);
 			
 	    });
 	});

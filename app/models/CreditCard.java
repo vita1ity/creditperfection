@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
-import com.avaje.ebean.Model.Finder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import errors.ValidationError;
 import play.data.format.Formats;
@@ -34,6 +34,7 @@ public class CreditCard extends Model {
    
     public int cvv;
     
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH)
     public User user;
 
@@ -76,8 +77,8 @@ public class CreditCard extends Model {
 			}
 		}
 		digits = digits.replaceAll("\\s+", "");
-		if (digits.length() != 16) {
-			errors.add(new ValidationError("digits", "Card Number should contain 16 digits"));
+		if (digits.length() != 16 && digits.length() != 15) {
+			errors.add(new ValidationError("digits", "Card Number should contain 15 or 16 digits"));
 		}
 		
 		if (cvv == 0) {

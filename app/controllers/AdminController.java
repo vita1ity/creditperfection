@@ -17,6 +17,7 @@ import models.CardType;
 import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
+import models.Transaction;
 import models.User;
 import models.json.MessageResponse;
 import play.data.DynamicForm;
@@ -311,4 +312,37 @@ public class AdminController extends Controller {
 		
 	}
 	
+	//transactions
+	public Result transactions() {
+		
+		List<User> allUsers = User.find.all();
+		List<Product> allProducts = Product.find.all();
+		List<Transaction> allTransactions = Transaction.find.all();
+		
+		return ok(views.html.adminTransactions.render(allTransactions, allUsers, allProducts));
+		
+	}
+	
+	public Result getUserCreditCards() {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("userId"));
+		
+		User user = User.find.byId(id);
+		List<CreditCard> userCreditCards = user.creditCards;
+		
+		return ok(Json.toJson(userCreditCards));
+	}
+	
+	public Result addTransaction() {
+		return null;
+	}
+	
+	public Result editTransaction() {
+		return null;
+	}
+	
+	public Result deleteTransaction() {
+		return null;
+	}
 }

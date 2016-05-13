@@ -1,14 +1,17 @@
 package models;
 
-import com.avaje.ebean.Model;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
-import javax.persistence.*;
+import com.avaje.ebean.Model;
 
 @Entity
 public class Transaction extends Model {
     
 	@Id
-    public int id;
+    public long id;
     @ManyToOne(cascade = CascadeType.ALL)
     public User user;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -23,7 +26,7 @@ public class Transaction extends Model {
 		this.product = product;
 	}
     
-    
+	public static Finder<Long, Transaction> find = new Finder<Long, Transaction>(Transaction.class);
     
 
 }
