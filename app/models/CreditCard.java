@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
+import com.avaje.ebean.Model.Finder;
 
 import errors.ValidationError;
 import play.data.format.Formats;
@@ -20,7 +21,7 @@ import play.data.format.Formats;
 public class CreditCard extends Model {
 	
     @Id
-    public int id;
+    public long id;
     
     public String name;
     
@@ -30,12 +31,16 @@ public class CreditCard extends Model {
     
     @Formats.DateTime(pattern="MM/yyyy")
     public YearMonth expDate;
-    
+   
     public int cvv;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     public User user;
 
+    public CreditCard() {
+    	
+    }
+    
 	public CreditCard(String name, CardType cardType, String digits, YearMonth expDate, int cvv, User user) {
 		super();
 		
@@ -47,6 +52,8 @@ public class CreditCard extends Model {
 		this.user = user;
 	}
 
+	public static Finder<Long, CreditCard> find = new Finder<Long, CreditCard>(CreditCard.class);
+	
 	@Override
 	public String toString() {
 		return "CreditCard [id=" + id + ", name=" + name + ", cardType=" + cardType + ", digits=" + digits
@@ -86,6 +93,17 @@ public class CreditCard extends Model {
 		}
 		
 		return null;
+	}
+
+	public void updateCreditCardInfo(CreditCard creditCard) {
+		
+		this.name = creditCard.name;
+		this.cardType = creditCard.cardType;
+		this.expDate = creditCard.expDate;
+		this.digits = creditCard.digits;
+		this.cvv = creditCard.cvv;
+		
+		
 	}
     
     

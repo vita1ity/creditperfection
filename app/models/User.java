@@ -15,12 +15,15 @@ import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
 
+import be.objectify.deadbolt.java.models.Permission;
+import be.objectify.deadbolt.java.models.Role;
+import be.objectify.deadbolt.java.models.Subject;
 import errors.ValidationError;
 import play.data.validation.Constraints.Required;
 import utils.EmailValidator;
 
 @Entity
-public class User extends Model {
+public class User extends Model implements Subject {
 	
     @Id
     public long id;
@@ -40,7 +43,8 @@ public class User extends Model {
     
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role")
-    public List<Role> roles;
+    public List<SecurityRole> roles;
+    
     
     @OneToMany(cascade = CascadeType.ALL)
     public List<CreditCard> creditCards;
@@ -130,6 +134,23 @@ public class User extends Model {
 		this.zip = user.zip;
 		this.active = user.active;
 		
+	}
+
+	@Override
+	public List<? extends Role> getRoles() {
+		return roles;
+	}
+
+	@Override
+	public List<? extends Permission> getPermissions() {
+		
+		return null;
+	}
+
+	@Override
+	public String getIdentifier() {
+		
+		return email;
 	}
     
     

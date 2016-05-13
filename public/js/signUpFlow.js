@@ -1,8 +1,5 @@
 $(document).ready(function() {
 	
-	//var url = 'https://xml.idcreditservices.com/FAMSUserInterface/default.aspx?passId=dNh%2bYBC26BjV6LwG7Y2XvO74wkZhJj0LFBxiEcnZ%2bLE%3d&custId=GXhy359WfvvqEgVFCNsy86VGxluc0ZrU0HMIpOZz8Do%3d';
-	//$.redirect('/get-report', {'url': url});
-	
 	//register new user
 	$(document).on('submit', '.register-form', function (e) {
 		
@@ -13,16 +10,16 @@ $(document).ready(function() {
 		var url = $(this).data("url");
 		var firstName = $('[name="firstName"]').val();
 		var lastName = $('[name="lastName"]').val();
-		var email = $('[name="email"]').val();
+		var email = $(this).find('[name="email"]').val();
 		var address = $('[name="address"]').val();
 		var city = $('[name="city"]').val();
 		var state = $('[name="state"]').val();
 		var zip = $('[name="zip"]').val();
-		var password = $('[name="password"]').val();
+		var password = $(this).find('[name="password"]').val();
 		
 		var userJSON =  {firstName: firstName, lastName: lastName, email: email, address: address,
 				city: city, state: state, zip: zip, password: password};
-		
+		console.log(userJSON);
 		$.ajax({
 			
 	        type: 'POST',
@@ -107,10 +104,13 @@ $(document).ready(function() {
 		
 		e.preventDefault();
 		
+		console.log("process payment");
+		
 		clearErrors();
 		$('#transactionReportError').text('');
 		 
-		if (!validateCreditCard()) {
+		if (!validateCreditCard(this)) {
+			console.log("validation failed");
 			return;
 		}
 		
@@ -125,6 +125,8 @@ $(document).ready(function() {
 		
 		var creditCardJSON =  {name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv};
+		
+		console.log(creditCardJSON);
 		
 		$.ajax({
 			
@@ -168,9 +170,9 @@ $(document).ready(function() {
 		});
 	}
 	
-	function validateCreditCard() {
+	function validateCreditCard(ref) {
 		var validated = true;
-		$('.form-input').each(function(i, obj) {
+		$(ref).find('.form-input').each(function(i, obj) {
 			
 			var val = $(obj).val();
 			if (val == "") {
@@ -184,12 +186,12 @@ $(document).ready(function() {
 			
 		});
 		
-		var cvv = $('[name="cvv"]').val();
+		var cvv = $(ref).parent().find('[name="cvv"]').val();
 		
 		if(!cvv.match(/^\d+$/)) {
-			var errorsHtml = $('#cvv-error').html();
+			var errorsHtml = $(ref).parent().find('.cvv-error').html();
 			errorsHtml += "CVV should contain only digits" + "</br>";
-			$('#cvv-error').html(errorsHtml);
+			$(ref).parent().find('.cvv-error').html(errorsHtml);
 			validated = false;
 		}
 		return validated;

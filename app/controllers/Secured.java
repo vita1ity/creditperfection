@@ -14,9 +14,9 @@ public class Secured extends Security.Authenticator {
 
     @Override
     public Result onUnauthorized(Context ctx){
-        return unauthorized();
+        //return unauthorized();
         //TODO add redirecting to index page with open form
-    	//String login = "login";
-        //return redirect(routes.SignUpFlowController.index(login));
+    	Boolean login = true;
+        return redirect(routes.SignUpFlowController.index(login));
     }
 }

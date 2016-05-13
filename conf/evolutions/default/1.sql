@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table credit_card (
-  id                            integer auto_increment not null,
+  id                            bigint auto_increment not null,
   name                          varchar(255),
   card_type                     integer,
   digits                        varchar(255),
@@ -36,24 +36,24 @@ create table payment_gateway (
 );
 
 create table product (
-  id                            integer auto_increment not null,
+  id                            bigint auto_increment not null,
   name                          varchar(255),
   price                         double,
   sale_price                    double,
   constraint pk_product primary key (id)
 );
 
-create table role (
+create table security_role (
   id                            integer auto_increment not null,
   name                          varchar(255),
-  constraint pk_role primary key (id)
+  constraint pk_security_role primary key (id)
 );
 
 create table transaction (
   id                            integer auto_increment not null,
   user_id                       bigint,
-  credit_card_id                integer,
-  product_id                    integer,
+  credit_card_id                bigint,
+  product_id                    bigint,
   constraint pk_transaction primary key (id)
 );
 
@@ -75,8 +75,8 @@ create table user (
 
 create table user_role (
   user_id                       bigint not null,
-  role_id                       integer not null,
-  constraint pk_user_role primary key (user_id,role_id)
+  security_role_id              integer not null,
+  constraint pk_user_role primary key (user_id,security_role_id)
 );
 
 alter table credit_card add constraint fk_credit_card_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -97,8 +97,8 @@ create index ix_transaction_product_id on transaction (product_id);
 alter table user_role add constraint fk_user_role_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 create index ix_user_role_user on user_role (user_id);
 
-alter table user_role add constraint fk_user_role_role foreign key (role_id) references role (id) on delete restrict on update restrict;
-create index ix_user_role_role on user_role (role_id);
+alter table user_role add constraint fk_user_role_security_role foreign key (security_role_id) references security_role (id) on delete restrict on update restrict;
+create index ix_user_role_security_role on user_role (security_role_id);
 
 
 # --- !Downs
@@ -121,8 +121,8 @@ drop index ix_transaction_product_id on transaction;
 alter table user_role drop foreign key fk_user_role_user;
 drop index ix_user_role_user on user_role;
 
-alter table user_role drop foreign key fk_user_role_role;
-drop index ix_user_role_role on user_role;
+alter table user_role drop foreign key fk_user_role_security_role;
+drop index ix_user_role_security_role on user_role;
 
 drop table if exists credit_card;
 
@@ -134,7 +134,7 @@ drop table if exists payment_gateway;
 
 drop table if exists product;
 
-drop table if exists role;
+drop table if exists security_role;
 
 drop table if exists transaction;
 

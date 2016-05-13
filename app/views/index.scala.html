@@ -1,18 +1,15 @@
-@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.CardType])
+@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.CardType], login: java.lang.Boolean)
 <!DOCTYPE html>
 <html lang="en">
 <head>
     @head.render
 </head>
 <body>
-	@header.render()
+	@header.render(login)
 	<div class="container">
 	    @if(flash.get("message")!=null){
 	        <h4><i>@flash.get("message")</i></h4>
 	    }
-	    
-	    <!-- @login.render --> 
-	    <!-- @forgotpassword.render -->
 	        
 	    @register.render(userForm)
 	    @chooseProduct.render(productList)

@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import com.avaje.ebean.Ebean;
 
-import models.Role;
+import models.SecurityRole;
 import models.User;
 import models.json.ErrorResponse;
 import models.json.MessageResponse;
@@ -86,13 +86,12 @@ public class LoginController extends Controller {
             else {
                 session("email", email);
                 session("name", user.firstName);
-                session("admin", "admin");
                 
                 //check if admin user
-                Role adminRole = Role.findByName("admin");
+                SecurityRole adminRole = SecurityRole.findByName("admin");
                 if (user.roles.contains(adminRole)) {
+                	session("admin", "admin");
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin")));
-                	
                 }
                 else {
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user")));
@@ -108,7 +107,7 @@ public class LoginController extends Controller {
     public Result logout(){
         session().clear();
         
-        return redirect(routes.SignUpFlowController.index());
+        return redirect(routes.SignUpFlowController.index(false));
     }
     
     //forgot password form

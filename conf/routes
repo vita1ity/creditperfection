@@ -3,7 +3,7 @@
 # ~~~~
 
 # signup flow
-GET     /                           controllers.SignUpFlowController.index
+GET     /                           controllers.SignUpFlowController.index(login: java.lang.Boolean ?= null)
 POST    /register                   controllers.SignUpFlowController.register
 GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
@@ -26,6 +26,16 @@ GET    /admin/users                       controllers.AdminController.users
 POST   /admin/users/edit-user             controllers.AdminController.editUser
 POST   /admin/users/delete-user           controllers.AdminController.deleteUser
 POST   /admin/users/add-user              controllers.AdminController.addUser
+
+GET    /admin/products                    controllers.AdminController.products
+POST   /admin/products/edit-product       controllers.AdminController.editProduct
+POST   /admin/products/delete-product     controllers.AdminController.deleteProduct
+POST   /admin/products/add-product        controllers.AdminController.addProduct
+
+GET    /admin/credit-cards                controllers.AdminController.creditCards
+POST   /admin/credit-cards/edit-card      controllers.AdminController.editCreditCard
+POST   /admin/credit-cards/delete-card    controllers.AdminController.deleteCreditCard
+POST   /admin/credit-cards/add-card       controllers.AdminController.addCreditCard
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

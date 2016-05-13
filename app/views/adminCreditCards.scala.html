@@ -1,0 +1,85 @@
+@(allCards: java.util.List[models.CreditCard], allUsers: java.util.List[models.User], allTypes: Array[models.CardType])
+<!DOCTYPE html>
+<html>
+<head>
+	@head.render
+	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+</head>
+<body>
+
+	@header.render(false)
+	<div class="container">
+		
+		<div class="row" id="alert-box">
+		</div>
+		
+		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-credit-card" >Add Credit Card</span>
+		
+      	
+			<div class="panel-group" id="accordion">
+			@for((c, index) <- allCards.zipWithIndex) {
+			
+				<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index">
+				        @c.id. @c.name - @c.digits</a>
+				      </h4>
+				    </div>
+				    <div id="collapse@index" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form" role="form">
+						    <h3 class="text-center title">Credit Card Info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="cardID">@c.id</span></h4>
+						    	</div>
+						    </div>
+						    
+						    @creditCardFields.render(c, allTypes, allUsers)
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editCreditCard"
+							    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+							    	<button class="btn btn-danger" id="deleteCreditCard"
+							    		data-url="@routes.AdminController.deleteCreditCard()" type="submit">Delete Credit Card</button>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
+			}
+		</div>    
+	
+	</div>
+	
+	<div class="modal fade" id="add-credit-card" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="title">Add Credit Card</h4>
+	            </div>
+	            <div class="modal-body">
+	                 
+				   @creditCardFields.render(new CreditCard(), allTypes, allUsers)
+					<!-- add credit card to user-->    
+	
+					
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <button id="confirmAddCreditCard" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
+
+</body>
+</html>

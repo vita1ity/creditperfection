@@ -4,6 +4,8 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
+version := "2.5.0"
+
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
@@ -13,7 +15,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.18",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "javax.mail" % "mail" % "1.5.0-b01",
-  "net.authorize" % "anet-java-sdk" % "1.8.8"
+  "net.authorize" % "anet-java-sdk" % "1.8.8",
+  "be.objectify" %% "deadbolt-java" % "2.5.0"
 )
 
 // Java project. Don't expect Scala IDE

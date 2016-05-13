@@ -15,7 +15,7 @@ import errors.ValidationError;
 import models.CardType;
 import models.CreditCard;
 import models.Product;
-import models.Role;
+import models.SecurityRole;
 import models.Transaction;
 import models.User;
 import models.json.ErrorResponse;
@@ -57,22 +57,17 @@ public class SignUpFlowController extends Controller {
     @Inject
 	private Configuration conf;
 
-    public Result index(){
+    public Result index(Boolean login){
     	
     	Form<User> userForm = formFactory.form(User.class);
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
-    	
-        return ok(index.render(userForm, productList, allTypes));
+    	if (login == null) {
+    		login = false;
+    	}
+        return ok(index.render(userForm, productList, allTypes, login));
     }
-    public Result index(String login){
-    	
-    	Form<User> userForm = formFactory.form(User.class);
-    	List<Product> productList = Product.getAllProducts();
-    	CardType[] allTypes = CardType.values();
-    	
-        return ok(index.render(userForm, productList, allTypes));
-    }
+    
     
     @BodyParser.Of(BodyParser.Json.class)
     public Result register() throws Exception {
@@ -91,8 +86,8 @@ public class SignUpFlowController extends Controller {
 	    	}
 	    	
 	    	user.token = Tokener.randomString(48);
-	    	List<Role> roles = new ArrayList<Role>();
-	    	Role userRole = Role.findByName("user");
+	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
+	    	SecurityRole userRole = SecurityRole.findByName("user");
 	    	roles.add(userRole);
 	    	user.roles = roles;
         	user.save();
@@ -159,7 +154,7 @@ public class SignUpFlowController extends Controller {
             flash("error", "Account not verified, please try again");
         }
        
-        return redirect(routes.SignUpFlowController.index());
+        return redirect(routes.SignUpFlowController.index(false));
     }
 
     public Result chooseProduct() {

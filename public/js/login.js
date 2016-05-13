@@ -1,4 +1,12 @@
+window.onload = function(){
+	
+	if ($('#isLogin').text() == 'true') {
+		$('#login').modal('toggle');
+	}
+}
+
 $(document).ready(function() {
+	
 	$('[role="toggle_forgot_password_form"]').on('click', function (e) {
 		e.preventDefault();
 	    $(this).parents('.login-form-block').find('.flipper').toggleClass('rotate');

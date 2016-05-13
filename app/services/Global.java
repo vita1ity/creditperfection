@@ -4,7 +4,7 @@ import java.util.List;
 import com.avaje.ebean.Ebean;
 
 import models.Product;
-import models.Role;
+import models.SecurityRole;
 import play.Application;
 import play.GlobalSettings;
 import play.libs.Yaml;
@@ -18,8 +18,8 @@ public class Global extends GlobalSettings {
 	        if (Product.find.findRowCount() == 0) {
 	            Ebean.saveAll((List<Product>)Yaml.load("initial-products.yml"));
 	        }
-	        if (Role.find.findRowCount() == 0) {
-	            Ebean.saveAll((List<Role>)Yaml.load("initial-roles.yml"));
+	        if (SecurityRole.find.findRowCount() == 0) {
+	            Ebean.saveAll((List<SecurityRole>)Yaml.load("initial-roles.yml"));
 	        }
 	    }
 }
