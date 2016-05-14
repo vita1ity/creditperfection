@@ -517,8 +517,6 @@ $(document).ready(function() {
 		var url = $(this).data('url');
 		var userId = $(this).find(":selected").val();
 		
-		console.log(userId);
-		
 		$.ajax({
 			
 			type: 'GET',
@@ -537,8 +535,209 @@ $(document).ready(function() {
 					": " + creditCard.digits + " </option> \n";
 				
 			}
+			
 			$('#creditCard').html(optionsHtml);
 			$('#creditCard').prop("disabled", false);
+			
+		}).fail (function(err) {
+			
+			console.error(err);
+			
+		});
+		
+		
+	});
+	
+	
+	$(document).on('click', '#confirmAddTransaction', function(e) {
+		
+		e.preventDefault();
+		
+		clearErrors();
+		
+		var url = $(this).data('url');
+		var userId = $(this).parent().parent().find('[name="user"]').val();
+		var cardId = $(this).parent().parent().find('[name="creditCard"]').val();
+		var productId = $(this).parent().parent().find('[name="product"]').val();
+		
+		var transactionJSON = {userId: userId, cardId: cardId, productId: productId};
+		
+		$.ajax({
+			
+			type: 'POST',
+			url: url,
+			contentType: 'application/json',
+			data: JSON.stringify(transactionJSON),
+			dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			var alertHtml = "";
+	    	alertHtml += "<div class=\"alert alert-success\">\n";
+	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
+	    		
+	    	$('#alert-box').html(alertHtml);
+	    
+	    	$('#add-transaction').modal('toggle');
+			
+			
+		}).fail (function(err) {
+			
+			console.log(err);
+			processErrors(err);
+		})
+		
+	});
+	
+	$(document).on('click', '#editTransaction', function(e) {
+		
+		e.preventDefault();
+		
+		var transactionId = $(this).closest('.edit-form').find('.transactionId').text();
+		var userId = $(this).closest('.edit-form').find('.user-id').text();
+		var firstName = $(this).closest('.edit-form').find('.first-name').text();
+		var lastName = $(this).closest('.edit-form').find('.last-name').text();
+		var cardId = $(this).closest('.edit-form').find('.card-id').text();
+		var cardType = $(this).closest('.edit-form').find('.card-type').text();
+		var cardNumber = $(this).closest('.edit-form').find('.card-number').text();
+		var productId = $(this).closest('.edit-form').find('.product-id').text();
+		var productPrice = $(this).closest('.edit-form').find('.product-price').text();
+		var productName = $(this).closest('.edit-form').find('.product-name').text();
+		
+		console.log(userId);
+		
+		$('#transactionIdModal').val(transactionId);
+		
+		$('#userTransactionEdit > option').each(function() {
+			
+			if (this.value == userId) {
+				$(this).attr("selected", "selected");
+			}
+			
+		});
+		
+		$('#productTransactionEdit > option').each(function() {
+			
+			if (this.value == productId) {
+				$(this).attr("selected", "selected");
+			}
+			
+		});
+		
+		var url = $('#user').data('url');
+		
+		$.ajax({
+			
+			type: 'GET',
+	        url: url,
+	        data: {'userId': userId},
+	        dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			var optionsHtml ='';
+			//var optionsHtml = '<option value=\"' + cardId + '\">' + cardId + '. ' + cardType + ': '  + cardNumber + '</option>\n';
+			for (var i = 0; i < data.length; i++) {
+				var creditCard = data[i];
+				if (creditCard.id == cardId) {
+					optionsHtml += "<option selected value=\"" + creditCard.id + "\"> " + creditCard.id + ". " + creditCard.cardType + 
+					": " + creditCard.digits + " </option> \n";
+				}
+				else {
+					optionsHtml += "<option value=\"" + creditCard.id + "\"> " + creditCard.id + ". " + creditCard.cardType + 
+						": " + creditCard.digits + " </option> \n";
+				}
+			}
+			
+			$('#creditCardTransactionEdit').html(optionsHtml);
+			$('#creditCardTransactionEdit').prop("disabled", false);
+			
+		}).fail (function(err) {
+			
+			console.error(err);
+			
+		});
+		
+		
+		$('#edit-transaction').modal('toggle');
+		
+	});
+	
+	$(document).on('click', '#confirmEditTransaction', function(e) {
+		
+		e.preventDefault();
+		
+		clearErrors();
+		
+		var url = $(this).data('url');
+		
+		var transactionId = $('#transactionIdModal').val();
+		var userId = $('#userTransactionEdit').val();
+		var cardId = $('#creditCardTransactionEdit').val();
+		var productId = $('#productTransactionEdit').val();
+		
+		var transactionJSON = {transactionId: transactionId, userId: userId, cardId: cardId, productId: productId};
+		
+		console.log(transactionJSON);
+		
+		$.ajax({
+			
+			type: 'POST',
+			url: url,
+			contentType: 'application/json',
+			data: JSON.stringify(transactionJSON),
+			dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			var alertHtml = "";
+	    	alertHtml += "<div class=\"alert alert-success\">\n";
+	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
+	    		
+	    	$('#alert-box').html(alertHtml);
+	    
+	    	$('#edit-transaction').modal('toggle');
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+			
+		}).fail (function(err) {
+			
+			console.log(err);
+			processErrors(err);
+		})
+		
+	});
+	
+	$(document).on('click', '#deleteTransaction', function(e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		var id = $(this).closest('.edit-form').find('.transactionId').text();; 
+		
+		$.ajax({
+			
+			type: 'POST',
+			url: url,
+			data: {id: id},
+			dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			var alertHtml = "";
+	    	alertHtml += "<div class=\"alert alert-success\">\n";
+	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
+	    	$('#alert-box').html(alertHtml);
+	    
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 			
 		}).fail (function(err) {
 			

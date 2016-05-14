@@ -12,6 +12,7 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import errors.ValidationError;
+import forms.RegisterForm;
 import models.CardType;
 import models.CreditCard;
 import models.Product;
@@ -74,16 +75,18 @@ public class SignUpFlowController extends Controller {
     	
     	JsonNode json = request().body().asJson();
     	 
-    	User user = Json.fromJson(json, User.class);
-	    if(user == null) {
+    	RegisterForm registerForm = Json.fromJson(json, RegisterForm.class);
+    	//User user = Json.fromJson(json, User.class);
+	    if(registerForm == null) {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = user.validate(false);
+	    	List<ValidationError> errors = registerForm.validate(false);
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
+	    	User user = new User(registerForm);
 	    	
 	    	user.token = Tokener.randomString(48);
 	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();

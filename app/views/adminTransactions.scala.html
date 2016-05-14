@@ -13,7 +13,7 @@
 		<div class="row" id="alert-box">
 		</div>
 		
-		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-product" >Add Transaction</span>
+		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-transaction" >Add Transaction</span>
 		
       	
 			<div class="panel-group" id="accordion">
@@ -33,35 +33,34 @@
 						    <h3 class="text-center title">Transaction info:</h3>
 						    <div class="row form-group">
 						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="productID">@t.id</span></h4>
+						    		<h4>Id: <span class="transactionId">@t.id</span></h4>
 						    	</div>
 						    </div>
 						    
 						    <h4 class="text-center title">User:</h4>
-						    <p>User Id: @t.user.id</p>
-						    <p>First Name: @t.user.firstName</p>
-						    <p>Last Name: @t.user.lastName</p>
-						    <p>Email: @t.user.email</p> 
+						    <p><strong>User Id: </strong><span class="user-id">@t.user.id</span></p>
+						    <p><strong>First Name: </strong><span class="first-name">@t.user.firstName</span></p>
+						    <p><strong>Last Name: </strong><span class="last-name">@t.user.lastName</span></p>
+						    <p><strong>Email: </strong>@t.user.email</p> 
 						    
 						    <h4 class="text-center title">Credit Card:</h4>
-						    <p>Card Id: @t.creditCard.id</p>
-						    <p>Card Holder Name: @t.creditCard.name</p>
-						    <p>Card Type: @t.creditCard.cardType</p>
-						    <p>Card Number: @t.creditCard.digits</p>
-						    <p>Exp. Date: @t.creditCard.expDate</p>
-						    <p>CVV: @t.creditCard.cvv</p>
+						    <p><strong>Card Id: </strong><span class="card-id">@t.creditCard.id</span></p>
+						    <p><strong>Card Holder Name: </strong>@t.creditCard.name</p>
+						    <p><strong>Card Type: </strong><span class="card-type">@t.creditCard.cardType</span></p>
+						    <p><strong>Card Number: </strong><span class="card-number">@t.creditCard.digits</span></p>
+						    <p><strong>Exp. Date: </strong>@t.creditCard.expDate</p>
+						    <p><strong>CVV: </strong>@t.creditCard.cvv</p>
 						    
 						    <h4 class="text-center title">Product:</h4>
-						    <p>Product Id: @t.product.id</p>
-						    <p>Product Name: @t.product.name</p>
-						    <p>Price: @t.product.price</p>
-						    <p>Sale Price: @t.product.salePrice</p>
+						    <p><strong>Product Id: </strong><span class="product-id">@t.product.id</span></p>
+						    <p><strong>Product Name: </strong><span class="product-name">@t.product.name</span></p>
+						    <p><strong>Price: </strong><span class="product-price">@t.product.price</span></p>
+						    <p><strong>Sale Price: </strong>@t.product.salePrice</p>
 						        
 						    <hr class="separator">
 						    <div class="row form-group">  
 							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editTransaction" 
-							    		data-url="@routes.AdminController.editTransaction()" type="submit">Edit Transaction</button>
+							    	<button class="btn btn-warning left-button" id="editTransaction" >Edit Transaction</button>
 							    	<button class="btn btn-danger" id="deleteTransaction"
 							    		data-url="@routes.AdminController.deleteTransaction()" type="submit">Delete Transaction</button>
 								</div>
@@ -77,7 +76,7 @@
 	
 	</div>
 	
-	<div class="modal fade" id="add-product" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="add-transaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
 	            <div class="modal-header">
@@ -110,11 +109,12 @@
 					<div class="row form-group">
     
 						<div class="col-sm-4 ">
-					    	<label class="control-label" for="price">Credit Card:</label>
+					    	<label class="control-label" for="creditCard">Credit Card:</label>
 					    </div>
 					
 					    <div class="col-sm-8">
-					    	<select class="form-input form-control" id="creditCard" name="creditCard" class="width5 expiry-field gray-text" disabled>
+					    	<select class="form-input form-control" id="creditCard" name="creditCard" 
+					    		class="width5 expiry-field gray-text" disabled>
 				
 								<option value="">Select Credit Card</option>
 								
@@ -128,7 +128,7 @@
     				<div class="row form-group">
     
 						<div class="col-sm-4 ">
-					    	<label class="control-label" for="price">Product:</label>
+					    	<label class="control-label" for="product">Product:</label>
 					    </div>
 					
 					    <div class="col-sm-8">
@@ -156,6 +156,84 @@
 	    </div>
 	</div>
 	
+	
+	<div class="modal fade" id="edit-transaction" tabindex="-1" role="dialog" aria-labelledby="editTransactionLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="title">Edit Transaction</h4>
+	            </div>
+	            <div class="modal-body">
+	                 
+	               <input type="hidden" id="transactionIdModal" value=""/>  
+				   <div class="row form-group">
+    
+						<div class="col-sm-4 ">
+					    	<label class="control-label" for="price">User:</label>
+					    </div>
+					
+					    <div class="col-sm-8">
+					    	<select class="form-input form-control" id="userTransactionEdit" name="user" class="width5 expiry-field gray-text"
+					    		data-url="@routes.AdminController.getUserCreditCards()">
+				
+								@for((u, i) <- allUsers.zipWithIndex){
+									<option value="@u.id">@u.id. @u.firstName @u.lastName</option>
+									
+								}
+								
+							</select>
+					    	
+					    	<span class="error user-error"></span>
+					    </div>
+    				</div>
+					    
+					<div class="row form-group">
+    
+						<div class="col-sm-4 ">
+					    	<label class="control-label" for="creditCard">Credit Card:</label>
+					    </div>
+					
+					    <div class="col-sm-8">
+					    	<select class="form-input form-control" id="creditCardTransactionEdit" name="creditCard" 
+					    		class="width5 expiry-field gray-text" disabled>
+								
+								
+							</select>
+					    	
+					    	<span class="error creditCard-error"></span>
+					    </div>
+    				</div>  
+    				
+    				<div class="row form-group">
+    
+						<div class="col-sm-4 ">
+					    	<label class="control-label" for="product">Product:</label>
+					    </div>
+					
+					    <div class="col-sm-8">
+					    	<select class="form-input form-control" id="productTransactionEdit" name="product" class="width5 expiry-field gray-text">
+				
+								<option id="product-option" value=""></option>
+								@for((p, i) <- allProducts.zipWithIndex){
+									<option value="@p.id">@p.id. @p.name: @p.price</option>
+									
+								}
+								
+							</select>
+					    	
+					    	<span class="error product-error"></span>
+					    </div>
+    				</div>   
+					    
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <button id="confirmEditTransaction" class="btn btn-warning btn-ok" data-url="@routes.AdminController.editTransaction()" >
+	                	Edit Transaction</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 
 </body>
 </html>

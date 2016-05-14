@@ -8,17 +8,20 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var firstName = $('[name="firstName"]').val();
-		var lastName = $('[name="lastName"]').val();
+		var firstName = $(this).find('[name="firstName"]').val();
+		var lastName = $(this).find('[name="lastName"]').val();
 		var email = $(this).find('[name="email"]').val();
-		var address = $('[name="address"]').val();
-		var city = $('[name="city"]').val();
-		var state = $('[name="state"]').val();
-		var zip = $('[name="zip"]').val();
 		var password = $(this).find('[name="password"]').val();
+		var confirmEmail = $(this).find('[name="confirmEmail"]').val();
+		var confirmPassword = $(this).find('[name="confirmPassword"]').val();
+		var address = $(this).find('[name="address"]').val();
+		var city = $(this).find('[name="city"]').val();
+		var state = $(this).find('[name="state"]').val();
+		var zip = $(this).find('[name="zip"]').val();
 		
-		var userJSON =  {firstName: firstName, lastName: lastName, email: email, address: address,
-				city: city, state: state, zip: zip, password: password};
+		
+		var userJSON =  {firstName: firstName, lastName: lastName, email: email, password: password, confirmEmail: confirmEmail,
+				confirmPassword: confirmPassword, address: address, city: city, state: state, zip: zip};
 		console.log(userJSON);
 		$.ajax({
 			

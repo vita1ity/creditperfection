@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
+import forms.TransactionForm;
 import models.CardType;
 import models.CreditCard;
 import models.Product;
@@ -103,7 +104,7 @@ public class AdminController extends Controller {
 		JsonNode json = request().body().asJson();
 	   	 
     	User user = Json.fromJson(json, User.class);
-	    if(user == null) {
+	    if (user == null) {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
 	    }
 	    else {
@@ -334,15 +335,58 @@ public class AdminController extends Controller {
 		return ok(Json.toJson(userCreditCards));
 	}
 	
+	@BodyParser.Of(BodyParser.Json.class)
 	public Result addTransaction() {
-		return null;
+		
+		JsonNode json = request().body().asJson();
+		TransactionForm transactionForm = Json.fromJson(json, TransactionForm.class);
+		
+		List<ValidationError> errors = transactionForm.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		
+		User user = User.find.byId(Long.parseLong(transactionForm.userId));
+		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
+		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
+		Transaction transaction = new Transaction(user, creditCard, product);
+		transaction.save();
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was added successfully")));
+		
 	}
 	
 	public Result editTransaction() {
-		return null;
+		
+		JsonNode json = request().body().asJson();
+		TransactionForm transactionForm = Json.fromJson(json, TransactionForm.class);
+		
+		List<ValidationError> errors = transactionForm.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		long transactionId = Long.parseLong(transactionForm.transactionId);
+		User user = User.find.byId(Long.parseLong(transactionForm.userId));
+		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
+		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
+		Transaction transaction = new Transaction(transactionId, user, creditCard, product);
+		transaction.update();
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was edited successfully")));
+		
 	}
 	
 	public Result deleteTransaction() {
-		return null;
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("id"));
+		
+		Transaction transaction = Transaction.find.byId(id);
+		transaction.delete();
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
+		
 	}
 }

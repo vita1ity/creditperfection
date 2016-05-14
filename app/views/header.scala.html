@@ -40,7 +40,7 @@
 		    @if(session.get("email")!=null) {
 	        	@if(session.get("name")!=null) {
 	        
-	        		<li><a href="#">Welcome, @session.get("name")</a></li>
+	        		<li><span class="welcome">Welcome, @session.get("name")</span></li>
 	        	}
 	        	<li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 	        	

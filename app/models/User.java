@@ -19,6 +19,7 @@ import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Role;
 import be.objectify.deadbolt.java.models.Subject;
 import errors.ValidationError;
+import forms.RegisterForm;
 import play.data.validation.Constraints.Required;
 import utils.EmailValidator;
 
@@ -54,7 +55,24 @@ public class User extends Model implements Subject {
     
     public static Finder<Long, User> find = new Finder<Long, User>(User.class);
     
-    public static User findByEmail(String email) {
+    public User() {
+    	
+    }
+    
+    public User(RegisterForm registerForm) {
+    	
+		this.firstName = registerForm.firstName;
+		this.lastName = registerForm.lastName;
+		this.address = registerForm.address;
+		this.email = registerForm.email;
+		this.city = registerForm.city;
+		this.password = registerForm.password;
+		this.state = registerForm.state;
+		this.zip = registerForm.zip;
+		
+	}
+
+	public static User findByEmail(String email) {
 		User user = User.find.where().eq("email", email).findUnique();
 		return user;
 	}
