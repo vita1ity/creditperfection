@@ -117,7 +117,7 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var url = $(this).data("url");
+		var url = $(this).data('url');
 		
 		var name = $('[name="name"]').val();
 		var cardType = $('[name="cardType"]').val();
@@ -125,6 +125,8 @@ $(document).ready(function() {
 		var month = $('[name="month"]').val();
 		var year = $('[name="year"]').val();
 		var cvv = $('[name="cvv"]').val();
+		
+		var reportPageUrl = $(this).data('report-page-url');
 		
 		var creditCardJSON =  {name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv};
@@ -145,16 +147,25 @@ $(document).ready(function() {
 	    	
 	    	var url = data.reportUrl;
 	    	
-	    	$.redirect('/get-report', {'url': url});
-	    	
-	    	//window.location.href = "/get-report?url= " + url;
+	    	$.redirect(reportPageUrl, {'url': url});
 	    	
 	    
 	    }).fail (function(err) {
 			console.error(err)
 			
-			//transaction or report error
-			$('#transactionReportError').text(err.responseJSON.errorMessage);
+			var errorResponse = err.responseJSON;
+			if (errorResponse.errors) {
+				var errorText = '';
+				for (var i = 0; i < errorResponse.errors.length; i++) {
+					errorText += errorResponse.errors[i].errorMessage + '</br>';
+				}
+				$('#transactionReportError').html(errorText);
+					
+			}
+			else {
+				//transaction or report error
+				$('#transactionReportError').text(err.responseJSON.errorMessage);
+			}
 			
 			//validation errors
 			processErrors(err);

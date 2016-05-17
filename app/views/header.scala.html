@@ -148,7 +148,10 @@
 			            </div>
 			            <div class="modal-footer">
 			                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			                <button id="sendLogin" class="btn btn-warning btn-ok" data-url="@routes.LoginController.login()">Login</button>
+			                <button id="sendLogin" class="btn btn-warning btn-ok" 
+			                	data-url="@routes.LoginController.login()" 
+			                	data-admin-url="@routes.AdminController.users()" 
+			                	data-user-url="@routes.UserController.userPage()">Login</button>
 			            </div>
 			            
 			        </div>   

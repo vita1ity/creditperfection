@@ -3,6 +3,7 @@ package services;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -11,6 +12,7 @@ import models.CreditCard;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
+import models.json.MultipleErrorResponse;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.ANetApiResponse;
 import net.authorize.api.contract.v1.CreateTransactionRequest;
@@ -21,7 +23,8 @@ import net.authorize.api.contract.v1.MessageTypeEnum;
 import net.authorize.api.contract.v1.PaymentType;
 import net.authorize.api.contract.v1.TransactionRequestType;
 import net.authorize.api.contract.v1.TransactionResponse;
-import net.authorize.api.contract.v1.TransactionResponse.Messages.Message;
+import net.authorize.api.contract.v1.TransactionResponse.Errors.Error;
+import net.authorize.api.contract.v1.TransactionResponse.Messages;
 import net.authorize.api.contract.v1.TransactionTypeEnum;
 import net.authorize.api.controller.CreateTransactionController;
 import net.authorize.api.controller.base.ApiOperationBase;
@@ -92,22 +95,41 @@ public class CreditCardService {
                     return jsonResponse;
                 }
                 else {
-                    System.out.println("Failed Transaction" + result.getResponseCode());
-                    
-                    List<Message> messages = result.getMessages().getMessage();
-                    StringBuilder errorMessages = new StringBuilder();
-                    for (Message m: messages) {
-                    	System.out.println("Message: " + m.getDescription());
-                    	errorMessages.append(m.getDescription() + "\n");
+                    System.out.println("Failed Transaction with Response Code: " + result.getResponseCode());
+                    Messages msgs = result.getMessages();
+                    /*if (msgs != null) {
+	                    List<Message> messages = msgs.getMessage();
+	                    StringBuilder errorMessages = new StringBuilder();
+	                    for (Message m: messages) {
+	                    	System.out.println("Message: " + m.getDescription());
+	                    	errorMessages.append(m.getDescription() + "\n");
+	                    }
+	                    
+	                    System.out.println("Error messages:");
+	                    System.out.println(errorMessages);
+	                    
+	                    
+	                    jsonResponse = new ErrorResponse("ERROR", "201", errorMessages.toString());
+	                    
+	                    return jsonResponse;
                     }
-                    
-                    System.out.println("Error messages:");
-                    System.out.println(errorMessages);
-                    
-                    
-                    jsonResponse = new ErrorResponse("ERROR", "201", errorMessages.toString());
-                    
-                    return jsonResponse;
+                    else {*/
+                    	//TODO
+                    	List<Error> errors = result.getErrors().getError();
+                    	String errorCode = null;
+                    	String errorMessage = null;
+                    	List<models.json.Error> errs = new ArrayList<models.json.Error>();
+                    	for (Error err: errors) {
+                    		System.out.println(err.getErrorCode() + ", " + err.getErrorText());
+                    		errorCode = err.getErrorCode();
+                    		errorMessage = err.getErrorText();
+                    		errs.add(new models.json.Error(errorCode, errorMessage));
+                    		
+                    	}
+                    	jsonResponse = new MultipleErrorResponse("ERROR", errs);
+	                    
+	                    return jsonResponse;
+                    //}
                 }
             }
             else {

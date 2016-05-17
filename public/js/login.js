@@ -21,6 +21,9 @@ $(document).ready(function() {
 		var email = $(this).parent().parent().find('[name="email"]').val();
 		var password = $(this).parent().parent().find('[name="password"]').val();
 		
+		var adminUrl = $(this).data("admin-url");
+		var userUrl = $(this).data("user-url");
+		
 		$.ajax({
 			
 	        type: 'POST',
@@ -34,10 +37,11 @@ $(document).ready(function() {
 	    	
 	    	var role = data.role;
 	    	if (role == "admin") {
-	    		window.location.href = "/admin/users";
+	    		
+	    		window.location.href = adminUrl;
 	    	}
 	    	else {
-	    		window.location.href = "/account";
+	    		window.location.href = userUrl;
 	    	}
 	    	
 	    

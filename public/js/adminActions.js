@@ -11,14 +11,14 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var firstName = $(this).parent().parent().find('[name="firstName"]').val();
-		var lastName = $(this).parent().parent().find('[name="lastName"]').val();
-		var email = $(this).parent().parent().find('[name="email"]').val();
-		var address = $(this).parent().parent().find('[name="address"]').val();
-		var city = $(this).parent().parent().find('[name="city"]').val();
-		var state = $(this).parent().parent().find('[name="state"]').val();
-		var zip = $(this).parent().parent().find('[name="zip"]').val();
-		var password = $(this).parent().parent().find('[name="password"]').val();
+		var firstName = $(this).closest('.modal-content').find('[name="firstName"]').val();
+		var lastName = $(this).closest('.modal-content').find('[name="lastName"]').val();
+		var email = $(this).closest('.modal-content').find('[name="email"]').val();
+		var address = $(this).closest('.modal-content').find('[name="address"]').val();
+		var city = $(this).closest('.modal-content').find('[name="city"]').val();
+		var state = $(this).closest('.modal-content').find('[name="state"]').val();
+		var zip = $(this).closest('.modal-content').find('[name="zip"]').val();
+		var password = $(this).closest('.modal-content').find('[name="password"]').val();
 		
 		var userJSON =  {firstName: firstName, lastName: lastName, email: email, address: address,
 				city: city, state: state, zip: zip, password: password};
@@ -62,19 +62,18 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var id = $(this).parent().parent().parent().find('.userID').text();
-		var firstName = $(this).parent().parent().parent().find('[name="firstName"]').val();
-		var lastName = $(this).parent().parent().parent().find('[name="lastName"]').val();
-		var email = $(this).parent().parent().parent().find('[name="email"]').val();
-		var address = $(this).parent().parent().parent().find('[name="address"]').val();
-		var city = $(this).parent().parent().parent().find('[name="city"]').val();
-		var state = $(this).parent().parent().parent().find('[name="state"]').val();
-		var zip = $(this).parent().parent().parent().find('[name="zip"]').val();
-		var password = $(this).parent().parent().parent().find('[name="password"]').val();
-		//var activeStr = $(this).parent().parent().parent().find('[name="active"]').val();
+		var id = $(this).closest('.edit-form').find('.userID').text();
+		var firstName = $(this).closest('.edit-form').find('[name="firstName"]').val();
+		var lastName = $(this).closest('.edit-form').find('[name="lastName"]').val();
+		var email = $(this).closest('.edit-form').find('[name="email"]').val();
+		var address = $(this).closest('.edit-form').find('[name="address"]').val();
+		var city = $(this).closest('.edit-form').find('[name="city"]').val();
+		var state = $(this).closest('.edit-form').find('[name="state"]').val();
+		var zip = $(this).closest('.edit-form').find('[name="zip"]').val();
+		var password = $(this).closest('.edit-form').find('[name="password"]').val();
 		
 		var active = false;
-		if ($(this).parent().parent().parent().find('[name="active"]').is(':checked')) {
+		if ($(this).closest('.edit-form').find('[name="active"]').is(':checked')) {
 			console.log('checked');
 			active = true;
 		}
@@ -117,7 +116,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).parent().parent().parent().find('.userID').text();
+		var id = $(this).closest('.edit-form').find('.userID').text();
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -154,9 +153,9 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var name = $(this).parent().parent().find('[name="name"]').val();
-		var price = $(this).parent().parent().find('[name="price"]').val();
-		var salePrice = $(this).parent().parent().find('[name="salePrice"]').val();
+		var name = $(this).closest('.modal-content').find('[name="name"]').val();
+		var price = $(this).closest('.modal-content').find('[name="price"]').val();
+		var salePrice = $(this).closest('.modal-content').find('[name="salePrice"]').val();
 		
 		if (!validateProduct(this)) {
 			return;
@@ -205,10 +204,10 @@ $(document).ready(function() {
 		
 		var url = $(this).data("url");
 		
-		var id = $(this).parent().parent().parent().find('.productID').text();
-		var name = $(this).parent().parent().parent().find('[name="name"]').val();
-		var price = $(this).parent().parent().parent().find('[name="price"]').val();
-		var salePrice = $(this).parent().parent().parent().find('[name="salePrice"]').val();
+		var id = $(this).closest('.edit-form').find('.productID').text();
+		var name = $(this).closest('.edit-form').find('[name="name"]').val();
+		var price = $(this).closest('.edit-form').find('[name="price"]').val();
+		var salePrice = $(this).closest('.edit-form').find('[name="salePrice"]').val();
 		
 		if (!validateProduct($(this))) {
 			return;
@@ -254,7 +253,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).parent().parent().parent().find('.productID').text();
+		var id = $(this).closest('.edit-form').find('.productID').text();
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -287,7 +286,7 @@ $(document).ready(function() {
 	function validateProduct(ref) {
 		
 		var validated = true;
-		$(ref).parent().parent().parent().find('.form-input').each(function(i, obj) {
+		$(ref).closest('.validate-product').find('.form-input').each(function(i, obj) {
 			
 			var val = $(obj).val();
 			if (val == "") {
@@ -301,34 +300,34 @@ $(document).ready(function() {
 			
 		});
 		
-		var price = $(ref).parent().parent().parent().find('[name="price"]').val();
+		var price = $(ref).closest('.validate-product').find('[name="price"]').val();
 		
 		if(!price.match(/^-?(\d*\.)?\d*$/)) {
-			var errorsHtml = $(ref).parent().parent().parent().find('.price-error').html();
+			var errorsHtml = $(ref).closest('.validate-product').find('.price-error').html();
 			errorsHtml += "Price should be numeric value" + "</br>";
-			$(ref).parent().parent().parent().find('.price-error').html(errorsHtml);
+			$(ref).closest('.validate-product').find('.price-error').html(errorsHtml);
 			validated = false;
 		
 		}
 		else if (price < 0) {
-			var errorsHtml = $(ref).parent().parent().parent().find('.price-error').html();
+			var errorsHtml = $(ref).closest('.validate-product').find('.price-error').html();
 			errorsHtml += "Price should be gteater than 0" + "</br>";
-			$(ref).parent().parent().parent().find('.price-error').html(errorsHtml);
+			$(ref).closest('.validate-product').find('.price-error').html(errorsHtml);
 			validated = false;
 		}
 		
-		var salePrice = $(ref).parent().parent().parent().find('[name="salePrice"]').val();
+		var salePrice = $(ref).closest('.validate-product').find('[name="salePrice"]').val();
 		
 		if(!salePrice.match(/^-?(\d*\.)?\d*$/)) {
-			var errorsHtml = $(ref).parent().parent().parent().find('.salePrice-error').html();
+			var errorsHtml = $(ref).closest('.validate-product').find('.salePrice-error').html();
 			errorsHtml += "Sale Price should be numeric value" + "</br>";
-			$(ref).parent().parent().parent().find('.salePrice-error').html(errorsHtml);
+			$(ref).closest('.validate-product').find('.salePrice-error').html(errorsHtml);
 			validated = false;
 		}
 		else if (salePrice < 0) {
-			var errorsHtml = $(ref).parent().parent().parent().find('.salePrice-error').html();
+			var errorsHtml = $(ref).closest('.validate-product').find('.salePrice-error').html();
 			errorsHtml += "Sale Price should be greater than 0" + "</br>";
-			$(ref).parent().parent().parent().find('.salePrice-error').html(errorsHtml);
+			$(ref).closest('.validate-product').find('.salePrice-error').html(errorsHtml);
 			validated = false;
 		}
 		return validated;
@@ -341,13 +340,13 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var name = $(this).parent().parent().find('[name="name"]').val();
-		var cardType = $(this).parent().parent().find('[name="cardType"]').val();
-		var digits = $(this).parent().parent().find('[name="digits"]').val();
-		var month = $(this).parent().parent().find('[name="month"]').val();
-		var year = $(this).parent().parent().find('[name="year"]').val();
-		var cvv = $(this).parent().parent().find('[name="cvv"]').val();
-		var ownerId = $(this).parent().parent().find('[name="owner"]').val();
+		var name = $(this).closest('.modal-content').find('[name="name"]').val();
+		var cardType = $(this).closest('.modal-content').find('[name="cardType"]').val();
+		var digits = $(this).closest('.modal-content').find('[name="digits"]').val();
+		var month = $(this).closest('.modal-content').find('[name="month"]').val();
+		var year = $(this).closest('.modal-content').find('[name="year"]').val();
+		var cvv = $(this).closest('.modal-content').find('[name="cvv"]').val();
+		var ownerId = $(this).closest('.modal-content').find('[name="owner"]').val();
 		
 		var creditCardJSON =  {name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv, ownerId: ownerId};
@@ -397,13 +396,13 @@ $(document).ready(function() {
 		
 		var url = $(this).data("url");
 		
-		var id = $(this).parent().parent().parent().find('.cardID').text();
-		var name = $(this).parent().parent().parent().find('[name="name"]').val();
-		var cardType = $(this).parent().parent().parent().find('[name="cardType"]').val();
-		var digits = $(this).parent().parent().parent().find('[name="digits"]').val();
-		var month = $(this).parent().parent().parent().find('[name="month"]').val();
-		var year = $(this).parent().parent().parent().find('[name="year"]').val();
-		var cvv = $(this).parent().parent().parent().find('[name="cvv"]').val();
+		var id = $(this).closest('.edit-form').find('.cardID').text();
+		var name = $(this).closest('.edit-form').find('[name="name"]').val();
+		var cardType = $(this).closest('.edit-form').find('[name="cardType"]').val();
+		var digits = $(this).closest('.edit-form').find('[name="digits"]').val();
+		var month = $(this).closest('.edit-form').find('[name="month"]').val();
+		var year = $(this).closest('.edit-form').find('[name="year"]').val();
+		var cvv = $(this).closest('.edit-form').find('[name="cvv"]').val();
 		
 		var creditCardJSON =  {id: id, name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv};
@@ -450,7 +449,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).parent().parent().parent().find('.cardID').text();
+		var id = $(this).closest('.edit-form').find('.cardID').text();
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -484,7 +483,7 @@ $(document).ready(function() {
 	
 	function validateCreditCard(ref) {
 		var validated = true;
-		$(ref).parent().parent().parent().find('.form-input').each(function(i, obj) {
+		$(ref).closest(".card-validation").find('.form-input').each(function(i, obj) {
 			
 			var val = $(obj).val();
 			if (val == "") {
@@ -498,12 +497,12 @@ $(document).ready(function() {
 			
 		});
 		
-		var cvv = $(ref).parent().parent().parent().find('[name="cvv"]').val();
+		var cvv = $(ref).closest(".card-validation").find('[name="cvv"]').val();
 		
 		if(!cvv.match(/^\d+$/)) {
-			var errorsHtml = $(ref).parent().parent().parent().find('.cvv-error').html();
+			var errorsHtml = $(ref).closest(".card-validation").find('.cvv-error').html();
 			errorsHtml += "CVV should contain only digits" + "</br>";
-			$(ref).parent().parent().parent().find('.cvv-error').html(errorsHtml);
+			$(ref).closest(".card-validation").find('.cvv-error').html(errorsHtml);
 			validated = false;
 		}
 		return validated;
@@ -556,9 +555,9 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data('url');
-		var userId = $(this).parent().parent().find('[name="user"]').val();
-		var cardId = $(this).parent().parent().find('[name="creditCard"]').val();
-		var productId = $(this).parent().parent().find('[name="product"]').val();
+		var userId = $(this).closest('.modal-content').find('[name="user"]').val();
+		var cardId = $(this).closest('.modal-content').find('[name="creditCard"]').val();
+		var productId = $(this).closest('.modal-content').find('[name="product"]').val();
 		
 		var transactionJSON = {userId: userId, cardId: cardId, productId: productId};
 		

@@ -1,6 +1,7 @@
 @(allTypes: Array[models.CardType])
 <form class="payment-form horizontal-form register-flow-form hidden"
-	 role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()">
+	 role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()"
+	 data-report-page-url="@routes.CreditReportController.processUrl()">
 	<h3 class="text-center form-title">Payment Details</h3>
 
 	<div class="row form-group">
