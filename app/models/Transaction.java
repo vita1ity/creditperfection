@@ -7,6 +7,8 @@ import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
 
+import forms.TransactionForm;
+
 @Entity
 public class Transaction extends Model {
     
@@ -35,6 +37,19 @@ public class Transaction extends Model {
 	}
 
 	public static Finder<Long, Transaction> find = new Finder<Long, Transaction>(Transaction.class);
+
+	public static Transaction createTransaction(TransactionForm transactionForm) {
+		
+		User user = User.find.byId(Long.parseLong(transactionForm.userId));
+		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
+		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
+		Transaction transaction = new Transaction(user, creditCard, product);
+		
+		if (transactionForm.transactionId != null){
+			transaction.id = Long.parseLong(transactionForm.transactionId);
+		}
+		return transaction;
+	}
     
 
 }

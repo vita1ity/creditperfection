@@ -75,7 +75,6 @@ public class CreditCardService {
 			return response;
 		}
 		catch (Exception e) {
-			
 			Logger.error(e.getMessage(), e);
 		}
 		return null;
@@ -105,44 +104,25 @@ public class CreditCardService {
                 }
                 else {
                     System.out.println("Failed Transaction with Response Code: " + result.getResponseCode());
-                    Messages msgs = result.getMessages();
-                    /*if (msgs != null) {
-	                    List<Message> messages = msgs.getMessage();
-	                    StringBuilder errorMessages = new StringBuilder();
-	                    for (Message m: messages) {
-	                    	System.out.println("Message: " + m.getDescription());
-	                    	errorMessages.append(m.getDescription() + "\n");
-	                    }
-	                    
-	                    System.out.println("Error messages:");
-	                    System.out.println(errorMessages);
-	                    
-	                    
-	                    jsonResponse = new ErrorResponse("ERROR", "201", errorMessages.toString());
-	                    
-	                    return jsonResponse;
-                    }
-                    else {*/
-                    	//TODO
-                    	List<Error> errors = result.getErrors().getError();
-                    	String errorCode = null;
-                    	String errorMessage = null;
-                    	List<models.json.Error> errs = new ArrayList<models.json.Error>();
-                    	for (Error err: errors) {
-                    		System.out.println(err.getErrorCode() + ", " + err.getErrorText());
-                    		errorCode = err.getErrorCode();
-                    		errorMessage = err.getErrorText();
-                    		errs.add(new models.json.Error(errorCode, errorMessage));
-                    		
-                    	}
-                    	jsonResponse = new MultipleErrorResponse("ERROR", errs);
-	                    
-	                    return jsonResponse;
-                    //}
+                    
+                	List<Error> errors = result.getErrors().getError();
+                	String errorCode = null;
+                	String errorMessage = null;
+                	List<models.json.Error> errs = new ArrayList<models.json.Error>();
+                	for (Error err: errors) {
+                		System.out.println(err.getErrorCode() + ", " + err.getErrorText());
+                		errorCode = err.getErrorCode();
+                		errorMessage = err.getErrorText();
+                		errs.add(new models.json.Error(errorCode, errorMessage));
+                		
+                	}
+                	jsonResponse = new MultipleErrorResponse("ERROR", errs);
+                    
+                    return jsonResponse;
+                    
                 }
             }
             else {
-                 
                  List<net.authorize.api.contract.v1.MessagesType.Message> messages = response.getMessages().getMessage();
                  StringBuilder errorMessages = new StringBuilder();
                  for (net.authorize.api.contract.v1.MessagesType.Message m: messages) {

@@ -19,6 +19,7 @@ $(document).ready(function() {
 		var state = $(this).find('[name="state"]').val();
 		var zip = $(this).find('[name="zip"]').val();
 		
+		var registerForm = $(this);
 		
 		var userJSON =  {firstName: firstName, lastName: lastName, email: email, password: password, confirmEmail: confirmEmail,
 				confirmPassword: confirmPassword, address: address, city: city, state: state, zip: zip};
@@ -40,18 +41,18 @@ $(document).ready(function() {
 	    }).fail (function(err) {
 			
 	    	//console.error(err)
-			processErrors(err);
+			processErrors(err, registerForm);
 			
 	    });
 	});
 	
-	function processErrors(err) { 
+	function processErrors(err, form) { 
 		for (var i = 0; i < err.responseJSON.length; i++) {
 			var error = err.responseJSON[i];
 			var field = error.field;
 			var errorMessage = error.error;
 			
-			$('.form-input').each(function(i, obj) {
+			$(form).find('.form-input').each(function(i, obj) {
 				
 				if (field == $(obj).attr('name')) {
 					var errorsHtml = $(obj).parent().find('.error').html();
@@ -74,7 +75,7 @@ $(document).ready(function() {
 		clearErrors();
 		
 		var url = $(this).data("url");
-		var product = $('[name="product"]').val();
+		var product = $(this).find('[name="product"]').val();
 		
 		if (product == "") {
 			var errorsHtml = $(this).parent().find('.error').html();
@@ -119,12 +120,14 @@ $(document).ready(function() {
 		
 		var url = $(this).data('url');
 		
-		var name = $('[name="name"]').val();
-		var cardType = $('[name="cardType"]').val();
-		var digits = $('[name="digits"]').val();
-		var month = $('[name="month"]').val();
-		var year = $('[name="year"]').val();
-		var cvv = $('[name="cvv"]').val();
+		var name = $(this).find('[name="name"]').val();
+		var cardType = $(this).find('[name="cardType"]').val();
+		var digits = $(this).find('[name="digits"]').val();
+		var month = $(this).find('[name="month"]').val();
+		var year = $(this).find('[name="year"]').val();
+		var cvv = $(this).find('[name="cvv"]').val();
+		
+		var paymentForm = $(this);
 		
 		var reportPageUrl = $(this).data('report-page-url');
 		
@@ -168,7 +171,7 @@ $(document).ready(function() {
 			}
 			
 			//validation errors
-			processErrors(err);
+			processErrors(err, paymentForm);
 			
 	    });
 	});

@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Role;
@@ -46,10 +47,10 @@ public class User extends Model implements Subject {
     @JoinTable(name = "user_role")
     public List<SecurityRole> roles;
     
-    
     @OneToMany(cascade = CascadeType.ALL)
     public List<CreditCard> creditCards;
     
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     public List<Transaction> transactions;
     

@@ -12,17 +12,21 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import errors.ValidationError;
+import forms.CreditCardForm;
 import forms.RegisterForm;
-import models.CardType;
-import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
 import models.Transaction;
 import models.User;
+import models.enums.CardType;
+import models.enums.Month;
+import models.enums.State;
+import models.enums.Year;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
+import models.CreditCard;
 import play.Configuration;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -63,10 +67,13 @@ public class SignUpFlowController extends Controller {
     	Form<User> userForm = formFactory.form(User.class);
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
+    	State[] states = State.values();
+    	Month[] months = Month.values();
+    	Year[] years = Year.values();
     	if (login == null) {
     		login = false;
     	}
-        return ok(index.render(userForm, productList, allTypes, login));
+        return ok(index.render(userForm, productList, allTypes, states, months, years, login));
     }
     
     
@@ -102,48 +109,6 @@ public class SignUpFlowController extends Controller {
 	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was registered")));
 	    }
     	
-        //User user = formFactory.form(User.class).bindFromRequest().get();
-        /*Form<User> userForm = formFactory.form(User.class).bindFromRequest();
-        
-        if (userForm.hasErrors()) {
-        	List<Product> productList = Product.getAllProducts();
-        	CardType[] allTypes = CardType.values();
-    		return badRequest(views.html.index.render(userForm, productList, allTypes));
-    	} 
-        else {
-        	User user = userForm.get();
-        	user.token = Tokener.randomString(48);
-        	user.save();
-        	session("userEmail", user.email);
-        	//mailService.sendEmailToken(user.email, user.token);
-        	flash("message", "Email verification sent");
-        	return redirect(routes.SignUpFlowController.chooseProductPage()); 
-        }*/
-    	
-        /*DynamicForm form = formFactory.form().bindFromRequest();
-        StringBuilder builder = new StringBuilder();
-        builder.append("partnerCode=CRDPRF");
-        builder.append("&partnerPass=kYmfR5@23");
-        builder.append("&packageId=474");
-        builder.append("&branding=CRDPRF");
-        builder.append("&memberId=" + form.get("email"));
-        builder.append("&firstname" + form.get("first_name"));
-        builder.append("&lastname" + form.get("last_name"));
-        builder.append("&address" + form.get("address"));
-        builder.append("&city" + form.get("city"));
-        builder.append("&state" + form.get("state"));
-        builder.append("&zip" + form.get("zip"));
-        builder.append("&phone" + form.get("phone"));
-        builder.append("&email" + form.get("email"));
-        builder.append("&password" + form.get("password"));
-        builder.append("&action" + "CreateDashEnrollment");*/
-
-        // fix SSL issue
-        /*String feedUrl = "https://idcs.idandcredit.com/modal/portal/enroll.php";
-        return ws.url(feedUrl).post(builder.toString()).thenApply(response ->
-                        ok(response.getBody())
-        );*/
-        
     }
     
     public Result registerToken(String token) {
@@ -172,29 +137,22 @@ public class SignUpFlowController extends Controller {
     	
     	JsonNode json = request().body().asJson();
    	 
-    	CreditCard creditCard = Json.fromJson(json, CreditCard.class);
+    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
     	
-	    if(creditCard == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCard")));
+	    if(creditCardForm == null) {
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = creditCard.validate();
+	    	List<ValidationError> errors = creditCardForm.validate();
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
-	    	
-	    	String month = json.findPath("month").textValue();
-	    	String year = json.findPath("year").textValue();
-	    	
-	    	String expDateStr = month + "/" + year;
-	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-	    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
-	    	
 	    	String userEmail = session().get("userEmail");
 	    	User user = User.findByEmail(userEmail);
 	    	
-	    	creditCard.expDate = ym;
+	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm); 
+	    	
 	    	creditCard.user = user;
 	    	creditCard.save();
 	    	

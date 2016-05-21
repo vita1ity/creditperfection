@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import errors.ValidationError;
+import forms.ProductForm;
 
 @Entity
 public class Product extends Model {
@@ -21,6 +25,10 @@ public class Product extends Model {
     
     public double price;
     public double salePrice;
+    
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    public List<Transaction> transactions;
     
     public static Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
     
@@ -73,7 +81,17 @@ public class Product extends Model {
 		this.salePrice = product.salePrice;
 		
 	}
-    
-	
+
+	public static Product createProduct(ProductForm productForm) {
+		Product product = new Product();
+		if (productForm.id != null) {
+			product.id = Long.parseLong(productForm.id);
+		}
+		product.name = productForm.name;
+		product.price = Double.parseDouble(productForm.price);
+		product.salePrice = Double.parseDouble(productForm.salePrice);
+		
+		return product;
+	}
 	
 }

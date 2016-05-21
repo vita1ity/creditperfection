@@ -1,4 +1,5 @@
-@(c: models.CreditCard, allTypes: Array[models.CardType], allUsers: java.util.List[models.User])
+@(c: models.CreditCard, allTypes: Array[models.enums.CardType], allUsers: java.util.List[models.User],
+months: Array[models.enums.Month], years: Array[models.enums.Year])
 <div class="row form-group">
 	
 	<div class="col-sm-2">
@@ -6,7 +7,7 @@
 	</div>
 
 	<div class="col-sm-4">
-		<input class="form-input form-control" type="text" name="name" placeholder="Card Holder Name" value="@c.name"/>
+		<input class="form-input form-control name " type="text" name="name" placeholder="Card Holder Name" value="@c.name"/>
 		<span class="error" id="name-error"></span>
 	</div>
 	
@@ -15,15 +16,17 @@
 	</div>
 	
 	<div class="col-sm-4">
-		<select class="form-input form-control" name="cardType">
+		<select class="form-input form-control card-type" name="cardType">
 			@if(c.cardType == null){
 	    		<option value="" >Choose Card Type</option>
-	    	}else{
-	    		<option value="@c.cardType" >@c.cardType.value</option>
 	    	}
 	    	
 	        @for(cardType <- allTypes) {
-	    		<option value="@cardType">@cardType.value</option>
+	        	@if(c.cardType != null && c.cardType.value == cardType.value) {
+	        		<option value="@cardType" selected>@cardType.value</option>
+	        	}else{
+	    			<option value="@cardType">@cardType.value</option>
+	    		}
 			}
    		 </select>
     	<span class="error" id="cardtype-error"></span>
@@ -38,7 +41,7 @@
 	</div>
    	
     <div class="col-sm-4">
-   	 	<input class="form-input form-control" type="text" name="digits" placeholder="Card Number" value="@c.digits"/>
+   	 	<input class="form-input form-control digits" type="text" name="digits" placeholder="Card Number" value="@c.digits"/>
    	 	<span class="error" id="digits-error"></span>
     </div>
     
@@ -47,7 +50,7 @@
 	</div>
     
     <div class="col-sm-4">
-		<input class="form-input form-control" type="text" name="cvv" placeholder="CVV Number" value="@c.cvv" />
+		<input class="form-input form-control cvv" type="text" name="cvv" placeholder="CVV Number" value="@c.cvv" />
 		<span class="error cvv-error" ></span>
 	</div>
 	
@@ -61,56 +64,42 @@
    	
    	<div class="col-sm-2">
 
-		<select class="form-input form-control" id="ccmonth" name="month" class="width5 expiry-field gray-text">
+		<select class="form-input form-control month" id="ccmonth" name="month" class="width5 expiry-field gray-text">
 			@if(c.expDate == null){
-				<option value="">M</option>	
-			}else{
-				<option value="@c.expDate.getMonthValue">@c.expDate.getMonthValue</option>
+				<option value="">Month</option>	
 			}
 			
-			<option value="01">01-Jan</option>
-			<option value="02">02-Feb</option>
-			<option value="03">03-Mar</option>
-			<option value="04">04-Apr</option>
-			<option value="05">05-May</option>
-			<option value="06">06-Jun</option>
-			<option value="07">07-Jul</option>
-			<option value="08">08-Aug</option>
-			<option value="09">09-Sep</option>
-			<option value="10">10-Oct</option>
-			<option value="11">11-Nov</option>
-			<option value="12">12-Dec</option>
+			@for(m <- months) {
+				@if(c.expDate != null && c.expDate.getMonthValue == m.getNum) {
+					<option value="@m.getNum" selected>@m.getName</option>
+				}else{
+					<option value="@m.getNum">@m.getName</option>
+				}
+					
+			}
 		</select>
 		
 		<span class="error" id="monthyear-error"></span>
 	</div>
 	<div class="col-sm-2">
-		<select class="form-input form-control" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+		<select class="form-input form-control year" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
 			@if(c.expDate == null){
-				<option value="">Y</option>
-			}else{
-				<option value="@c.expDate.getYear">@c.expDate.getYear</option>
+				<option value="">Year</option>
 			}
-			<option value="2016">2016</option>
-			<option value="2017">2017</option>
-			<option value="2018">2018</option>
-			<option value="2019">2019</option>
-			<option value="2020">2020</option>
-			<option value="2021">2021</option>
-			<option value="2022">2022</option>
-			<option value="2023">2023</option>
-			<option value="2024">2024</option>
-			<option value="2025">2025</option>
-			<option value="2026">2026</option>
-			<option value="2027">2027</option>
-			<option value="2028">2028</option>
-			<option value="2029">2029</option>
-			<option value="2030">2030</option>
+			@for(y <- years) {
+				@if(c.expDate != null && c.expDate.getYear == y.getValue) {
+					<option value="@y.getValue" selected>@y.getValue</option>
+				}else{
+					<option value="@y.getValue">@y.getValue</option>
+				}
+					
+			}
+			
 		</select>
 		
 		<span class="error" id="monthyear-error"></span>
 	</div>
-	@if(c.name == null){
+	@if(c.name == null && allUsers != null){
 		<div class="col-sm-2">
 	    	<label class="control-label" >Card Owner:</label>
 	    </div>

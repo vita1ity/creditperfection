@@ -1,7 +1,5 @@
 package controllers;
 
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +11,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
+import forms.CreditCardForm;
+import forms.ProductForm;
 import forms.TransactionForm;
-import models.CardType;
 import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
 import models.Transaction;
 import models.User;
+import models.enums.CardType;
+import models.enums.Month;
+import models.enums.State;
+import models.enums.Year;
 import models.json.MessageResponse;
+import models.json.ObjectCreatedResponse;
+import models.json.TransactionResponse;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -48,8 +54,9 @@ public class AdminController extends Controller {
 		User user = User.findByEmail(email);
 		
 		List<User> allUsers = User.find.all();
+		State[] states = State.values();
 		
-		return ok(views.html.adminUsers.render(user, allUsers));
+		return ok(views.html.adminUsers.render(user, allUsers, states));
 	}
 	
 	@BodyParser.Of(BodyParser.Json.class)
@@ -125,7 +132,7 @@ public class AdminController extends Controller {
         	mailService.sendEmailToken(user.email, user.token);
         	flash("message", "Email verification sent");
 	    	
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was created successfully")));
+	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.id)));
 	    }
 		
 	}
@@ -143,22 +150,24 @@ public class AdminController extends Controller {
 				
 		JsonNode json = request().body().asJson();
 		
-    	Product product = Json.fromJson(json, Product.class);
+    	ProductForm productForm = Json.fromJson(json, ProductForm.class);
     	
-	    if(product == null) {
+	    if(productForm == null) {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to Product")));
 	    }
 	    else {
 	    	
-	    	List<ValidationError> errors = product.validate();
+	    	List<ValidationError> errors = productForm.validate();
 	    	
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
+	    	
+	    	Product product = Product.createProduct(productForm);
         	product.save();
         	
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "Product was created successfully")));
+	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Product was created successfully", product.id)));
 	    }
 	
 	}
@@ -167,19 +176,20 @@ public class AdminController extends Controller {
 		
 		JsonNode json = request().body().asJson();
 		
-    	Product product = Json.fromJson(json, Product.class);
+    	ProductForm productForm = Json.fromJson(json, ProductForm.class);
     	
-	    if(product == null) {
+	    if(productForm == null) {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to Product")));
 	    }
 	    else {
 	    	
-	    	List<ValidationError> errors = product.validate();
+	    	List<ValidationError> errors = productForm.validate();
 	    	
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
+	    	Product product = Product.createProduct(productForm);
 	    	Product productDB = Product.find.byId(product.id);
 	    	if (productDB == null) {
 	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Product with id" + product.id + "is not found")));
@@ -215,7 +225,9 @@ public class AdminController extends Controller {
 		List<CreditCard> allCards = CreditCard.find.all();
 		List<User> allUsers = User.find.all();
 		CardType[] allTypes = CardType.values();
-		return ok(views.html.adminCreditCards.render(allCards, allUsers, allTypes));
+		Month[] months = Month.values();
+    	Year[] years = Year.values();
+		return ok(views.html.adminCreditCards.render(allCards, allUsers, allTypes, months, years));
 		
 	}
 	@BodyParser.Of(BodyParser.Json.class)
@@ -223,35 +235,27 @@ public class AdminController extends Controller {
 		
 		JsonNode json = request().body().asJson();
 	   	 
-    	CreditCard creditCard = Json.fromJson(json, CreditCard.class);
+    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
     	
-	    if(creditCard == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCard")));
+	    if(creditCardForm == null) {
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = creditCard.validate();
+	    	List<ValidationError> errors = creditCardForm.validate();
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	String month = json.findPath("month").textValue();
-	    	String year = json.findPath("year").textValue();
-	    	
-	    	String expDateStr = month + "/" + year;
-	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-	    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
-	    	
 	    	long ownerId = json.findPath("ownerId").asLong();
 	    	User owner = User.find.byId(ownerId);
 	    	
-	    	creditCard.expDate = ym;
+	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
+	    	
 	    	creditCard.user = owner;
 	    	creditCard.save();
 	    	
-	    	
-	    	
-	    	return ok(Json.toJson(new MessageResponse("SUCCESS", "Credit Card was edited successfully")));
+	    	return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Credit Card was created successfully", creditCard.id)));
 	    }
 	}
 	
@@ -259,29 +263,19 @@ public class AdminController extends Controller {
 	public Result editCreditCard() {
 		JsonNode json = request().body().asJson();
 	   	 
-    	CreditCard creditCard = Json.fromJson(json, CreditCard.class);
+    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
     	
-	    if(creditCard == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCard")));
+	    if(creditCardForm == null) {
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = creditCard.validate();
+	    	List<ValidationError> errors = creditCardForm.validate();
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	String month = json.findPath("month").textValue();
-	    	String year = json.findPath("year").textValue();
-	    	
-	    	if (month.length() == 1) {
-	    		month = "0" + month;
-	    	}
-	    	
-	    	String expDateStr = month + "/" + year;
-	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-	    	YearMonth ym = YearMonth.parse(expDateStr, formatter);
-	    	creditCard.expDate = ym;
+	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
 	    	
 	    	CreditCard creditCardDB = CreditCard.find.byId(creditCard.id);
 	    	if (creditCardDB == null) {
@@ -332,6 +326,10 @@ public class AdminController extends Controller {
 		User user = User.find.byId(id);
 		List<CreditCard> userCreditCards = user.creditCards;
 		
+		for (CreditCard creditCard: userCreditCards) {
+			Logger.info("Credit Card: " + creditCard);
+		}
+		
 		return ok(Json.toJson(userCreditCards));
 	}
 	
@@ -347,13 +345,11 @@ public class AdminController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		
-		User user = User.find.byId(Long.parseLong(transactionForm.userId));
-		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
-		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
-		Transaction transaction = new Transaction(user, creditCard, product);
+    	Transaction transaction = Transaction.createTransaction(transactionForm);
+    	
 		transaction.save();
 		
-		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was added successfully")));
+		return ok(Json.toJson(new TransactionResponse("SUCCESS", "Transaction was added successfully", transaction)));
 		
 	}
 	
@@ -367,14 +363,10 @@ public class AdminController extends Controller {
     		
     		return badRequest(Json.toJson(errors));
     	}
-		long transactionId = Long.parseLong(transactionForm.transactionId);
-		User user = User.find.byId(Long.parseLong(transactionForm.userId));
-		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
-		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
-		Transaction transaction = new Transaction(transactionId, user, creditCard, product);
+		Transaction transaction = Transaction.createTransaction(transactionForm);
 		transaction.update();
 		
-		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was edited successfully")));
+		return ok(Json.toJson(new TransactionResponse("SUCCESS", "Transaction was edited successfully", transaction)));
 		
 	}
 	

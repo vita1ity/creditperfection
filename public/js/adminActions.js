@@ -1,3 +1,13 @@
+var deleteUserId = '';
+var deletePanel = new Object();
+var deleteProductId = '';
+var deleteProductPanel = new Object();
+var deleteCreditCardId = '';
+var deleteCreditCardPanel = new Object();
+var deleteTransactionId = '';
+var deleteTransactionPanel = new Object();
+
+
 window.onload = function(){
 	
 }
@@ -19,6 +29,8 @@ $(document).ready(function() {
 		var state = $(this).closest('.modal-content').find('[name="state"]').val();
 		var zip = $(this).closest('.modal-content').find('[name="zip"]').val();
 		var password = $(this).closest('.modal-content').find('[name="password"]').val();
+		
+		var form = $(this).closest('.modal-content');
 		
 		var userJSON =  {firstName: firstName, lastName: lastName, email: email, address: address,
 				city: city, state: state, zip: zip, password: password};
@@ -46,11 +58,46 @@ $(document).ready(function() {
 	    
 	    	$('#add-user').modal('toggle');
 	    	
+	    	//display new user
+	    	var id = data.id;
+	    	
+	    	var userHtml = $('.panel').html();
+	    	userHtml = '<div class="panel panel-default">\n' + userHtml + "\n</div>";
+	    	
+	    	var index = parseInt($('.index:last').text()) + 1;
+	    	
+	    	$('#accordion').append(userHtml);
+	    	
+	    	console.log("index: " + index);
+	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
+	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + firstName + " " + lastName);
+	    	$('.userID:last').text(id);
+	    	
+	    	$('.first-name:last').val(firstName);
+	    	
+	    	$('.last-name:last').val(lastName);
+	    	$('.email:last').val(email);
+	    	$('.address:last').val(address);
+	    	$('.city:last').val(city);
+	    	$('.state:last > option').each(function(i, obj) {
+	    		if (state == $(obj).val()) {
+	    			$(obj).prop("selected", true);
+	    		}
+	    		else {
+	    			$(obj).prop("selected", false);
+	    		}
+	    	});
+	    	$('.zip:last').val(zip);
+	    	$('.active:last').prop("checked", false);
+	    	
+	    	
 	    	
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
@@ -71,6 +118,8 @@ $(document).ready(function() {
 		var state = $(this).closest('.edit-form').find('[name="state"]').val();
 		var zip = $(this).closest('.edit-form').find('[name="zip"]').val();
 		var password = $(this).closest('.edit-form').find('[name="password"]').val();
+		
+		var form = $(this).closest('.edit-form');
 		
 		var active = false;
 		if ($(this).closest('.edit-form').find('[name="active"]').is(':checked')) {
@@ -106,17 +155,27 @@ $(document).ready(function() {
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
 	
-	$(document).on('click', '#deleteUser', function (e) {
+	$('#deleteUser').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.userID').text();
+	    
+	    deleteUserId = id;
+	    deletePanel = $(trigger).closest('.panel');
+	});
+	
+	$(document).on('click', '#confirmDeleteUser', function (e) {
 		
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).closest('.edit-form').find('.userID').text();
+		
+		var id = deleteUserId;
+		var panel = deletePanel;
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -136,6 +195,12 @@ $(document).ready(function() {
 	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
 	    		
 	    	$('#alert-box').html(alertHtml);
+	    	
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+	    	
+	    	$(panel).remove();
+	    	
+	    	$('#deleteUser').modal('toggle');
 	    
 	    }).fail (function(err) {
 			
@@ -156,6 +221,8 @@ $(document).ready(function() {
 		var name = $(this).closest('.modal-content').find('[name="name"]').val();
 		var price = $(this).closest('.modal-content').find('[name="price"]').val();
 		var salePrice = $(this).closest('.modal-content').find('[name="salePrice"]').val();
+		
+		var form = $(this).closest('.modal-content');
 		
 		if (!validateProduct(this)) {
 			return;
@@ -187,11 +254,33 @@ $(document).ready(function() {
 	    
 	    	$('#add-product').modal('toggle');
 	    	
+	    	//display new product
+	    	var id = data.id;
+	    	
+	    	var productHtml = $('.panel').html();
+	    	productHtml = '<div class="panel panel-default">\n' + productHtml + "\n</div>";
+	    	
+	    	var index = parseInt($('.index:last').text()) + 1;
+	    	
+	    	$('#accordion').append(productHtml);
+	    	
+	    	console.log("index: " + index);
+	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
+	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + name);
+	    	$('.productID:last').text(id);
+	    	
+	    	$('.name').eq(-2).val(name);
+	    	
+	    	$('.price').eq(-2).val(price);
+	    	$('.sale-price').eq(-2).val(salePrice);
+	    	
 	    	
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
@@ -208,6 +297,8 @@ $(document).ready(function() {
 		var name = $(this).closest('.edit-form').find('[name="name"]').val();
 		var price = $(this).closest('.edit-form').find('[name="price"]').val();
 		var salePrice = $(this).closest('.edit-form').find('[name="salePrice"]').val();
+		
+		var form = $(this).closest('.edit-form');
 		
 		if (!validateProduct($(this))) {
 			return;
@@ -243,19 +334,27 @@ $(document).ready(function() {
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
 	
-	$(document).on('click', '#deleteProduct', function (e) {
+	$('#deleteProduct').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.productID').text();
+	    
+	    deleteProductId = id;
+	    deleteProductPanel = $(trigger).closest('.panel');
+	});
+	
+	$(document).on('click', '#confirmDeleteProduct', function (e) {
 		
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).closest('.edit-form').find('.productID').text();
 		
-		console.log("url: " + url + ", id: " + id);
+		var id = deleteProductId;
+		var panel = deleteProductPanel;
 		
 		$.ajax({
 			
@@ -273,6 +372,14 @@ $(document).ready(function() {
 	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
 	    		
 	    	$('#alert-box').html(alertHtml);
+	    	
+	    	$(panel).remove();
+	    	
+	    	$('#deleteProduct').modal('toggle');
+	    	
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+	    	
+	    	
 	    
 	    }).fail (function(err) {
 			
@@ -348,6 +455,8 @@ $(document).ready(function() {
 		var cvv = $(this).closest('.modal-content').find('[name="cvv"]').val();
 		var ownerId = $(this).closest('.modal-content').find('[name="owner"]').val();
 		
+		var form = $(this).closest('.modal-content');
+		
 		var creditCardJSON =  {name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv, ownerId: ownerId};
 		
@@ -379,11 +488,63 @@ $(document).ready(function() {
 	    
 	    	$('#add-credit-card').modal('toggle');
 	    	
+	    	//display new credit card
+	    	var id = data.id;
+	    	
+	    	var creditCardHtml = $('.panel').html();
+	    	creditCardHtml = '<div class="panel panel-default">\n' + creditCardHtml + "\n</div>";
+	    	
+	    	var index = parseInt($('.index:last').text()) + 1;
+	    	
+	    	$('#accordion').append(creditCardHtml);
+	    	
+	    	console.log("index: " + index);
+	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
+	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + name + " - " + digits);
+	    	$('.cardID:last').text(id);
+	    	
+	    	$('.name').eq(-1).val(name);
+	    	
+	    	$('.card-type:last > option').each(function(i, obj) {
+	    		
+	    		if (cardType == $(obj).val()) {
+	    			$(obj).prop("selected", true);
+	    		}
+	    		else {
+	    			$(obj).prop("selected", false);
+	    		}
+	    	});
+	    	
+	    	$('.digits').eq(-1).val(digits);
+	    	$('.cvv').eq(-1).val(cvv);
+	    	
+	    	$('.month:last > option').each(function(i, obj) {
+	    		
+	    		
+	    		if (month == $(obj).val()) {
+	    			$(obj).prop("selected", true);
+	    		}
+	    		else {
+	    			$(obj).prop("selected", false);
+	    		}
+	    	});
+	    	$('.year:last > option').each(function(i, obj) {
+	    		
+	    		if (year == $(obj).val()) {
+	    			$(obj).prop("selected", true);
+	    		}
+	    		else {
+	    			$(obj).prop("selected", false);
+	    		}
+	    	});
+	    	
 	    	
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
@@ -403,6 +564,8 @@ $(document).ready(function() {
 		var month = $(this).closest('.edit-form').find('[name="month"]').val();
 		var year = $(this).closest('.edit-form').find('[name="year"]').val();
 		var cvv = $(this).closest('.edit-form').find('[name="cvv"]').val();
+		
+		var form = $(this).closest('.edit-form');
 		
 		var creditCardJSON =  {id: id, name: name, cardType: cardType, digits: digits, month: month,
 				year: year, cvv: cvv};
@@ -439,17 +602,27 @@ $(document).ready(function() {
 	    }).fail (function(err) {
 			
 	    	console.error(err);
-			processErrors(err);
+			processErrors(err, form);
 			
 	    });
 	});
 	
-	$(document).on('click', '#deleteCreditCard', function (e) {
+	$('#deleteCreditCard').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.cardID').text();
+	    
+	    deleteCreditCardId = id;
+	    deleteCreditCardPanel = $(trigger).closest('.panel');
+	});
+	
+	$(document).on('click', '#confirmDeleteCreditCard', function (e) {
 		
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var id = $(this).closest('.edit-form').find('.cardID').text();
+		
+		var id = deleteCreditCardId;
+		var panel = deleteCreditCardPanel;
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -469,8 +642,14 @@ $(document).ready(function() {
 	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
 	    		
 	    	$('#alert-box').html(alertHtml);
-	    
+	
+	    	$(panel).remove();
+	    	$('#deleteCreditCard').modal('toggle');
+	    	
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+	    	
+	    	
+	    
 	    	
 	    }).fail (function(err) {
 			
@@ -509,12 +688,14 @@ $(document).ready(function() {
 	}
 	
 	//TRANSACTIONS
-	$(document).on('change', '#user', function (e) {
+	$(document).on('change', '.user-cards', function (e) {
 		
 		e.preventDefault();
 		
 		var url = $(this).data('url');
 		var userId = $(this).find(":selected").val();
+		
+		var userHtml = $(this);
 		
 		$.ajax({
 			
@@ -535,15 +716,14 @@ $(document).ready(function() {
 				
 			}
 			
-			$('#creditCard').html(optionsHtml);
-			$('#creditCard').prop("disabled", false);
+			$(userHtml).closest('.modal-body').find('.credit-card').html(optionsHtml);
+			$(userHtml).closest('.modal-body').find('.credit-card').prop("disabled", false);
 			
 		}).fail (function(err) {
 			
 			console.error(err);
 			
 		});
-		
 		
 	});
 	
@@ -558,6 +738,8 @@ $(document).ready(function() {
 		var userId = $(this).closest('.modal-content').find('[name="user"]').val();
 		var cardId = $(this).closest('.modal-content').find('[name="creditCard"]').val();
 		var productId = $(this).closest('.modal-content').find('[name="product"]').val();
+		
+		var form = $(this).closest('.modal-content');
 		
 		var transactionJSON = {userId: userId, cardId: cardId, productId: productId};
 		
@@ -581,11 +763,62 @@ $(document).ready(function() {
 	    
 	    	$('#add-transaction').modal('toggle');
 			
+	    	//display new transaction
+	    	var id = data.transaction.id;
+	    	
+	    	var userId = data.transaction.user.id;
+	    	var firstName = data.transaction.user.firstName;
+	    	var lastName = data.transaction.user.lastName;
+	    	var email = data.transaction.user.email;
+	    	
+	    	var cardId = data.transaction.creditCard.id;
+	    	var cardName = data.transaction.creditCard.name;
+	    	var cardType = data.transaction.creditCard.cardType;
+	    	var digits = data.transaction.creditCard.digits;
+	    	var expDate = data.transaction.creditCard.expDate;
+	    	var cvv = data.transaction.creditCard.cvv;
+	    	
+	    	var productId = data.transaction.product.id;
+	    	var productName = data.transaction.product.name;
+	    	var productPrice = data.transaction.product.price;
+	    	var productSalePrice = data.transaction.product.salePrice;
+	    	
+	    	var transactionHtml = $('.panel').html();
+	    	transactionHtml = '<div class="panel panel-default">\n' + transactionHtml + "\n</div>";
+	    	
+	    	var index = parseInt($('.index:last').text()) + 1;
+	    	
+	    	$('#accordion').append(transactionHtml);
+	    	
+	    	console.log("index: " + index);
+	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
+	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
+	    	$('.transactionId:last').text(id);
+	    	
+	    	$('.user-id:last').text(userId);
+	    	$('.first-name:last').text(firstName);
+	    	$('.last-name:last').text(lastName);
+	    	$('.email:last').text(email);
 			
+	    	$('.card-id:last').text(cardId);
+	    	$('.card-name:last').text(cardName);
+	    	$('.card-type:last').text(cardType);
+	    	$('.card-number:last').text(digits);
+	    	$('.exp-date:last').text(expDate);
+	    	$('.cvv:last').text(cvv);
+	    	
+	    	$('.product-id:last').text(productId);
+	    	$('.product-name:last').text(productName);
+	    	$('.product-price:last').text(productPrice);
+	    	$('.sale-price:last').text(productSalePrice);
+	    	
+	    	
 		}).fail (function(err) {
 			
 			console.log(err);
-			processErrors(err);
+			processErrors(err, form);
 		})
 		
 	});
@@ -593,6 +826,8 @@ $(document).ready(function() {
 	$(document).on('click', '#editTransaction', function(e) {
 		
 		e.preventDefault();
+		
+		clearErrors();
 		
 		var transactionId = $(this).closest('.edit-form').find('.transactionId').text();
 		var userId = $(this).closest('.edit-form').find('.user-id').text();
@@ -639,7 +874,7 @@ $(document).ready(function() {
 			console.log(data);
 			
 			var optionsHtml ='';
-			//var optionsHtml = '<option value=\"' + cardId + '\">' + cardId + '. ' + cardType + ': '  + cardNumber + '</option>\n';
+			
 			for (var i = 0; i < data.length; i++) {
 				var creditCard = data[i];
 				if (creditCard.id == cardId) {
@@ -679,6 +914,8 @@ $(document).ready(function() {
 		var cardId = $('#creditCardTransactionEdit').val();
 		var productId = $('#productTransactionEdit').val();
 		
+		var form = $(this).closest('.modal-content');
+		
 		var transactionJSON = {transactionId: transactionId, userId: userId, cardId: cardId, productId: productId};
 		
 		console.log(transactionJSON);
@@ -703,21 +940,70 @@ $(document).ready(function() {
 	    
 	    	$('#edit-transaction').modal('toggle');
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+	    	
+	    	//display edited transaction
+	    	var userId = data.transaction.user.id;
+	    	var firstName = data.transaction.user.firstName;
+	    	var lastName = data.transaction.user.lastName;
+	    	var email = data.transaction.user.email;
+	    	
+	    	var cardId = data.transaction.creditCard.id;
+	    	var cardName = data.transaction.creditCard.name;
+	    	var cardType = data.transaction.creditCard.cardType;
+	    	var digits = data.transaction.creditCard.digits;
+	    	var expDate = data.transaction.creditCard.expDate;
+	    	var cvv = data.transaction.creditCard.cvv;
+	    	
+	    	var productId = data.transaction.product.id;
+	    	var productName = data.transaction.product.name;
+	    	var productPrice = data.transaction.product.price;
+	    	var productSalePrice = data.transaction.product.salePrice;
+	    	
+	    	var index = parseInt($('.index:last').text());
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
+	    	
+	    	$('.user-id:last').text(userId);
+	    	$('.first-name:last').text(firstName);
+	    	$('.last-name:last').text(lastName);
+	    	$('.email:last').text(email);
+			
+	    	$('.card-id:last').text(cardId);
+	    	$('.card-name:last').text(cardName);
+	    	$('.card-type:last').text(cardType);
+	    	$('.card-number:last').text(digits);
+	    	$('.exp-date:last').text(expDate);
+	    	$('.cvv:last').text(cvv);
+	    	
+	    	$('.product-id:last').text(productId);
+	    	$('.product-name:last').text(productName);
+	    	$('.product-price:last').text(productPrice);
+	    	$('.sale-price:last').text(productSalePrice);
+	    	
 			
 		}).fail (function(err) {
 			
 			console.log(err);
-			processErrors(err);
+			processErrors(err, form);
 		})
 		
 	});
 	
-	$(document).on('click', '#deleteTransaction', function(e) {
+	$('#deleteTransaction').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.transactionId').text();
+	    
+	    deleteTransactionId = id;
+	    deleteTransactionPanel = $(trigger).closest('.panel');
+	});
+	
+	$(document).on('click', '#confirmDeleteTransaction', function(e) {
 		
 		e.preventDefault();
 		
 		var url = $(this).data('url');
-		var id = $(this).closest('.edit-form').find('.transactionId').text();; 
+		var id = deleteTransactionId;
+		var panel = deleteTransactionPanel; 
 		
 		$.ajax({
 			
@@ -736,6 +1022,10 @@ $(document).ready(function() {
 	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
 	    	$('#alert-box').html(alertHtml);
 	    
+	    	$(panel).remove();
+	    	
+	    	$('#deleteTransaction').modal('toggle');
+	    	
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 			
 		}).fail (function(err) {
@@ -754,13 +1044,13 @@ $(document).ready(function() {
 		});
 	}
 	
-	function processErrors(err) { 
+	function processErrors(err, form) { 
 		for (var i = 0; i < err.responseJSON.length; i++) {
 			var error = err.responseJSON[i];
 			var field = error.field;
 			var errorMessage = error.error;
 			
-			$('.form-input').each(function(i, obj) {
+			$(form).find('.form-input').each(function(i, obj) {
 				
 				if (field == $(obj).attr('name')) {
 					var errorsHtml = $(obj).parent().find('.error').html();

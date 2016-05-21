@@ -1,6 +1,7 @@
 package models;
 
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,8 @@ import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import errors.ValidationError;
+import forms.CreditCardForm;
+import models.enums.CardType;
 import play.data.format.Formats;
 
 @Entity
@@ -110,6 +113,24 @@ public class CreditCard extends Model {
 		this.cvv = creditCard.cvv;
 		
 		
+	}
+
+	public static CreditCard createCreditCard(CreditCardForm creditCardForm) {
+		
+		CreditCard creditCard = new CreditCard();
+		if (creditCardForm.id != null) {
+			creditCard.id = Long.parseLong(creditCardForm.id);
+		}
+		creditCard.name = creditCardForm.name;
+		creditCard.cardType = CardType.valueOf(creditCardForm.cardType);
+		creditCard.digits = creditCardForm.digits;
+		creditCard.cvv = Integer.parseInt(creditCardForm.cvv);
+		String expDateStr = creditCardForm.month + "/" + creditCardForm.year;
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+    	YearMonth expDate = YearMonth.parse(expDateStr, formatter);
+    	creditCard.expDate = expDate; 
+		
+		return creditCard;
 	}
     
     

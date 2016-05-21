@@ -22,8 +22,8 @@
 				<div class="panel panel-default">
 				    <div class="panel-heading">
 				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index">
-				        @p.id. @p.name</a>
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
+				        	<span class="index">@(index + 1)</span>. @p.name</a>
 				      </h4>
 				    </div>
 				    <div id="collapse@index" class="panel-collapse collapse">
@@ -44,8 +44,8 @@
 							    <div class="col-sm-12 text-center">
 							    	<button class="btn btn-warning left-button" id="editProduct" 
 							    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
-							    	<button class="btn btn-danger" id="deleteProduct"
-							    		data-url="@routes.AdminController.deleteProduct()" type="submit">Delete Product</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteProduct" >Delete Product</span>
 								</div>
 							</div>
 						</form>
@@ -72,12 +72,32 @@
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <button id="confirmAddProduct" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addProduct()" >Add Product</button>
+	                <button id="confirmAddProduct" class="btn btn-warning btn-ok" 
+	                	data-url="@routes.AdminController.addProduct()" >Add Product</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
 	
+	<div class="modal fade" id="deleteProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <strong>Confirm Delete</strong>
+	            </div>
+	            <div class="modal-body">
+	                <p>You are about to delete the product, this procedure is irreversible.</p>
+
+					<p>Do you want to proceed?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <a id="confirmDeleteProduct" class="btn btn-danger btn-ok" 
+	                	data-url="@routes.AdminController.deleteProduct()" >Delete</a>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 
 </body>
 </html>

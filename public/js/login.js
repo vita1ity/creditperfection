@@ -18,8 +18,8 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var email = $(this).parent().parent().find('[name="email"]').val();
-		var password = $(this).parent().parent().find('[name="password"]').val();
+		var email = $(this).closest('.login-form').find('[name="email"]').val();
+		var password = $(this).closest('.login-form').find('[name="password"]').val();
 		
 		var adminUrl = $(this).data("admin-url");
 		var userUrl = $(this).data("user-url");
@@ -67,7 +67,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var url = $(this).data("url");
-		var email = $(this).parent().parent().find('[name="email"]').val();
+		var email = $(this).closest('.forgot-pass').find('[name="email"]').val();
 		
 		$.ajax({
 			

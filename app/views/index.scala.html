@@ -1,4 +1,5 @@
-@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.CardType], login: java.lang.Boolean)
+@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.enums.CardType], 
+states: Array[models.enums.State], months: Array[models.enums.Month], years: Array[models.enums.Year], login: java.lang.Boolean)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,9 +12,9 @@
 	        <h4><i>@flash.get("message")</i></h4>
 	    }
 	        
-	    @register.render(userForm)
+	    @register.render(userForm, states)
 	    @chooseProduct.render(productList)
-	    @paymentDetails(allTypes)
+	    @paymentDetails(allTypes, months, years)
 	    
     </div>
 </body>
