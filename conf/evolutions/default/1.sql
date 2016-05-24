@@ -3,6 +3,15 @@
 
 # --- !Ups
 
+create table auth_net_account (
+  id                            bigint auto_increment not null,
+  name                          varchar(255) not null,
+  description                   varchar(255),
+  login_id                      varchar(255) not null,
+  transaction_key               varchar(255) not null,
+  constraint pk_auth_net_account primary key (id)
+);
+
 create table credit_card (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -123,6 +132,8 @@ drop index ix_user_role_user on user_role;
 
 alter table user_role drop foreign key fk_user_role_security_role;
 drop index ix_user_role_security_role on user_role;
+
+drop table if exists auth_net_account;
 
 drop table if exists credit_card;
 

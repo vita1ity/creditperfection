@@ -97,6 +97,10 @@
 
 .navbar-brand {
 	margin-right: 40px;	
+	float: left;
+    padding: 0px 25px;
+    font-size: 18px;
+    line-height: 20px;
 }
 .panel {
 	width: 80%;
@@ -109,5 +113,10 @@
 .nav .welcome {
     display: block;
     padding: 15px 15px;
+}
+
+.success-message {
+	color: green;
+	margin: 0 auto;
 }
  

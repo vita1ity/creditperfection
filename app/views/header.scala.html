@@ -13,9 +13,11 @@
 	      </button>
 	      @if(session.get("admin")!=null){
 				      
-	      	<a class="navbar-brand" href="@routes.SignUpFlowController.index(false)">Credit Perfection Admin</a>
+	      	<a class="navbar-brand" href="@routes.SignUpFlowController.index(false)">
+	      		<img src="/assets/images/logo.png" alt="Credit Perfection Admin" height="50px"></a>
 	      }else{
-	      	<a class="navbar-brand" href="@routes.SignUpFlowController.index(false)">Credit Perfection</a>
+	      	<a class="navbar-brand" href="@routes.SignUpFlowController.index(false)">
+	      		<img src="/assets/images/logo.png" alt="Credit Perfection" height="50px"></a>
 	      }
 	    </div>
 	    <div class="collapse navbar-collapse" id="myNavbar">
@@ -26,6 +28,7 @@
 	      		<li ><a href="@routes.AdminController.products">Products</a></li>
 	      		<li ><a href="@routes.AdminController.creditCards">Credit Cards</a></li>
 	      		<li ><a href="@routes.AdminController.transactions">Transactions</a></li>
+	      		<li ><a href="@routes.AdminController.authNetAccounts">Merchant Accounts</a></li>
 	      	}else{
 	      		
 	      	}

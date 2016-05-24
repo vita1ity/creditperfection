@@ -13,6 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import play.Configuration;
+import play.Logger;
 
 @Singleton
 public class MailService {
@@ -26,24 +27,25 @@ public class MailService {
 	
     public void sendEmailToken(String email, String token){
     	
-        final String url = conf.getString("app.test");
+        final String url = conf.getString("app.host");
+        //final String url = conf.getString("app.localhost");
        
-        final String username = conf.getString("email.username");
+        final String from = conf.getString("email.from");
         final String subject = "Credit Perfection Registration";
         final String text = "Click the link below to verify your Credit Perfection account \n\n" + 
         		url + "/registertoken/" + token;
         
-        sendEmail(username, email, subject, text);
+        sendEmail(from, email, subject, text);
         
     }
 
     public void sendEmailPassword(String email, String tempPass){
-        final String username = conf.getString("email.username");
+        final String from = conf.getString("email.from");
         
         final String subject = "Credit Perfection Password";
         final String text = "Please change your password after logging in\n\n" + "Password: " + tempPass;
         
-        sendEmail(username, email, subject, text);
+        sendEmail(from, email, subject, text);
        
     }
     
@@ -51,14 +53,17 @@ public class MailService {
 		
     	final String username = conf.getString("email.username");
         final String password = conf.getString("email.password");
-    	
+    	final String host = conf.getString("email.host");
+    	final String port = conf.getString("email.port");
+        
     	Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.socketFactory.port", "465");
+    	props.put("mail.smtp.host", host);
+    	props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", port);
+        /*props.put("mail.smtp.socketFactory.port", port);
         props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.port", "465");
+                "javax.net.ssl.SSLSocketFactory");*/
+        
         Session session = Session.getInstance(props,
             new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -74,7 +79,16 @@ public class MailService {
 		    msg.setFrom(new InternetAddress(from));
 		    msg.setSubject(subject);
 		    msg.setText(body);
+		    
+		    Logger.info("To: " + to);
+		    Logger.info("From: " + from);
+		    Logger.info("Subject: " + subject);
+		    Logger.info("Body: " + body);
+		    
 		    Transport.send(msg);
+		    
+		    Logger.info("Message sent");
+		    
 	    } catch (MessagingException e) {
 	    	
 	    	e.printStackTrace();

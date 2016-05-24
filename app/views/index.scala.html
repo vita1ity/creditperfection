@@ -9,7 +9,10 @@ states: Array[models.enums.State], months: Array[models.enums.Month], years: Arr
 	@header.render(login)
 	<div class="container">
 	    @if(flash.get("message")!=null){
-	        <h4><i>@flash.get("message")</i></h4>
+	    	<div class="alert alert-success">
+	    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	    		<span id="alert-message">@flash.get("message")</span>
+	    	</div>
 	    }
 	        
 	    @register.render(userForm, states)

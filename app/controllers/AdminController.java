@@ -14,6 +14,7 @@ import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.ProductForm;
 import forms.TransactionForm;
+import models.AuthNetAccount;
 import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
@@ -130,8 +131,7 @@ public class AdminController extends Controller {
         	user.save();
         	
         	mailService.sendEmailToken(user.email, user.token);
-        	flash("message", "Email verification sent");
-	    	
+        	
 	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.id)));
 	    }
 		
@@ -381,4 +381,25 @@ public class AdminController extends Controller {
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
 		
 	}
+	
+	//Authorize .NET Accounts
+	public Result authNetAccounts() {
+		
+		List<AuthNetAccount> allAccounts = AuthNetAccount.find.all();
+		
+		return ok(views.html.adminAuthNetAccounts.render(allAccounts));
+		
+	}
+	
+	public Result addAuthNetAccount() {
+		return null;
+	}
+	
+	public Result editAuthNetAccount() {
+		return null;
+	}
+	public Result deleteAuthNetAccount() {
+		return null;
+	}
+	
 }

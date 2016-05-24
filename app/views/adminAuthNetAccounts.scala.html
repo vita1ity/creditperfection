@@ -1,0 +1,103 @@
+@(allAccounts: java.util.List[models.AuthNetAccount])
+<!DOCTYPE html>
+<html>
+<head>
+	@head.render
+	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+</head>
+<body>
+
+	@header.render(false)
+	<div class="container">
+		
+		<div class="row" id="alert-box">
+		</div>
+		
+		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#addAuthNetAccount" >Add Account</span>
+		
+      	
+			<div class="panel-group" id="accordion">
+			@for((a, index) <- allAccounts.zipWithIndex) {
+			
+				<div class="panel panel-default">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
+				        	<span class="index">@(index + 1)</span>. @a.name</a>
+				      </h4>
+				    </div>
+				    <div id="collapse@index" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form validate-auth-account" role="form">
+						    <h3 class="text-center title">Auth.Net Account Info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="authNetAccountId">@a.id</span></h4>
+						    	</div>
+						    </div>
+						    
+						    @authNetAccountFields.render(a)
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editAuthNetAccount" 
+							    		data-url="@routes.AdminController.editAuthNetAccount()" type="submit">Edit Account</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteAuthNetAccount" >Delete Account</span>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
+			}
+		</div>    
+	
+	</div>
+	
+	<div class="modal fade" id="addAuthNetAccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content validate-product">
+	            <div class="modal-header">
+	                <h4 class="title">Add Merchant Account</h4>
+	            </div>
+	            <div class="modal-body">
+	                 
+				   @authNetAccountFields.render(new AuthNetAccount())
+					    
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <button id="confirmAddAuthNetAccount" class="btn btn-warning btn-ok" 
+	                	data-url="@routes.AdminController.addAuthNetAccount()" >Add Account</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	
+	<div class="modal fade" id="deleteAuthNetAccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <strong>Confirm Delete</strong>
+	            </div>
+	            <div class="modal-body">
+	                <p>You are about to delete the Auth.Net Account, this procedure is irreversible.</p>
+
+					<p>Do you want to proceed?</p>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <a id="confirmDeleteAuthNetAccount" class="btn btn-danger btn-ok" 
+	                	data-url="@routes.AdminController.deleteAuthNetAccount()" >Delete</a>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+</body>
+</html>

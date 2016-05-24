@@ -1,7 +1,5 @@
 package controllers;
 
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.RegisterForm;
+import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
 import models.Transaction;
@@ -26,8 +25,8 @@ import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
-import models.CreditCard;
 import play.Configuration;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -102,11 +101,11 @@ public class SignUpFlowController extends Controller {
 	    	user.roles = roles;
         	user.save();
         	
+        	Logger.info("Sending email to : " + user.email);
         	mailService.sendEmailToken(user.email, user.token);
-        	flash("message", "Email verification sent");
         	
         	session("userEmail", user.email);
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was registered")));
+	        return ok(Json.toJson(new MessageResponse("SUCCESS", "Email verification sent")));
 	    }
     	
     }

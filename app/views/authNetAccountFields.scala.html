@@ -1,0 +1,54 @@
+@(a: models.AuthNetAccount)
+<div class="row form-group">
+						    
+   	<div class="col-sm-4 ">
+   		<label class="control-label" for="name">Account Name:</label>
+   	</div>
+   	
+   	<div class="col-sm-8">
+    	<input class="form-input form-control name" type="text" name="name" placeholder="Account Name" value="@a.name">
+    	<span class="error name-error"></span>
+    </div>
+    
+</div>
+
+<div class="row form-group">
+    
+    <div class="col-sm-4 ">
+    	<label class="control-label" for="description">Description:</label>
+    </div>
+
+    <div class="col-sm-8">
+    	<input class="form-input form-control description" type="text" name="description" placeholder="Description" value="@a.description">
+    	<span class="error description-error"></span>
+    </div>
+    
+</div>
+<div class="row form-group">
+   
+   	<div class="col-sm-4">
+   		<label class="control-label" for="loginId">Login ID:</label>
+   	</div>
+   
+   	<div class="col-sm-8">
+    	<input class="form-input form-control login-id" type="text" name="loginId" placeholder="Login ID" value="@a.loginId">
+    	<span class="error loginId-error" ></span>
+    </div>
+    
+    
+ </div>
+ 
+ <div class="row form-group">
+   
+   	<div class="col-sm-4">
+   		<label class="control-label" for="transactionKey">Transaction Key:</label>
+   	</div>
+   
+   	<div class="col-sm-8">
+    	<input class="form-input form-control transaction-key" type="text" name="transactionKey" 
+    		placeholder="Transaction Key" value="@a.transactionKey">
+    	<span class="error transactionKey-error" ></span>
+    </div>
+    
+    
+ </div>

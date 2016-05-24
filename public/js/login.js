@@ -52,7 +52,7 @@ $(document).ready(function() {
 	    	var errorMessage = err.responseJSON.errorMessage;
 	    	
 	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert-small alert-danger\">\n";
+	    	alertHtml += "<div class=\"alert alert-small alert-danger\">\n";
 	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
 	    	alertHtml += "<span id=\"alert-message\">" + errorMessage + "</span>\n"	
 	    		
