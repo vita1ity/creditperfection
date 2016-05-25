@@ -36,8 +36,44 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		
 		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-credit-card" >Add Credit Card</span>
 		
-      	
 			<div class="panel-group" id="accordion">
+			
+				<!-- DEFAULT TEMPLATE -->
+				<div class="panel panel-default hidden">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+				        <span class="index">0</span>. DEFAULT</a>
+				      </h4>
+				    </div>
+				    <div id="collapse" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form card-validation" role="form">
+						    <h3 class="text-center title">Credit Card Info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="cardID">0</span></h4>
+						    	</div>
+						    </div>
+						    
+						    @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editCreditCard"
+							    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteCreditCard">Delete Credit Card</span>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
 			@for((c, index) <- allCards.zipWithIndex) {
 			
 				<div class="panel panel-default">

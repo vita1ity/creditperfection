@@ -7,6 +7,26 @@
 </head>
 <body>
 
+	<div class="modal fade" id="addAuthNetAccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content validate-product">
+	            <div class="modal-header">
+	                <h4 class="title">Add Merchant Account</h4>
+	            </div>
+	            <div class="modal-body">
+	                 
+				   @authNetAccountFields.render(new AuthNetAccount())
+					    
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	                <button id="confirmAddAuthNetAccount" class="btn btn-warning btn-ok" 
+	                	data-url="@routes.AdminController.addAuthNetAccount()" >Add Account</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
 	@header.render(false)
 	<div class="container">
 		
@@ -15,8 +35,45 @@
 		
 		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#addAuthNetAccount" >Add Account</span>
 		
-      	
+      		<!-- FORM TEMPLATE -->
 			<div class="panel-group" id="accordion">
+			
+				<div class="panel panel-default hidden">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+				        	<span class="index">0</span>. DEFAULT</a>
+				      </h4>
+				    </div>
+				    <div id="collapse" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form validate-auth-account" role="form">
+						    <h3 class="text-center title">Auth.Net Account Info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="authNetAccountId">0</span></h4>
+						    	</div>
+						    </div>
+						    
+						    @authNetAccountFields.render(new AuthNetAccount())
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editAuthNetAccount" 
+							    		data-url="@routes.AdminController.editAuthNetAccount()" type="submit">Edit Account</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteAuthNetAccount" >Delete Account</span>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
+			
 			@for((a, index) <- allAccounts.zipWithIndex) {
 			
 				<div class="panel panel-default">
@@ -59,25 +116,7 @@
 	
 	</div>
 	
-	<div class="modal fade" id="addAuthNetAccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content validate-product">
-	            <div class="modal-header">
-	                <h4 class="title">Add Merchant Account</h4>
-	            </div>
-	            <div class="modal-body">
-	                 
-				   @authNetAccountFields.render(new AuthNetAccount())
-					    
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <button id="confirmAddAuthNetAccount" class="btn btn-warning btn-ok" 
-	                	data-url="@routes.AdminController.addAuthNetAccount()" >Add Account</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
+	
 	
 	<div class="modal fade" id="deleteAuthNetAccount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	    <div class="modal-dialog">

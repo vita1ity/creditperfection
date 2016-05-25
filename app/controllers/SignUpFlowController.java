@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.RegisterForm;
+import models.AuthNetAccount;
 import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
@@ -161,8 +162,23 @@ public class SignUpFlowController extends Controller {
 	    	
 	    	//final String loginId = conf.getString("authorise.net.sandbox.login.id");
 	    	//final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
-	    	final String loginId = conf.getString("authorise.net.login.id");
-	    	final String transactionKey = conf.getString("authorise.net.transaction.key");
+	    	String loginId = null;
+	    	String transactionKey = null;
+	    	
+	    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
+	    	
+	    	Logger.info("Choosen Account: " + account);
+	    	
+	    	if (account == null) {
+	    		loginId = conf.getString("authorise.net.login.id");
+		    	transactionKey = conf.getString("authorise.net.transaction.key");
+	    	}
+	    	else {
+	    		loginId = account.loginId;
+		    	transactionKey = account.transactionKey;
+	    	}
+	    	
+	    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
 	    	
 	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
 	    			transactionKey, product.price, creditCard);

@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Singleton;
+import javax.persistence.Column;
 
+import models.AuthNetAccount;
 import models.CreditCard;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
@@ -24,7 +27,6 @@ import net.authorize.api.contract.v1.PaymentType;
 import net.authorize.api.contract.v1.TransactionRequestType;
 import net.authorize.api.contract.v1.TransactionResponse;
 import net.authorize.api.contract.v1.TransactionResponse.Errors.Error;
-import net.authorize.api.contract.v1.TransactionResponse.Messages;
 import net.authorize.api.contract.v1.TransactionTypeEnum;
 import net.authorize.api.controller.CreateTransactionController;
 import net.authorize.api.controller.base.ApiOperationBase;
@@ -33,6 +35,50 @@ import play.Logger;
 
 @Singleton
 public class CreditCardService {
+	
+	public AuthNetAccount chooseMerchantAccount() {
+		List<AuthNetAccount> authNetAccounts = AuthNetAccount.find.all();
+		if (authNetAccounts.size() == 0) {
+			return null;
+		}
+		else {
+			Collections.sort(authNetAccounts);
+			
+			for (int i = 0; i < authNetAccounts.size(); i++) {
+				
+				AuthNetAccount account = authNetAccounts.get(i); 
+				
+				if (account.isLastUsed) {
+					//if last account was previously used return first account
+					
+					if (i == authNetAccounts.size() - 1) {
+						AuthNetAccount firstAccount = authNetAccounts.get(0);
+						account.isLastUsed= false;
+						firstAccount.isLastUsed = true;
+						account.update();
+						firstAccount.update();
+						return firstAccount;
+					}
+					else {
+						AuthNetAccount nextAccount = authNetAccounts.get(i + 1);
+						account.isLastUsed = false;
+						nextAccount.isLastUsed = true;
+						account.update();
+						nextAccount.update();
+						return nextAccount;
+					}
+					
+				}
+			}
+			
+			//last used account not found. use first
+			AuthNetAccount firstAccount = authNetAccounts.get(0);
+			firstAccount.isLastUsed = true;
+			firstAccount.update();
+			return firstAccount;
+			
+		}
+	}
 	
 	public ANetApiResponse charge(String apiLoginId, String transactionKey, Double amount, CreditCard userCreditCard) {
 
@@ -148,5 +194,6 @@ public class CreditCardService {
         }
 		
 	}
+	
 	
 }

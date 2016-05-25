@@ -9,6 +9,7 @@ create table auth_net_account (
   description                   varchar(255),
   login_id                      varchar(255) not null,
   transaction_key               varchar(255) not null,
+  is_last_used                  tinyint(1) default 0,
   constraint pk_auth_net_account primary key (id)
 );
 

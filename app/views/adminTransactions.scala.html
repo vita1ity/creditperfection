@@ -13,10 +13,64 @@
 		<div class="row" id="alert-box">
 		</div>
 		
+		<!-- DEFAULT TEMPLATE -->
 		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-transaction" >Add Transaction</span>
 		
-      	
 			<div class="panel-group" id="accordion">
+			
+				<div class="panel panel-default hidden">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+				        	<span class="index">0</span>. 
+				        	DEFAULT</a>
+				      </h4>
+				    </div>
+				    <div id="collapse" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form" role="form">
+						    <h3 class="text-center title">Transaction info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="transactionId">0</span></h4>
+						    	</div>
+						    </div>
+						    
+						    <h4 class="text-center title">User:</h4>
+						    <p><strong>User Id: </strong><span class="user-id"></span></p>
+						    <p><strong>First Name: </strong><span class="first-name"></span></p>
+						    <p><strong>Last Name: </strong><span class="last-name"></span></p>
+						    <p><strong>Email: </strong><span class="email"></span></p> 
+						    
+						    <h4 class="text-center title">Credit Card:</h4>
+						    <p><strong>Card Id: </strong><span class="card-id"></span></p>
+						    <p><strong>Card Holder Name: </strong><span class="card-name"></span></p>
+						    <p><strong>Card Type: </strong><span class="card-type"></span></p>
+						    <p><strong>Card Number: </strong><span class="card-number"></span></p>
+						    <p><strong>Exp. Date: </strong><span class="exp-date"></span></p>
+						    <p><strong>CVV: </strong><span class="cvv"></span></p>
+						    
+						    <h4 class="text-center title">Product:</h4>
+						    <p><strong>Product Id: </strong><span class="product-id"></span></p>
+						    <p><strong>Product Name: </strong><span class="product-name"></span></p>
+						    <p><strong>Price: </strong><span class="product-price"></span></p>
+						    <p><strong>Sale Price: </strong><span class="sale-price"></span></p>
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editTransaction" >Edit Transaction</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteTransaction">Delete Transaction</span>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
 			@for((t, index) <- allTransactions.zipWithIndex) {
 			
 				<div class="panel panel-default">

@@ -15,8 +15,44 @@
 		
 		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-product" >Add Product</span>
 		
-      	
 			<div class="panel-group" id="accordion">
+			
+				<!-- DEFAULT TEMPLATE -->
+				<div class="panel panel-default hidden">
+				    <div class="panel-heading">
+				      <h4 class="panel-title">
+				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+				        	<span class="index">0</span>. DEFAULT</a>
+				      </h4>
+				    </div>
+				    <div id="collapse" class="panel-collapse collapse">
+				      <div class="panel-body">
+				      
+				      	<form class="form-horizontal edit-form validate-product" role="form">
+						    <h3 class="text-center title">Product Info:</h3>
+						    <div class="row form-group">
+						    	<div class="col-sm-12 ">
+						    		<h4>Id: <span class="productID">0</span></h4>
+						    	</div>
+						    </div>
+						    
+						    @productFields.render(new Product())
+						        
+						    <hr class="separator">
+						    <div class="row form-group">  
+							    <div class="col-sm-12 text-center">
+							    	<button class="btn btn-warning left-button" id="editProduct" 
+							    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
+							    	<span class="btn btn-danger" data-toggle="modal" 
+							    		data-target="#deleteProduct" >Delete Product</span>
+								</div>
+							</div>
+						</form>
+				      
+				      </div>
+				    </div>
+				</div>
+			
 			@for((p, index) <- allProducts.zipWithIndex) {
 			
 				<div class="panel panel-default">

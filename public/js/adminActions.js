@@ -6,7 +6,8 @@ var deleteCreditCardId = '';
 var deleteCreditCardPanel = new Object();
 var deleteTransactionId = '';
 var deleteTransactionPanel = new Object();
-
+var deleteAuthNetAccountId = '';
+var deleteAuthNetAccountPanel = new Object();
 
 window.onload = function(){
 	
@@ -49,12 +50,7 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	showSuccessAlert(data.message);
 	    
 	    	$('#add-user').modal('toggle');
 	    	
@@ -143,12 +139,8 @@ $(document).ready(function() {
 	    }).done (function(data) {
 	    	
 	    	console.log(data);
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+
+	    	showSuccessAlert(data.message);
 	    
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 	    	
@@ -189,12 +181,8 @@ $(document).ready(function() {
 	    }).done (function(data) {
 	    	
 	    	console.log(data);
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	
+	    	showSuccessAlert(data.message);
 	    	
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 	    	
@@ -245,12 +233,7 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	showSuccessAlert(data.message);
 	    
 	    	$('#add-product').modal('toggle');
 	    	
@@ -321,12 +304,7 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	showSuccessAlert(data.message);
 	    
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 	    	
@@ -366,12 +344,8 @@ $(document).ready(function() {
 	    }).done (function(data) {
 	    	
 	    	console.log(data);
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+
+	    	showSuccessAlert(data.message);
 	    	
 	    	$(panel).remove();
 	    	
@@ -479,12 +453,7 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	showSuccessAlert(data.message);
 	    
 	    	$('#add-credit-card').modal('toggle');
 	    	
@@ -589,12 +558,7 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+	    	showSuccessAlert(data.message);
 	    
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 	    	
@@ -636,12 +600,8 @@ $(document).ready(function() {
 	    }).done (function(data) {
 	    	
 	    	console.log(data);
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+
+	    	showSuccessAlert(data.message);
 	
 	    	$(panel).remove();
 	    	$('#deleteCreditCard').modal('toggle');
@@ -754,12 +714,8 @@ $(document).ready(function() {
 		}).done (function(data) {
 			
 			console.log(data);
-			var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+
+			showSuccessAlert(data.message);
 	    
 	    	$('#add-transaction').modal('toggle');
 			
@@ -931,12 +887,8 @@ $(document).ready(function() {
 		}).done (function(data) {
 			
 			console.log(data);
-			var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    		
-	    	$('#alert-box').html(alertHtml);
+			
+			showSuccessAlert(data.message);
 	    
 	    	$('#edit-transaction').modal('toggle');
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
@@ -1016,11 +968,7 @@ $(document).ready(function() {
 			
 			console.log(data);
 			
-			var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    	$('#alert-box').html(alertHtml);
+			showSuccessAlert(data.message);
 	    
 	    	$(panel).remove();
 	    	
@@ -1032,6 +980,152 @@ $(document).ready(function() {
 			
 			console.error(err);
 			
+		});
+		
+	});
+	
+	
+	
+	$(document).on('click', '#confirmAddAuthNetAccount', function(e) {
+		
+		e.preventDefault();
+		
+		clearErrors();
+		
+		var url = $(this).data('url');
+		
+		var name = $(this).closest('.modal-content').find('.name').val();
+		var description = $(this).closest('.modal-content').find('.description').val();
+		var loginId = $(this).closest('.modal-content').find('.login-id').val();
+		var transactionKey = $(this).closest('.modal-content').find('.transaction-key').val();
+		
+		var accountJSON = {name: name, description: description, loginId: loginId, transactionKey: transactionKey};
+		
+		var form = $(this).closest('.modal-content');
+		
+		$.ajax ({
+			type: 'POST',
+	        url: url, 
+	        contentType: 'application/json',
+	        data: JSON.stringify(accountJSON),
+	        dataType: 'json'	
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			$('#addAuthNetAccount').modal('toggle');
+			
+			showSuccessAlert(data.message);
+	    
+	    	$('#add-user').modal('toggle');
+	    	
+	    	//display new merchant account
+	    	var id = data.id;
+	    	
+	    	var accountHtml = $('.panel').html();
+	    	accountHtml = '<div class="panel panel-default">\n' + accountHtml + "\n</div>";
+	    	
+	    	var index = parseInt($('.index:last').text()) + 1;
+	    	
+	    	if (isNaN(index)) {
+	    		
+	    		index = 1;
+	    	}
+	    	
+	    	$('#accordion').append(accountHtml);
+	    	
+	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
+	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
+	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
+	    			index + "</span>. " + name);
+	    	$('.authNetAccountId:last').text(id);
+	    	
+	    	$('.name:last').val(name);
+	    	
+	    	$('.description:last').val(description);
+	    	$('.login-id:last').val(loginId);
+	    	$('.transaction-key:last').val(transactionKey);
+	    	
+			
+		}).fail (function(err) {
+			console.error(err);
+			processErrors(err, form);
+		});
+		
+	});
+	
+	$(document).on('click', '#editAuthNetAccount', function(e) {
+		
+		e.preventDefault();
+		
+		clearErrors();
+		
+		var url = $(this).data('url');
+		
+		var id = $(this).closest('.edit-form').find('.authNetAccountId').text();
+		var name = $(this).closest('.edit-form').find('.name').val();
+		var description = $(this).closest('.edit-form').find('.description').val();
+		var loginId = $(this).closest('.edit-form').find('.login-id').val();
+		var transactionKey = $(this).closest('.edit-form').find('.transaction-key').val();
+		
+		var accountJSON = {id: id, name: name, description: description, loginId: loginId, transactionKey: transactionKey};
+		
+		var form = $(this).closest('.edit-form');
+		
+		$.ajax({
+			type: 'POST',
+			url: url,
+			contentType: 'application/json',
+			data: JSON.stringify(accountJSON),
+			dataType: 'json'
+		}).done (function(data) {
+			
+			showSuccessAlert(data.message);
+		
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+			
+		}).fail (function(err) {
+			console.error(err);
+			processErrors(err, form);
+		});
+		
+		
+	});
+	
+	$('#deleteAuthNetAccount').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.authNetAccountId').text();
+	    
+	    deleteAuthNetAccountId = id;
+	    deleteAuthNetAccountPanel = $(trigger).closest('.panel');
+	});
+	
+	$(document).on('click', '#confirmDeleteAuthNetAccount', function(e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		
+		var id = deleteAuthNetAccountId;
+		var deletePanel = deleteAuthNetAccountPanel;
+		
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: {id: id},
+			dataType: 'json'
+		}).done (function(data) {
+			
+			showSuccessAlert(data.message);
+			
+			$(deletePanel).remove();
+	    	
+	    	$('#deleteAuthNetAccount').modal('toggle');
+	    	
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+			
+		}).fail (function(err) {
+			console.error(err);
 		});
 		
 	});
@@ -1065,6 +1159,14 @@ $(document).ready(function() {
 		}
 	}
 	
-	
+	function showSuccessAlert(message) {
+		var alertHtml = "";
+    	alertHtml += "<div class=\"alert alert-success\">\n";
+    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+    	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
+    		
+    	$('#alert-box').html(alertHtml);
+	}
 	
 });
+

@@ -391,15 +391,49 @@ public class AdminController extends Controller {
 		
 	}
 	
+	@BodyParser.Of(BodyParser.Json.class)
 	public Result addAuthNetAccount() {
-		return null;
+		
+		JsonNode json = request().body().asJson();
+		AuthNetAccount account = Json.fromJson(json, AuthNetAccount.class);
+		
+		List<ValidationError> errors = account.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		
+		account.save();
+		
+		return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Merchant Account was added successfully", account.id)));
+		
 	}
 	
+	@BodyParser.Of(BodyParser.Json.class)
 	public Result editAuthNetAccount() {
-		return null;
+		JsonNode json = request().body().asJson();
+		AuthNetAccount account = Json.fromJson(json, AuthNetAccount.class);
+		
+		List<ValidationError> errors = account.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		
+		account.update();
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was edited successfully")));
 	}
 	public Result deleteAuthNetAccount() {
-		return null;
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("id"));
+		
+		AuthNetAccount account = AuthNetAccount.find.byId(id);
+		account.delete();
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was deleted successfully")));
+		
 	}
 	
 }
