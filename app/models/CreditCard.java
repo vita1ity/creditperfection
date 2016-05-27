@@ -39,11 +39,11 @@ public class CreditCard extends Model {
     public int cvv;
     
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     public User user;
     
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "creditCard")
     public List<Transaction> transactions;
 
     public CreditCard() {

@@ -1,6 +1,5 @@
 package models;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -14,11 +13,11 @@ public class Transaction extends Model {
     
 	@Id
     public long id;
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     public User user;
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     public CreditCard creditCard;
-    @ManyToOne(cascade = CascadeType.REFRESH)
+    @ManyToOne
     public Product product;
     
 	public Transaction(User user, CreditCard creditCard, Product product) {

@@ -39,6 +39,14 @@ create table credit_report_field (
   constraint pk_credit_report_field primary key (id)
 );
 
+create table kbaquestions (
+  id                            bigint auto_increment not null,
+  url                           varchar(255),
+  user_id                       bigint,
+  constraint uq_kbaquestions_user_id unique (user_id),
+  constraint pk_kbaquestions primary key (id)
+);
+
 create table payment_gateway (
   id                            integer auto_increment not null,
   name                          varchar(255),
@@ -95,6 +103,8 @@ create index ix_credit_card_user_id on credit_card (user_id);
 alter table credit_report_field add constraint fk_credit_report_field_credit_report_id foreign key (credit_report_id) references credit_report (id) on delete restrict on update restrict;
 create index ix_credit_report_field_credit_report_id on credit_report_field (credit_report_id);
 
+alter table kbaquestions add constraint fk_kbaquestions_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 alter table transaction add constraint fk_transaction_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 create index ix_transaction_user_id on transaction (user_id);
 
@@ -119,6 +129,8 @@ drop index ix_credit_card_user_id on credit_card;
 alter table credit_report_field drop foreign key fk_credit_report_field_credit_report_id;
 drop index ix_credit_report_field_credit_report_id on credit_report_field;
 
+alter table kbaquestions drop foreign key fk_kbaquestions_user_id;
+
 alter table transaction drop foreign key fk_transaction_user_id;
 drop index ix_transaction_user_id on transaction;
 
@@ -141,6 +153,8 @@ drop table if exists credit_card;
 drop table if exists credit_report;
 
 drop table if exists credit_report_field;
+
+drop table if exists kbaquestions;
 
 drop table if exists payment_gateway;
 

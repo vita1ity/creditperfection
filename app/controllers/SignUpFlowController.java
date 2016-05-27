@@ -14,6 +14,7 @@ import forms.CreditCardForm;
 import forms.RegisterForm;
 import models.AuthNetAccount;
 import models.CreditCard;
+import models.KBAQuestions;
 import models.Product;
 import models.SecurityRole;
 import models.Transaction;
@@ -22,6 +23,7 @@ import models.enums.CardType;
 import models.enums.Month;
 import models.enums.State;
 import models.enums.Year;
+import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
@@ -128,7 +130,11 @@ public class SignUpFlowController extends Controller {
     public Result chooseProduct() {
     	DynamicForm form = formFactory.form().bindFromRequest();
     	String product = form.get("product");
+    	
     	session("productId", product);
+    	
+    	Logger.info("Product added to session: " + product);
+    	
     	return ok("success");
         
     }
@@ -160,6 +166,8 @@ public class SignUpFlowController extends Controller {
 	    	long productId = Long.parseLong(session().get("productId"));
 	    	Product product = Product.getById(productId);
 	    	
+	    	Logger.info("Product to be purchased: " + product);
+	    	
 	    	//final String loginId = conf.getString("authorise.net.sandbox.login.id");
 	    	//final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
 	    	String loginId = null;
@@ -189,12 +197,18 @@ public class SignUpFlowController extends Controller {
 	    		Transaction transaction = new Transaction(user, creditCard, product);
 	    		transaction.save();
 	    		
-	    		JSONResponse reportResponse = creditReportService.getCreditReport(user);
-	    		if (reportResponse instanceof ErrorResponse) {
-	    			return badRequest(Json.toJson(reportResponse));
+	    		JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
+	    		if (kbaUrlResponse instanceof ErrorResponse) {
+	    			return badRequest(Json.toJson(kbaUrlResponse));
 	    		}
 	    		else {
-	    			return ok(Json.toJson(reportResponse));
+	    			
+	    			CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
+	    			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
+	    			user.kbaQuestions = kbaQuestions;
+	    			user.update();
+	    			
+	    			return ok(Json.toJson(kbaUrlResponse));
 	    		}
 	    		
 	    	}

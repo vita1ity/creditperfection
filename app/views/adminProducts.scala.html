@@ -6,134 +6,138 @@
 	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
 </head>
 <body>
-
-	@header.render(false)
-	<div class="container">
+	<div class="wrapper">
+		@header.render(false)
+		<div class="container">
+			
+			<div class="row" id="alert-box">
+			</div>
+			
+			<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-product" >Add Product</span>
+			
+				<div class="panel-group" id="accordion">
+				
+					<!-- DEFAULT TEMPLATE -->
+					<div class="panel panel-default hidden">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+					        	<span class="index">0</span>. DEFAULT</a>
+					      </h4>
+					    </div>
+					    <div id="collapse" class="panel-collapse collapse">
+					      <div class="panel-body">
+					      
+					      	<form class="form-horizontal edit-form validate-product" role="form">
+							    <h3 class="text-center title">Product Info:</h3>
+							    <div class="row form-group">
+							    	<div class="col-sm-12 ">
+							    		<h4>Id: <span class="productID">0</span></h4>
+							    	</div>
+							    </div>
+							    
+							    @productFields.render(new Product())
+							        
+							    <hr class="separator">
+							    <div class="row form-group">  
+								    <div class="col-sm-12 text-center">
+								    	<button class="btn btn-warning left-button" id="editProduct" 
+								    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
+								    	<span class="btn btn-danger" data-toggle="modal" 
+								    		data-target="#deleteProduct" >Delete Product</span>
+									</div>
+								</div>
+							</form>
+					      
+					      </div>
+					    </div>
+					</div>
+				
+				@for((p, index) <- allProducts.zipWithIndex) {
+				
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
+					        	<span class="index">@(index + 1)</span>. @p.name</a>
+					      </h4>
+					    </div>
+					    <div id="collapse@index" class="panel-collapse collapse">
+					      <div class="panel-body">
+					      
+					      	<form class="form-horizontal edit-form validate-product" role="form">
+							    <h3 class="text-center title">Product Info:</h3>
+							    <div class="row form-group">
+							    	<div class="col-sm-12 ">
+							    		<h4>Id: <span class="productID">@p.id</span></h4>
+							    	</div>
+							    </div>
+							    
+							    @productFields.render(p)
+							        
+							    <hr class="separator">
+							    <div class="row form-group">  
+								    <div class="col-sm-12 text-center">
+								    	<button class="btn btn-warning left-button" id="editProduct" 
+								    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
+								    	<span class="btn btn-danger" data-toggle="modal" 
+								    		data-target="#deleteProduct" >Delete Product</span>
+									</div>
+								</div>
+							</form>
+					      
+					      </div>
+					    </div>
+					</div>
+				
+				}
+			</div>    
 		
-		<div class="row" id="alert-box">
 		</div>
 		
-		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-product" >Add Product</span>
+		<div class="modal fade" id="add-product" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content validate-product">
+		            <div class="modal-header">
+		                <h4 class="title">Add New Product</h4>
+		            </div>
+		            <div class="modal-body">
+		                 
+					   @productFields.render(new Product())
+						    
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <button id="confirmAddProduct" class="btn btn-warning btn-ok" 
+		                	data-url="@routes.AdminController.addProduct()" >Add Product</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
 		
-			<div class="panel-group" id="accordion">
-			
-				<!-- DEFAULT TEMPLATE -->
-				<div class="panel panel-default hidden">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
-				        	<span class="index">0</span>. DEFAULT</a>
-				      </h4>
-				    </div>
-				    <div id="collapse" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      
-				      	<form class="form-horizontal edit-form validate-product" role="form">
-						    <h3 class="text-center title">Product Info:</h3>
-						    <div class="row form-group">
-						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="productID">0</span></h4>
-						    	</div>
-						    </div>
-						    
-						    @productFields.render(new Product())
-						        
-						    <hr class="separator">
-						    <div class="row form-group">  
-							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editProduct" 
-							    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
-							    	<span class="btn btn-danger" data-toggle="modal" 
-							    		data-target="#deleteProduct" >Delete Product</span>
-								</div>
-							</div>
-						</form>
-				      
-				      </div>
-				    </div>
-				</div>
-			
-			@for((p, index) <- allProducts.zipWithIndex) {
-			
-				<div class="panel panel-default">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
-				        	<span class="index">@(index + 1)</span>. @p.name</a>
-				      </h4>
-				    </div>
-				    <div id="collapse@index" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      
-				      	<form class="form-horizontal edit-form validate-product" role="form">
-						    <h3 class="text-center title">Product Info:</h3>
-						    <div class="row form-group">
-						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="productID">@p.id</span></h4>
-						    	</div>
-						    </div>
-						    
-						    @productFields.render(p)
-						        
-						    <hr class="separator">
-						    <div class="row form-group">  
-							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editProduct" 
-							    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
-							    	<span class="btn btn-danger" data-toggle="modal" 
-							    		data-target="#deleteProduct" >Delete Product</span>
-								</div>
-							</div>
-						</form>
-				      
-				      </div>
-				    </div>
-				</div>
-			
-			}
-		</div>    
+		<div class="modal fade" id="deleteProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <strong>Confirm Delete</strong>
+		            </div>
+		            <div class="modal-body">
+		                <p>You are about to delete the product, this procedure is irreversible.</p>
 	
-	</div>
+						<p>Do you want to proceed?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <a id="confirmDeleteProduct" class="btn btn-danger btn-ok" 
+		                	data-url="@routes.AdminController.deleteProduct()" >Delete</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
 	
-	<div class="modal fade" id="add-product" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content validate-product">
-	            <div class="modal-header">
-	                <h4 class="title">Add New Product</h4>
-	            </div>
-	            <div class="modal-body">
-	                 
-				   @productFields.render(new Product())
-					    
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <button id="confirmAddProduct" class="btn btn-warning btn-ok" 
-	                	data-url="@routes.AdminController.addProduct()" >Add Product</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-	<div class="modal fade" id="deleteProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <strong>Confirm Delete</strong>
-	            </div>
-	            <div class="modal-body">
-	                <p>You are about to delete the product, this procedure is irreversible.</p>
+		<div class="push"></div>
 
-					<p>Do you want to proceed?</p>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <a id="confirmDeleteProduct" class="btn btn-danger btn-ok" 
-	                	data-url="@routes.AdminController.deleteProduct()" >Delete</a>
-	            </div>
-	        </div>
-	    </div>
 	</div>
-
+	@footer.render()
 </body>
 </html>

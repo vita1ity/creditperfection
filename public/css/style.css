@@ -1,9 +1,41 @@
+
+html, body {
+    height: 100%;
+}
 .container-full {
-  margin: 0 auto;
-  width: 100%;
+	margin: 0 auto;
+  	width: 100%;
 }
 .header {
 	
+}
+
+.navbar-fixed-bottom {
+  	display: inline-block;
+  	float: none;
+  	vertical-align: top;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -100px;
+}
+.footer, .push {
+	margin-top: 50px;
+    height: 50px;
+}
+.footer-text {
+	text-align: center;
+	padding-top: 1%;
+}
+
+.footer-link {
+	color: #264d73
+}
+.without-margin {
+	margin: 0;
 }
 .hidden {
 	display: none;

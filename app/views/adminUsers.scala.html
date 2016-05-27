@@ -6,289 +6,296 @@
 	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
 </head>
 <body>
-	@header.render(false)
-	<div class="container">
-		
-		<div class="row" id="alert-box">
+
+	<div class="wrapper">
+		@header.render(false)
+		<div class="container">
+			
+			<div class="row" id="alert-box">
+			</div>
+			
+			<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-user" >Add User</span>
+			
+				<div class="panel-group" id="accordion">
+				
+				@for((u, index) <- allUsers.zipWithIndex) {
+				
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
+					        <span class="index"> @(index + 1)</span>. @u.firstName @u.lastName</a>
+					      </h4>
+					    </div>
+					    <div id="collapse@index" class="panel-collapse collapse">
+					      <div class="panel-body">
+					      
+					      	<form class="form-horizontal edit-form" role="form">
+					      	
+							    <h3 class="text-center title">User Info:</h3>
+							    <div class="row form-group">
+							    	<div class="col-sm-12 ">
+							    		<h4>Id: <span class="userID">@u.id</span></h4>
+							    	</div>
+							    </div>
+							    
+							    
+							    <div class="row form-group">
+							    
+							    	<div class="col-sm-2 ">
+							    		<label class="control-label" for="firstName">First Name:</label>
+							    	</div>
+							    	
+							    	<div class="col-sm-4">
+								    	<input class="form-input form-control first-name" type="text" name="firstName" placeholder="First Name" value="@u.firstName">
+								    	<span class="error" id="firstname-error"></span>
+								    </div>
+								    
+								    <div class="col-sm-2 ">
+								    	<label class="control-label" for="lastName">Last Name:</label>
+								    </div>
+								    
+								    <div class="col-sm-4">
+								    	<input class="form-input form-control last-name" type="text" name="lastName" placeholder="Last Name" value="@u.lastName">
+								    	<span class="error" id="lastname-error"></span>
+								    </div>
+								    
+							    </div>
+							    <div class="row form-group">
+							    
+							    	<div class="col-sm-2">
+							    		<label class="control-label" for="email">Email:</label>
+							    	</div>
+							    
+							    	<div class="col-sm-4">
+								    	<input class="form-input form-control email" type="email" name="email" placeholder="Email" value="@u.email">
+								    	<span class="error" id="email-error"></span>
+								    </div>
+								    
+								    <div class="col-sm-2">
+								    	<label class="control-label" for="address">Address:</label>
+								    </div>
+								    
+								    <div class="col-sm-4">
+								    	<input class="form-input form-control address" type="text" name="address" placeholder="Address" value="@u.address">
+								    	<span class="error" id="address-error"></span>
+								    </div>
+							    	
+								 </div>
+								    
+							    <div class="row form-group">   
+							     
+								    
+								    <div class="col-sm-2">
+								    	<label class="control-label" for="city">City:</label>
+								    </div>
+								    
+								    <div class="col-sm-4">
+								    	<input class="form-input form-control city" type="text" name="city" placeholder="City" value="@u.city">
+								    	<span class="error" id="city-error"></span>
+								    </div>
+								    
+								    <div class="col-sm-2">
+								    	<label class="control-label" for="state">State:</label>
+								    </div>
+							    
+								    <div class="col-sm-4">
+									    <select name="state" class="form-input form-control state" >
+									    	
+									        @for(state <- states) {
+									        	@if(u.state == state.getCode){
+									        		<option value="@state.getCode" selected>@state.getName</option>
+									        	}else{
+									        		<option value="@state.getCode">@state.getName</option>
+									        	}
+												
+											}	
+									    </select>
+									    <span class="error" id="state-error"></span>
+									</div>
+									
+								    
+							    </div>
+							    
+							    <div class="row form-group">  
+							    
+							    	
+									<div class="col-sm-2">
+										<label class="control-label" for="zip">Zip:</label>
+									</div>
+									
+								    <div class="col-sm-4">
+									    <input class="form-input form-control zip" type="text" name="zip" placeholder="Zip Code" value="@u.zip">
+									    <span class="error" id="zip-error"></span>
+								    </div>
+								    
+								    <div class="col-sm-2">
+										<label class="control-label" for="zip">Is Active:</label>
+									</div>
+									
+								    <div class="col-sm-4">
+								    	@if(u.active==true){
+								    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active" checked>	
+								    	}else{
+								    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active">
+								    	}
+								    	
+								    </div>
+							    	<input type="hidden" name="password" value="@u.password">
+							    </div>
+							    <hr class="separator">
+							    <div class="row form-group">  
+								    <div class="col-sm-12 text-center">
+								    	<button class="btn btn-warning left-button" id="editUser" 
+								    		data-url="@routes.AdminController.editUser()" type="submit">Edit Account</button>
+								    	<span class="btn btn-danger" data-toggle="modal" data-target="#deleteUser"
+								    		 >Delete Account</span>
+									</div>
+								</div>
+							</form>
+					      
+					      </div>
+					    </div>
+					</div>
+				
+					
+				
+				}
+			</div>    
 		</div>
 		
-		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-user" >Add User</span>
 		
-			<div class="panel-group" id="accordion">
-			
-			@for((u, index) <- allUsers.zipWithIndex) {
-			
-				<div class="panel panel-default">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
-				        <span class="index"> @(index + 1)</span>. @u.firstName @u.lastName</a>
-				      </h4>
-				    </div>
-				    <div id="collapse@index" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      
-				      	<form class="form-horizontal edit-form" role="form">
-				      	
-						    <h3 class="text-center title">User Info:</h3>
-						    <div class="row form-group">
-						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="userID">@u.id</span></h4>
-						    	</div>
+		<div class="modal fade" id="add-user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h4 class="title">Add New User</h4>
+		            </div>
+		            <div class="modal-body">
+		                    
+					    <div class="row form-group">
+					    
+					    	<div class="col-sm-2 ">
+					    		<label class="control-label" for="firstName">First Name:</label>
+					    	</div>
+					    	
+					    	<div class="col-sm-4">
+						    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" >
+						    	<span class="error" id="firstname-error"></span>
 						    </div>
 						    
-						    
-						    <div class="row form-group">
-						    
-						    	<div class="col-sm-2 ">
-						    		<label class="control-label" for="firstName">First Name:</label>
-						    	</div>
-						    	
-						    	<div class="col-sm-4">
-							    	<input class="form-input form-control first-name" type="text" name="firstName" placeholder="First Name" value="@u.firstName">
-							    	<span class="error" id="firstname-error"></span>
-							    </div>
-							    
-							    <div class="col-sm-2 ">
-							    	<label class="control-label" for="lastName">Last Name:</label>
-							    </div>
-							    
-							    <div class="col-sm-4">
-							    	<input class="form-input form-control last-name" type="text" name="lastName" placeholder="Last Name" value="@u.lastName">
-							    	<span class="error" id="lastname-error"></span>
-							    </div>
-							    
-						    </div>
-						    <div class="row form-group">
-						    
-						    	<div class="col-sm-2">
-						    		<label class="control-label" for="email">Email:</label>
-						    	</div>
-						    
-						    	<div class="col-sm-4">
-							    	<input class="form-input form-control email" type="email" name="email" placeholder="Email" value="@u.email">
-							    	<span class="error" id="email-error"></span>
-							    </div>
-							    
-							    <div class="col-sm-2">
-							    	<label class="control-label" for="address">Address:</label>
-							    </div>
-							    
-							    <div class="col-sm-4">
-							    	<input class="form-input form-control address" type="text" name="address" placeholder="Address" value="@u.address">
-							    	<span class="error" id="address-error"></span>
-							    </div>
-						    	
-							 </div>
-							    
-						    <div class="row form-group">   
-						     
-							    
-							    <div class="col-sm-2">
-							    	<label class="control-label" for="city">City:</label>
-							    </div>
-							    
-							    <div class="col-sm-4">
-							    	<input class="form-input form-control city" type="text" name="city" placeholder="City" value="@u.city">
-							    	<span class="error" id="city-error"></span>
-							    </div>
-							    
-							    <div class="col-sm-2">
-							    	<label class="control-label" for="state">State:</label>
-							    </div>
-						    
-							    <div class="col-sm-4">
-								    <select name="state" class="form-input form-control state" >
-								    	
-								        @for(state <- states) {
-								        	@if(u.state == state.getCode){
-								        		<option value="@state.getCode" selected>@state.getName</option>
-								        	}else{
-								        		<option value="@state.getCode">@state.getName</option>
-								        	}
-											
-										}	
-								    </select>
-								    <span class="error" id="state-error"></span>
-								</div>
-								
-							    
+						    <div class="col-sm-2 ">
+						    	<label class="control-label" for="lastName">Last Name:</label>
 						    </div>
 						    
-						    <div class="row form-group">  
-						    
-						    	
-								<div class="col-sm-2">
-									<label class="control-label" for="zip">Zip:</label>
-								</div>
-								
-							    <div class="col-sm-4">
-								    <input class="form-input form-control zip" type="text" name="zip" placeholder="Zip Code" value="@u.zip">
-								    <span class="error" id="zip-error"></span>
-							    </div>
-							    
-							    <div class="col-sm-2">
-									<label class="control-label" for="zip">Is Active:</label>
-								</div>
-								
-							    <div class="col-sm-4">
-							    	@if(u.active==true){
-							    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active" checked>	
-							    	}else{
-							    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active">
-							    	}
-							    	
-							    </div>
-						    	<input type="hidden" name="password" value="@u.password">
+						    <div class="col-sm-4">
+						    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" >
+						    	<span class="error" id="lastname-error"></span>
 						    </div>
-						    <hr class="separator">
-						    <div class="row form-group">  
-							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editUser" 
-							    		data-url="@routes.AdminController.editUser()" type="submit">Edit Account</button>
-							    	<span class="btn btn-danger" data-toggle="modal" data-target="#deleteUser"
-							    		 >Delete Account</span>
-								</div>
+						    
+					    </div>
+					    <div class="row form-group">
+					    
+					    	<div class="col-sm-2">
+					    		<label class="control-label" for="email">Email:</label>
+					    	</div>
+					    
+					    	<div class="col-sm-4">
+						    	<input class="form-input form-control" type="email" name="email" placeholder="Email" >
+						    	<span class="error" id="email-error"></span>
+						    </div>
+						    
+						    <div class="col-sm-2">
+						    	<label class="control-label" for="email">Password:</label>
+						    </div>
+						    
+						    <div class="col-sm-4">
+					    		<input class="form-input form-control" type="password" name="password" placeholder="Password">
+					    		<span class="error" id="password-error"></span>
+					    	</div>
+					    	
+						 </div>
+						    
+					    <div class="row form-group">   
+					     
+						    <div class="col-sm-2">
+						    	<label class="control-label" for="address">Address:</label>
+						    </div>
+						    
+						    <div class="col-sm-4">
+						    	<input class="form-input form-control" type="text" name="address" placeholder="Address" >
+						    	<span class="error" id="address-error"></span>
+						    </div>
+						    
+						    <div class="col-sm-2">
+						    	<label class="control-label" for="city">City:</label>
+						    </div>
+						    
+						    <div class="col-sm-4">
+						    	<input class="form-input form-control" type="text" name="city" placeholder="City" >
+						    	<span class="error" id="city-error"></span>
+						    </div>
+					    </div>
+					    
+					    <div class="row form-group">  
+					    
+					    	<div class="col-sm-2">
+						    	<label class="control-label" for="state">State:</label>
+						    </div>
+					    
+						    <div class="col-sm-4">
+							    <select name="state" class="form-input form-control" >
+							    	<option value=""></option>
+							        @for(state <- states) {
+										<option value="@state.getCode">@state.getName</option>
+									}
+							    </select>
+							    <span class="error" id="state-error"></span>
 							</div>
-						</form>
-				      
-				      </div>
-				    </div>
-				</div>
-			
-				
-			
-			}
-		</div>    
+							
+							<div class="col-sm-2">
+								<label class="control-label" for="zip">Zip:</label>
+							</div>
+							
+						    <div class="col-sm-4">
+							    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" >
+							    <span class="error" id="zip-error"></span>
+						    </div>
+					    
+					    </div>
+						    
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <button id="confirmAdd" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addUser()" >Add User</button>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <strong>Confirm Delete</strong>
+		            </div>
+		            <div class="modal-body">
+		                <p>You are about to delete the user, this procedure is irreversible.</p>
+	
+						<p>Do you want to proceed?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <a id="confirmDeleteUser" class="btn btn-danger btn-ok" data-url="@routes.AdminController.deleteUser()" >Delete</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<div class="push"></div>
+		
 	</div>
 	
-	
-	<div class="modal fade" id="add-user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h4 class="title">Add New User</h4>
-	            </div>
-	            <div class="modal-body">
-	                    
-				    <div class="row form-group">
-				    
-				    	<div class="col-sm-2 ">
-				    		<label class="control-label" for="firstName">First Name:</label>
-				    	</div>
-				    	
-				    	<div class="col-sm-4">
-					    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" >
-					    	<span class="error" id="firstname-error"></span>
-					    </div>
-					    
-					    <div class="col-sm-2 ">
-					    	<label class="control-label" for="lastName">Last Name:</label>
-					    </div>
-					    
-					    <div class="col-sm-4">
-					    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" >
-					    	<span class="error" id="lastname-error"></span>
-					    </div>
-					    
-				    </div>
-				    <div class="row form-group">
-				    
-				    	<div class="col-sm-2">
-				    		<label class="control-label" for="email">Email:</label>
-				    	</div>
-				    
-				    	<div class="col-sm-4">
-					    	<input class="form-input form-control" type="email" name="email" placeholder="Email" >
-					    	<span class="error" id="email-error"></span>
-					    </div>
-					    
-					    <div class="col-sm-2">
-					    	<label class="control-label" for="email">Password:</label>
-					    </div>
-					    
-					    <div class="col-sm-4">
-				    		<input class="form-input form-control" type="password" name="password" placeholder="Password">
-				    		<span class="error" id="password-error"></span>
-				    	</div>
-				    	
-					 </div>
-					    
-				    <div class="row form-group">   
-				     
-					    <div class="col-sm-2">
-					    	<label class="control-label" for="address">Address:</label>
-					    </div>
-					    
-					    <div class="col-sm-4">
-					    	<input class="form-input form-control" type="text" name="address" placeholder="Address" >
-					    	<span class="error" id="address-error"></span>
-					    </div>
-					    
-					    <div class="col-sm-2">
-					    	<label class="control-label" for="city">City:</label>
-					    </div>
-					    
-					    <div class="col-sm-4">
-					    	<input class="form-input form-control" type="text" name="city" placeholder="City" >
-					    	<span class="error" id="city-error"></span>
-					    </div>
-				    </div>
-				    
-				    <div class="row form-group">  
-				    
-				    	<div class="col-sm-2">
-					    	<label class="control-label" for="state">State:</label>
-					    </div>
-				    
-					    <div class="col-sm-4">
-						    <select name="state" class="form-input form-control" >
-						    	<option value=""></option>
-						        @for(state <- states) {
-									<option value="@state.getCode">@state.getName</option>
-								}
-						    </select>
-						    <span class="error" id="state-error"></span>
-						</div>
-						
-						<div class="col-sm-2">
-							<label class="control-label" for="zip">Zip:</label>
-						</div>
-						
-					    <div class="col-sm-4">
-						    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" >
-						    <span class="error" id="zip-error"></span>
-					    </div>
-				    
-				    </div>
-					    
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <button id="confirmAdd" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addUser()" >Add User</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-	<div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <strong>Confirm Delete</strong>
-	            </div>
-	            <div class="modal-body">
-	                <p>You are about to delete the user, this procedure is irreversible.</p>
-
-					<p>Do you want to proceed?</p>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <a id="confirmDeleteUser" class="btn btn-danger btn-ok" data-url="@routes.AdminController.deleteUser()" >Delete</a>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
+	@footer.render()
 </body>
 </html>

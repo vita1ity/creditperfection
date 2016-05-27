@@ -18,7 +18,9 @@ public class CreditReportController extends Controller {
 		
 		DynamicForm form = formFactory.form().bindFromRequest();
 		
-		return ok(views.html.report.render(form.get("url")));
+		String url = form.get("url");
+		
+		return ok(views.html.report.render(url));
 	}
 
 	

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,16 +44,19 @@ public class User extends Model implements Subject {
     public String token;
     public boolean active;
     
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role")
     public List<SecurityRole> roles;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<CreditCard> creditCards;
     
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Transaction> transactions;
+    
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    public KBAQuestions kbaQuestions;
     
     public static Finder<Long, User> find = new Finder<Long, User>(User.class);
     

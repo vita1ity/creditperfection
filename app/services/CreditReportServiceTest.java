@@ -40,18 +40,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import models.json.ErrorResponse;
+import models.json.JSONResponse;
 import play.Configuration;
 
 @Singleton
 public class CreditReportServiceTest {
 
-	@Inject
-	private Configuration conf;
+	//@Inject
+	//private Configuration conf;
 	
 	public static void main(String args[]) {
 		
         CreditReportServiceTest reportService = new CreditReportServiceTest();
-        reportService.getCreditReport();
+        
+        //reportService.authenticate("vitalii.oleksiv@gmail.com");
+        reportService.getReport("");
+        //reportService.getCreditReport();
         //sendRequestManually();
     }
 	
@@ -494,5 +499,194 @@ public class CreditReportServiceTest {
     	    }
     }
     
+  //AUTHENTICATE
+	
+  	public JSONResponse authenticate(String username) {
+  		
+  		try {
+              // Create SOAP Connection
+              SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+              SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+
+              // Send SOAP Message to SOAP Server
+              String url = "https://xml.idcreditservices.com/SIDUpdateServices/MemberUpdate.asmx";
+              //String url = conf.getString("idcs.authenticate.url");
+              
+              SOAPMessage soapResponse = soapConnection.call(createAuthenticationRequest(username), url);
+              
+              JSONResponse response = parseAuthenticationResponse(soapResponse);
+              
+              //TODO log it or delete - Print the SOAP Response
+              printSOAPResponse(soapResponse);
+
+              soapConnection.close();
+              
+              return response;
+              
+          } catch (Exception e) {
+              System.err.println("Error occurred while sending SOAP Request to Server");
+              e.printStackTrace();
+              
+              JSONResponse response = new ErrorResponse("ERROR", "104", "Error occurred while sending SOAP Request to Server");
+              return response;
+              
+          }
+  		
+  	}
+
+
+  	private SOAPMessage createAuthenticationRequest(String usernameStr) throws SOAPException, IOException {
+  		MessageFactory messageFactory = MessageFactory.newInstance();
+          SOAPMessage soapMessage = messageFactory.createMessage();
+        
+          SOAPPart soapPart = soapMessage.getSOAPPart();
+          
+          String serverURI = "http://tempuri.org/";
+          //String serverURI = conf.getString("credit.report.server.uri");
+
+          // SOAP Envelope
+          SOAPEnvelope envelope = soapPart.getEnvelope();
+          envelope.setPrefix("soap12");
+          envelope.removeNamespaceDeclaration("SOAP-ENV");
+          envelope.addNamespaceDeclaration("soap12", "http://www.w3.org/2003/05/soap-envelope");
+          envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+          envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
+          
+          //SOAP header
+          SOAPHeader header = envelope.getHeader();
+          header.detachNode();
+          
+          // SOAP Body
+          SOAPBody soapBody = envelope.getBody();
+          soapBody.setPrefix("soap12");
+          
+          SOAPElement authenticate = soapBody.addChildElement("Authenticate", "", serverURI );
+          //idsEnrollmentString.addNamespaceDeclaration("", serverURI);
+         
+          //String partnerPass = conf.getString("credit.report.partner.password");
+          String partnerPass = "kYmfR5@23";
+          
+          SOAPElement username = authenticate.addChildElement("username");
+          username.addTextNode(usernameStr);
+          SOAPElement password = authenticate.addChildElement("password");
+          password.addTextNode(partnerPass);
+          
+          
+          MimeHeaders headers = soapMessage.getMimeHeaders();
+          headers.addHeader("SOAPAction", serverURI + "Authenticate");
+
+          soapMessage.saveChanges();
+
+          soapMessage.writeTo(System.out);
+          System.out.println();
+
+          return soapMessage;
+  	}
+  	
+
+  	private JSONResponse parseAuthenticationResponse(SOAPMessage soapResponse) {
+  		// TODO Auto-generated method stub
+  		return null;
+  	}
+    
+  	//GET REPORT
+	
+  	public JSONResponse getReport(String memberId) {
+  		
+  		try {
+              // Create SOAP Connection
+              SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+              SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+
+              // Send SOAP Message to SOAP Server
+              String url = "https://xml.idcreditservices.com/IDSWebServicesNG/IDSDataMonitoringReport.asmx";
+              //String url = conf.getString("idcs.authenticate.url");
+              
+              SOAPMessage soapResponse = soapConnection.call(createGetReportRequest(memberId), url);
+              
+              JSONResponse response = parseGetReportResponse(soapResponse);
+              
+              //TODO log it or delete - Print the SOAP Response
+              printSOAPResponse(soapResponse);
+
+              soapConnection.close();
+              
+              return response;
+              
+          } catch (Exception e) {
+              System.err.println("Error occurred while sending SOAP Request to Server");
+              e.printStackTrace();
+              
+              JSONResponse response = new ErrorResponse("ERROR", "104", "Error occurred while sending SOAP Request to Server");
+              return response;
+              
+          }
+  		
+  	}
+
+
+  	private SOAPMessage createGetReportRequest(String memberId) throws SOAPException, IOException {
+  		
+  		MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage soapMessage = messageFactory.createMessage();
+      
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        
+        String serverURI = "http://tempuri.org/";
+
+        // SOAP Envelope
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.setPrefix("soap12");
+        envelope.removeNamespaceDeclaration("SOAP-ENV");
+        envelope.addNamespaceDeclaration("soap12", "http://www.w3.org/2003/05/soap-envelope");
+        envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
+        
+        //SOAP header
+        SOAPHeader header = envelope.getHeader();
+        header.detachNode();
+        
+        // SOAP Body
+        SOAPBody soapBody = envelope.getBody();
+        soapBody.setPrefix("soap12");
+        
+        SOAPElement getIDSDataMonitoringReportString = soapBody.addChildElement("GetIDSDataMonitoringReportString", "", serverURI);
+        //idsEnrollmentString.addNamespaceDeclaration("", serverURI);
+        
+        SOAPElement strRequest = getIDSDataMonitoringReportString.addChildElement("strRequest");
+        strRequest.addTextNode("<?xml version=\"1.0\" encoding=\"utf-16\"?>" +
+        		" <Request xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">&#xD;" +
+        		  "<Product>&#xD;" +
+        		    "<ProductUser>&#xD;" +
+        		      "<MemberId>vitalii.oleksiv@gmail.com.test.2</MemberId>&#xD;" +
+        		    "</ProductUser>&#xD;" +
+        		  "</Product>&#xD;" +
+        		  "<PartnerType>ALL</PartnerType>&#xD;" +  
+        		  "<Partner>&#xD;" +
+        		    "<partnerAccount>CRDPRF</partnerAccount>&#xD;" +
+        		    "<partnerCode>CRDPRF</partnerCode>&#xD;" +
+        		    "<partnerPassword>kYmfR5@23</partnerPassword>&#xD;" +
+        		  "</Partner>&#xD;" +
+        		"</Request>");
+        
+        
+        MimeHeaders headers = soapMessage.getMimeHeaders();
+        headers.addHeader("SOAPAction", serverURI + "GetIDSDataMonitoringReportString");
+
+        soapMessage.saveChanges();
+
+        soapMessage.writeTo(System.out);
+        System.out.println();
+
+        return soapMessage;
+  		
+  	}
+  	
+
+  	private JSONResponse parseGetReportResponse(SOAPMessage soapResponse) {
+  		// TODO Auto-generated method stub
+  		
+  		return null;
+  	}
     
 }

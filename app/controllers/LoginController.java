@@ -7,7 +7,9 @@ import com.avaje.ebean.Ebean;
 
 import models.SecurityRole;
 import models.User;
+import models.json.AuthenticationSuccessResponse;
 import models.json.ErrorResponse;
+import models.json.JSONResponse;
 import models.json.MessageResponse;
 import models.json.SuccessLoginResponse;
 import play.data.DynamicForm;
@@ -15,6 +17,7 @@ import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.CreditReportService;
 import services.MailService;
 
 @Singleton
@@ -25,6 +28,9 @@ public class LoginController extends Controller {
 	
 	@Inject
     private MailService mailService;
+	
+	@Inject
+	private CreditReportService creditReportService;
     
     public Result login(){
         DynamicForm form = formFactory.form().bindFromRequest();
@@ -42,6 +48,13 @@ public class LoginController extends Controller {
                 return badRequest(Json.toJson(new ErrorResponse("ERROR", "302", "Account not verified - e-mail verification sent")));
             }
             else {
+            	
+            	//authenticate to idcs
+            	/*JSONResponse response = creditReportService.authenticate(email);
+            	if (response instanceof ErrorResponse) {
+            		return badRequest(Json.toJson(response));
+            	}*/
+            	
                 session("email", email);
                 session("name", user.firstName);
                 
@@ -52,6 +65,11 @@ public class LoginController extends Controller {
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin")));
                 }
                 else {
+                	//store memberId in session
+                	/*AuthenticationSuccessResponse authResponse = (AuthenticationSuccessResponse)response;
+                	String memberId = authResponse.getMemberId();
+                	session("memberId", memberId);*/
+                	
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user")));
                 }
             }

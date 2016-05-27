@@ -6,19 +6,23 @@ states: Array[models.enums.State], months: Array[models.enums.Month], years: Arr
     @head.render
 </head>
 <body>
-	@header.render(login)
-	<div class="container">
-	    @if(flash.get("message")!=null){
-	    	<div class="alert alert-success">
-	    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-	    		<span id="alert-message">@flash.get("message")</span>
-	    	</div>
-	    }
-	        
-	    @register.render(userForm, states)
-	    @chooseProduct.render(productList)
-	    @paymentDetails(allTypes, months, years)
-	    
+	<div class="wrapper">
+		@header.render(login)
+		<div class="container">
+		    @if(flash.get("message")!=null){
+		    	<div class="alert alert-success">
+		    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		    		<span id="alert-message">@flash.get("message")</span>
+		    	</div>
+		    }
+		        
+		    @register.render(userForm, states)
+		    @chooseProduct.render(productList)
+		    @paymentDetails(allTypes, months, years)
+		    
+	    </div>
+	    <div class="push"></div>
     </div>
+    @footer.render()
 </body>
 </html>

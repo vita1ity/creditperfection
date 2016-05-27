@@ -7,135 +7,141 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
 </head>
 	<body>
-	<div class="modal fade" id="add-credit-card" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content card-validation">
-	            <div class="modal-header">
-	                <h4 class="title">Add Credit Card</h4>
-	            </div>
-	            <div class="modal-body">
-	                 
-				   @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
-					<!-- add credit card to user-->    
 	
-					
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <button id="confirmAddCreditCard" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
+	<div class="wrapper">
 	
-	@header.render(false)
-	<div class="container">
+		<div class="modal fade" id="add-credit-card" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content card-validation">
+		            <div class="modal-header">
+		                <h4 class="title">Add Credit Card</h4>
+		            </div>
+		            <div class="modal-body">
+		                 
+					   @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
+						<!-- add credit card to user-->    
 		
-		<div class="row" id="alert-box">
+						
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <button id="confirmAddCreditCard" class="btn btn-warning btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
+		            </div>
+		        </div>
+		    </div>
 		</div>
 		
-		<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-credit-card" >Add Credit Card</span>
+		@header.render(false)
+		<div class="container">
+			
+			<div class="row" id="alert-box">
+			</div>
+			
+			<span class="btn btn-warning add-btn-center" data-toggle="modal" data-target="#add-credit-card" >Add Credit Card</span>
+			
+				<div class="panel-group" id="accordion">
+				
+					<!-- DEFAULT TEMPLATE -->
+					<div class="panel panel-default hidden">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
+					        <span class="index">0</span>. DEFAULT</a>
+					      </h4>
+					    </div>
+					    <div id="collapse" class="panel-collapse collapse">
+					      <div class="panel-body">
+					      
+					      	<form class="form-horizontal edit-form card-validation" role="form">
+							    <h3 class="text-center title">Credit Card Info:</h3>
+							    <div class="row form-group">
+							    	<div class="col-sm-12 ">
+							    		<h4>Id: <span class="cardID">0</span></h4>
+							    	</div>
+							    </div>
+							    
+							    @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
+							        
+							    <hr class="separator">
+							    <div class="row form-group">  
+								    <div class="col-sm-12 text-center">
+								    	<button class="btn btn-warning left-button" id="editCreditCard"
+								    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+								    	<span class="btn btn-danger" data-toggle="modal" 
+								    		data-target="#deleteCreditCard">Delete Credit Card</span>
+									</div>
+								</div>
+							</form>
+					      
+					      </div>
+					    </div>
+					</div>
+				
+				@for((c, index) <- allCards.zipWithIndex) {
+				
+					<div class="panel panel-default">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
+					        <span class="index">@(index + 1)</span>. @c.name - @c.digits</a>
+					      </h4>
+					    </div>
+					    <div id="collapse@index" class="panel-collapse collapse">
+					      <div class="panel-body">
+					      
+					      	<form class="form-horizontal edit-form card-validation" role="form">
+							    <h3 class="text-center title">Credit Card Info:</h3>
+							    <div class="row form-group">
+							    	<div class="col-sm-12 ">
+							    		<h4>Id: <span class="cardID">@c.id</span></h4>
+							    	</div>
+							    </div>
+							    
+							    @creditCardFields.render(c, allTypes, allUsers, months, years)
+							        
+							    <hr class="separator">
+							    <div class="row form-group">  
+								    <div class="col-sm-12 text-center">
+								    	<button class="btn btn-warning left-button" id="editCreditCard"
+								    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+								    	<span class="btn btn-danger" data-toggle="modal" 
+								    		data-target="#deleteCreditCard">Delete Credit Card</span>
+									</div>
+								</div>
+							</form>
+					      
+					      </div>
+					    </div>
+					</div>
+				
+				}
+			</div>    
 		
-			<div class="panel-group" id="accordion">
-			
-				<!-- DEFAULT TEMPLATE -->
-				<div class="panel panel-default hidden">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
-				        <span class="index">0</span>. DEFAULT</a>
-				      </h4>
-				    </div>
-				    <div id="collapse" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      
-				      	<form class="form-horizontal edit-form card-validation" role="form">
-						    <h3 class="text-center title">Credit Card Info:</h3>
-						    <div class="row form-group">
-						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="cardID">0</span></h4>
-						    	</div>
-						    </div>
-						    
-						    @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
-						        
-						    <hr class="separator">
-						    <div class="row form-group">  
-							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editCreditCard"
-							    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
-							    	<span class="btn btn-danger" data-toggle="modal" 
-							    		data-target="#deleteCreditCard">Delete Credit Card</span>
-								</div>
-							</div>
-						</form>
-				      
-				      </div>
-				    </div>
-				</div>
-			
-			@for((c, index) <- allCards.zipWithIndex) {
-			
-				<div class="panel panel-default">
-				    <div class="panel-heading">
-				      <h4 class="panel-title">
-				        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
-				        <span class="index">@(index + 1)</span>. @c.name - @c.digits</a>
-				      </h4>
-				    </div>
-				    <div id="collapse@index" class="panel-collapse collapse">
-				      <div class="panel-body">
-				      
-				      	<form class="form-horizontal edit-form card-validation" role="form">
-						    <h3 class="text-center title">Credit Card Info:</h3>
-						    <div class="row form-group">
-						    	<div class="col-sm-12 ">
-						    		<h4>Id: <span class="cardID">@c.id</span></h4>
-						    	</div>
-						    </div>
-						    
-						    @creditCardFields.render(c, allTypes, allUsers, months, years)
-						        
-						    <hr class="separator">
-						    <div class="row form-group">  
-							    <div class="col-sm-12 text-center">
-							    	<button class="btn btn-warning left-button" id="editCreditCard"
-							    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
-							    	<span class="btn btn-danger" data-toggle="modal" 
-							    		data-target="#deleteCreditCard">Delete Credit Card</span>
-								</div>
-							</div>
-						</form>
-				      
-				      </div>
-				    </div>
-				</div>
-			
-			}
-		</div>    
+		</div>
+		
+		<div class="modal fade" id="deleteCreditCard" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <strong>Confirm Delete</strong>
+		            </div>
+		            <div class="modal-body">
+		                <p>You are about to delete the credit card, this procedure is irreversible.</p>
 	
+						<p>Do you want to proceed?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <a id="confirmDeleteCreditCard" class="btn btn-danger btn-ok" 
+		                	data-url="@routes.AdminController.deleteCreditCard()" >Delete</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<div class="push"></div>
+		
 	</div>
-	
-	<div class="modal fade" id="deleteCreditCard" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <strong>Confirm Delete</strong>
-	            </div>
-	            <div class="modal-body">
-	                <p>You are about to delete the credit card, this procedure is irreversible.</p>
-
-					<p>Do you want to proceed?</p>
-	            </div>
-	            <div class="modal-footer">
-	                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	                <a id="confirmDeleteCreditCard" class="btn btn-danger btn-ok" 
-	                	data-url="@routes.AdminController.deleteCreditCard()" >Delete</a>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-
+	@footer.render()
 </body>
 </html>

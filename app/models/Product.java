@@ -27,7 +27,7 @@ public class Product extends Model {
     public double salePrice;
     
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     public List<Transaction> transactions;
     
     public static Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
