@@ -63,6 +63,8 @@ public class SignUpFlowController extends Controller {
 
     public Result index(Boolean login){
     	
+    	//session().clear();
+    	
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
     	State[] states = State.values();
@@ -108,10 +110,12 @@ public class SignUpFlowController extends Controller {
 	    	User userByEmail = User.findByEmail(user.email);
 			if (userByEmail != null) {
 				//user is already registered
-				if (user.kbaQuestions == null) {
+				if (userByEmail.kbaQuestions == null) {
 					//registration process is not completed
 					session("userEmail", user.email);
-					 return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
+					userByEmail.updateUserInfo(user);
+					userByEmail.update();
+					return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
 				}
 				else {
 					errors = new ArrayList<ValidationError>();
