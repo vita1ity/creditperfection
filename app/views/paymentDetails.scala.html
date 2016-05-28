@@ -1,87 +1,19 @@
-@(allTypes: Array[models.enums.CardType], months: Array[models.enums.Month], years: Array[models.enums.Year])
-<form class="payment-form horizontal-form register-flow-form hidden"
-	 role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()"
-	 data-report-page-url="@routes.CreditReportController.processUrl()">
+@(product: models.Product, allTypes: Array[models.enums.CardType], months: Array[models.enums.Month], years: Array[models.enums.Year])
+
+@if(product.id == 0){
+	<form class="payment-form horizontal-form register-flow-form hidden"
+	 	role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()"
+	 	data-report-page-url="@routes.CreditReportController.processUrl()">
+}else{
+	<form class="payment-form horizontal-form register-flow-form"
+	 	role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()"
+	 	data-report-page-url="@routes.CreditReportController.processUrl()">
+}
+	
 	<h3 class="text-center form-title">Payment Details</h3>
 
 	@creditCardFields.render(new CreditCard(), allTypes, null, months, years)
 	
-	<!-- <div class="row form-group">
-	
-		<div class="col-sm-2">
-			<label class="control-label" for="name">Card Holder Name:</label>
-		</div>
-	
-		<div class="col-sm-4">
-			<input class="form-input form-control" type="text" name="name" placeholder="Card Holder Name"/>
-			<span class="error" id="name-error"></span>
-		</div>
-		
-		<div class="col-sm-2">
-			<label class="control-label" for="cardType">Card Type:</label>
-		</div>
-		
-		<div class="col-sm-4">
-			<select class="form-input form-control" name="cardType">
-		    	<option value="" >Choose Card Type</option>
-		        @for(cardType <- allTypes) {
-		    		<option value="@cardType">@cardType.value</option>
-				}
-	   		 </select>
-	    	<span class="error" id="cardtype-error"></span>
-	    </div>
-	    
-    </div>
-    
-    <div class="row form-group">
-    	
-    	<div class="col-sm-2">
-			<label class="control-label" for="digits">Card Number:</label>
-		</div>
-    	
-	    <div class="col-sm-4">
-	   	 	<input class="form-input form-control" type="text" name="digits" placeholder="Card Number"/>
-	   	 	<span class="error" id="digits-error"></span>
-	    </div>
-	    
-	    <div class="col-sm-2">
-			<label class="control-label" for="cardType">CVV Number:</label>
-		</div>
-	    
-	    <div class="col-sm-4">
-			<input class="form-input form-control" type="text" name="cvv" placeholder="CVV Number" />
-			<span class="error cvv-error" ></span>
-		</div>
-		
-	</div>
-	    
-	<div class="row form-group">    
-	    
-	    <div class="col-sm-2">
-	    	<label class="control-label" >Expiration Date:</label>
-	    </div>
-    	
-    	<div class="col-sm-2">
-
-			<select class="form-input form-control" id="ccmonth" name="month" class="width5 expiry-field gray-text">
-				<option value="">Month</option>
-				@for(m <- months) {
-					<option value="@m.getNum">@m.getName</option>	
-				}
-			</select>
-		</div>
-		<div class="col-sm-2">
-			<select class="form-input form-control" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
-				<option value="">Year</option>
-				@for(y <- years) {
-					<option value="@y.getValue">@y.getValue</option>	
-				}
-			</select>
-			
-			<span class="error" id="monthyear-error"></span>
-		</div>
-	
-	</div> -->
 	
 	<div class="row">
 		<div class="col-sm-12 text-center">

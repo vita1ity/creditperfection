@@ -49,9 +49,6 @@ public class SignUpFlowController extends Controller {
     @Inject
     private FormFactory formFactory;
     
-    /*@Inject
-    private WSClient ws;*/
-    
     @Inject
     private MailService mailService;
     
@@ -66,7 +63,6 @@ public class SignUpFlowController extends Controller {
 
     public Result index(Boolean login){
     	
-    	Form<User> userForm = formFactory.form(User.class);
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
     	State[] states = State.values();
@@ -75,7 +71,18 @@ public class SignUpFlowController extends Controller {
     	if (login == null) {
     		login = false;
     	}
-        return ok(index.render(userForm, productList, allTypes, states, months, years, login));
+    	User user = new User();
+    	String userEmail = session().get("userEmail");
+    	if (userEmail != null) {
+    		user = User.findByEmail(userEmail);
+    	}
+    	Product product = new Product();
+    	if (session().get("productId") != null) {
+    		long productId = Long.parseLong(session().get("productId"));
+			product = Product.getById(productId);
+		}
+    	
+        return ok(index.render(user, product, productList, allTypes, states, months, years, login));
     }
     
     
@@ -91,11 +98,28 @@ public class SignUpFlowController extends Controller {
 	    } else {
 	    	
 	    	List<ValidationError> errors = registerForm.validate(false);
+	    	
 	    	if (errors != null) {
-	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
+	    	
 	    	User user = new User(registerForm);
+	    	
+	    	User userByEmail = User.findByEmail(user.email);
+			if (userByEmail != null) {
+				//user is already registered
+				if (user.kbaQuestions == null) {
+					//registration process is not completed
+					session("userEmail", user.email);
+					 return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
+				}
+				else {
+					errors = new ArrayList<ValidationError>();
+					errors.add(new ValidationError("email", "User with such email is already registered"));
+					return badRequest(Json.toJson(errors));
+				}
+			}
+
 	    	
 	    	user.token = Tokener.randomString(48);
 	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
@@ -157,71 +181,79 @@ public class SignUpFlowController extends Controller {
 	    	String userEmail = session().get("userEmail");
 	    	User user = User.findByEmail(userEmail);
 	    	
-	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm); 
+	    	//get kba questions
+	    	JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
+    		if (kbaUrlResponse instanceof ErrorResponse) {
+    			return badRequest(Json.toJson(kbaUrlResponse));
+    		}
+    		else {
+    			
+    			CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
+    			
+    	    	//charge amount for the product from credit card
+    	    	long productId = Long.parseLong(session().get("productId"));
+    	    	Product product = Product.getById(productId);
+    	    	
+    	    	Logger.info("Product to be purchased: " + product);
+    	    	
+    	    	//final String loginId = conf.getString("authorise.net.sandbox.login.id");
+    	    	//final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
+    	    	String loginId = null;
+    	    	String transactionKey = null;
+    	    	
+    	    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
+    	    	
+    	    	Logger.info("Choosen Account: " + account);
+    	    	
+    	    	if (account == null) {
+    	    		loginId = conf.getString("authorise.net.login.id");
+    		    	transactionKey = conf.getString("authorise.net.transaction.key");
+    	    	}
+    	    	else {
+    	    		loginId = account.loginId;
+    		    	transactionKey = account.transactionKey;
+    	    	}
+    	    	
+    	    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
+    	    	
+    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
+    	    			transactionKey, product.price, creditCard);
+    	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+    	    	if (transactionResponse instanceof MessageResponse) {
+    	    		
+    	    		//save credit card 
+        	    	creditCard.user = user;
+        	    	creditCard.save();
+    	    		
+    	    		//save transaction
+    	    		Transaction transaction = new Transaction(user, creditCard, product);
+    	    		transaction.save();
+    	    		
+    	    		//save kba questions url for user
+    	    		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
+        			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
+        			user.kbaQuestions = kbaQuestions;
+        			user.update();
+    	    		
+        			//clear session
+        			session().remove("userEmail");
+        			session().remove("productId");
+        			 
+    	    		return ok(Json.toJson(kbaUrlResponse));
+    	    		
+    	    	}
+    	    	else {
+    	    		
+    	    		return badRequest(Json.toJson(transactionResponse));
+    	    	}
+    			
+    		}
 	    	
-	    	creditCard.user = user;
-	    	creditCard.save();
-	    	
-	    	//charge amount for the product from credit card
-	    	long productId = Long.parseLong(session().get("productId"));
-	    	Product product = Product.getById(productId);
-	    	
-	    	Logger.info("Product to be purchased: " + product);
-	    	
-	    	//final String loginId = conf.getString("authorise.net.sandbox.login.id");
-	    	//final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
-	    	String loginId = null;
-	    	String transactionKey = null;
-	    	
-	    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
-	    	
-	    	Logger.info("Choosen Account: " + account);
-	    	
-	    	if (account == null) {
-	    		loginId = conf.getString("authorise.net.login.id");
-		    	transactionKey = conf.getString("authorise.net.transaction.key");
-	    	}
-	    	else {
-	    		loginId = account.loginId;
-		    	transactionKey = account.transactionKey;
-	    	}
-	    	
-	    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
-	    	
-	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
-	    			transactionKey, product.price, creditCard);
-	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
-	    	if (transactionResponse instanceof MessageResponse) {
-	    		
-	    		//save transaction in the db
-	    		Transaction transaction = new Transaction(user, creditCard, product);
-	    		transaction.save();
-	    		
-	    		JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
-	    		if (kbaUrlResponse instanceof ErrorResponse) {
-	    			return badRequest(Json.toJson(kbaUrlResponse));
-	    		}
-	    		else {
-	    			
-	    			CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
-	    			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
-	    			user.kbaQuestions = kbaQuestions;
-	    			user.update();
-	    			
-	    			return ok(Json.toJson(kbaUrlResponse));
-	    		}
-	    		
-	    	}
-	    	else {
-	    		
-	    		return badRequest(Json.toJson(transactionResponse));
-	    	}
 	    	
 	    }
 	    
 	    
     }
-    
     
 
 

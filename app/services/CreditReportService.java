@@ -239,7 +239,7 @@ public class CreditReportService {
 	
 	//AUTHENTICATE
 	
-	public JSONResponse authenticate(String username) {
+	public JSONResponse authenticate(String username, String password) {
 		
 		try {
             // Create SOAP Connection
@@ -249,7 +249,7 @@ public class CreditReportService {
             // Send SOAP Message to SOAP Server
             String url = conf.getString("idcs.authenticate.url");
             
-            SOAPMessage soapResponse = soapConnection.call(createAuthenticationRequest(username), url);
+            SOAPMessage soapResponse = soapConnection.call(createAuthenticationRequest(username, password), url);
             
             JSONResponse response = parseAuthenticationResponse(soapResponse);
             
@@ -272,7 +272,7 @@ public class CreditReportService {
 	}
 
 
-	private SOAPMessage createAuthenticationRequest(String usernameStr) throws SOAPException, IOException {
+	private SOAPMessage createAuthenticationRequest(String usernameStr, String passwordStr) throws SOAPException, IOException {
 		MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage soapMessage = messageFactory.createMessage();
       
@@ -298,13 +298,11 @@ public class CreditReportService {
         
         SOAPElement authenticate = soapBody.addChildElement("Authenticate", "", serverURI );
         //idsEnrollmentString.addNamespaceDeclaration("", serverURI);
-       
-        String partnerPass = conf.getString("credit.report.partner.password");
         
         SOAPElement username = authenticate.addChildElement("username");
         username.addTextNode(usernameStr);
         SOAPElement password = authenticate.addChildElement("password");
-        password.addTextNode(partnerPass);
+        password.addTextNode(passwordStr);
         
         
         MimeHeaders headers = soapMessage.getMimeHeaders();

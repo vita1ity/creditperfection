@@ -77,13 +77,14 @@ public class RegisterForm extends Model {
 			errors.add(error);
 	    }
 	    	
-		if (!isEdit) {
+		/*if (!isEdit) {
 			User userByEmail = User.findByEmail(this.email);
 			if (userByEmail != null) {
+				
 				errors.add(new ValidationError("email", "User with such email is already registered"));
 				
 			}
-		}
+		}*/
 		
 		if (errors.size() != 0) {
 			return errors;

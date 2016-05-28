@@ -42,25 +42,26 @@ public class LoginController extends Controller {
             	
             	return badRequest(Json.toJson(new ErrorResponse("ERROR", "301", "Invalid Password")));
             }
-            if(user.active == false){
+            else if (user.active == false) {
             	mailService.sendEmailToken(user.email, user.token);
                 
                 return badRequest(Json.toJson(new ErrorResponse("ERROR", "302", "Account not verified - e-mail verification sent")));
             }
+            
             else {
             	
             	//authenticate to idcs
-            	/*JSONResponse response = creditReportService.authenticate(email);
+            	/*JSONResponse response = creditReportService.authenticate(email, user.password);
             	if (response instanceof ErrorResponse) {
             		return badRequest(Json.toJson(response));
             	}*/
             	
-                session("email", email);
-                session("name", user.firstName);
                 
                 //check if admin user
                 SecurityRole adminRole = SecurityRole.findByName("admin");
                 if (user.roles.contains(adminRole)) {
+                	session("email", email);
+                    session("name", user.firstName);
                 	session("admin", "admin");
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin")));
                 }
@@ -70,7 +71,18 @@ public class LoginController extends Controller {
                 	String memberId = authResponse.getMemberId();
                 	session("memberId", memberId);*/
                 	
-                	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user")));
+                	if (user.kbaQuestions == null) {
+                    	return badRequest(Json.toJson(new ErrorResponse("ERROR", "304", "You haven't completed registration process. "
+                    			+ "Please contact support for help: support@creditperfection.org ")));
+                    }
+                	else {
+                		session("email", email);
+                        session("name", user.firstName);
+                        
+                        return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user")));
+                	}
+                	
+                	
                 }
             }
         } else {

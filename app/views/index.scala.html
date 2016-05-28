@@ -1,4 +1,4 @@
-@(userForm: Form[models.User], productList: java.util.List[models.Product], allTypes: Array[models.enums.CardType], 
+@(user: models.User, product: models.Product, productList: java.util.List[models.Product], allTypes: Array[models.enums.CardType], 
 states: Array[models.enums.State], months: Array[models.enums.Month], years: Array[models.enums.Year], login: java.lang.Boolean)
 <!DOCTYPE html>
 <html lang="en">
@@ -15,10 +15,16 @@ states: Array[models.enums.State], months: Array[models.enums.Month], years: Arr
 		    		<span id="alert-message">@flash.get("message")</span>
 		    	</div>
 		    }
+		    @if(user.email != null){
+		    	<div class="alert alert-info">
+		    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		    		<span id="alert-message">You have unfinished registration process. Please proceed from where you left.</span>
+		    	</div>
+		    }
 		        
-		    @register.render(userForm, states)
-		    @chooseProduct.render(productList)
-		    @paymentDetails(allTypes, months, years)
+		    @register.render(user, states)
+		    @chooseProduct.render(user, product, productList)
+		    @paymentDetails(product, allTypes, months, years)
 		    
 	    </div>
 	    <div class="push"></div>

@@ -1,4 +1,4 @@
-@(userForm: Form[models.User], states: Array[models.enums.State])
+@(user: models.User, states: Array[models.enums.State])
 
 <form class="form-horizontal register-form register-flow-form" data-url="@routes.SignUpFlowController.register()" role="form">
     <h3 class="text-center form-title">Register</h3>
@@ -9,7 +9,7 @@
     	</div>
     	
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" >
+	    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" value="@user.firstName">
 	    	<span class="error" id="firstname-error"></span>
 	    </div>
 	    
@@ -18,7 +18,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" >
+	    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" value="@user.lastName">
 	    	<span class="error" id="lastname-error"></span>
 	    </div>
 	    
@@ -30,7 +30,7 @@
     	</div>
     
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="email" name="email" placeholder="Email" >
+	    	<input class="form-input form-control" type="email" name="email" placeholder="Email" value="@user.email">
 	    	<span class="error" id="email-error"></span>
 	    </div>
 	    
@@ -39,7 +39,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-    		<input class="form-input form-control" type="password" name="password" placeholder="Password">
+    		<input class="form-input form-control" type="password" name="password" placeholder="Password" value="@user.password">
     		<span class="error" id="password-error"></span>
     	</div>
     	
@@ -52,7 +52,7 @@
     	</div>
     
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="email" name="confirmEmail" placeholder="Confirm Email" >
+	    	<input class="form-input form-control" type="email" name="confirmEmail" placeholder="Confirm Email" value="@user.email">
 	    	<span class="error" id="confirmEmail-error"></span>
 	    </div>
 	    
@@ -61,7 +61,8 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-    		<input class="form-input form-control" type="password" name="confirmPassword" placeholder="Confirm Password">
+    		<input class="form-input form-control" type="password" name="confirmPassword" 
+    			placeholder="Confirm Password" value="@user.password">
     		<span class="error" id="confirmPassword-error"></span>
     	</div>
     	
@@ -74,7 +75,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="address" placeholder="Address" >
+	    	<input class="form-input form-control" type="text" name="address" placeholder="Address" value="@user.address">
 	    	<span class="error" id="address-error"></span>
 	    </div>
 	    
@@ -83,7 +84,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="city" placeholder="City" >
+	    	<input class="form-input form-control" type="text" name="city" placeholder="City" value="@user.city">
 	    	<span class="error" id="city-error"></span>
 	    </div>
     </div>
@@ -96,9 +97,16 @@
     
 	    <div class="col-sm-4">
 		    <select name="state" class="form-input form-control" >
-				<option value=""></option>	
+		    	@if(user.state == null){
+		    		<option value=""></option>
+		    	}
+					
 				@for(state <- states) {
-					<option value="@state.getCode">@state.getName</option>
+					@if(state.getName == user.state){
+						<option value="@state.getCode" selected>@state.getName</option>
+					}else{
+						<option value="@state.getCode">@state.getName</option>
+					}
 				}	    
 		       
 		    </select>
@@ -110,14 +118,18 @@
 		</div>
 		
 	    <div class="col-sm-4">
-		    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" >
+		    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" value="@user.zip">
 		    <span class="error" id="zip-error"></span>
 	    </div>
     	
     </div>
     <div class="row" id="registerSuccess">
     </div>
-    <div class="row form-group">  
+    @if(user.email == null) {
+    	<div class="row form-group">
+    }else{
+    	<div class="row form-group hidden">
+    }  
 	    <div class="col-sm-12 text-center">
 	    	<button class="btn-center btn btn-warning" id="register" type="submit">Continue</button>
 		</div>
