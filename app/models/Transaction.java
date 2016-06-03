@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.avaje.ebean.Model;
@@ -13,11 +14,17 @@ public class Transaction extends Model {
     
 	@Id
     public long id;
+	
     @ManyToOne
+    @JoinColumn(nullable = false)
     public User user;
+    
     @ManyToOne
+    @JoinColumn(nullable = false)
     public CreditCard creditCard;
+    
     @ManyToOne
+    @JoinColumn(nullable = false)
     public Product product;
     
 	public Transaction(User user, CreditCard creditCard, Product product) {

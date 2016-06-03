@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -27,19 +29,25 @@ public class CreditCard extends Model {
     @Id
     public long id;
     
+    @Column(nullable = false)
     public String name;
     
+    @Column(nullable = false)
     public CardType cardType;
     
+    @Column(nullable = false)
     public String digits;
     
     @Formats.DateTime(pattern="MM/yyyy")
+    @Column(nullable = false)
     public YearMonth expDate;
-   
+    
+    @Column(nullable = false)
     public int cvv;
     
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(nullable = false)
     public User user;
     
     @JsonIgnore

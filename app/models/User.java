@@ -30,18 +30,36 @@ public class User extends Model implements Subject {
 	
     @Id
     public long id;
+    
     @Required
+    @Column(nullable = false)
     public String firstName;
+    
     @Required
+    @Column(nullable = false)
     public String lastName;
-    @Column(unique = true)
+    
+    @Column(unique = true, nullable = false)
     public String email;
+    
+    @Column(nullable = false)
     public String address;
+    
+    @Column(nullable = false)
     public String city;
+    
+    @Column(nullable = false)
     public String state;
+    
+    @Column(nullable = false)
     public String zip;
+    
+    @Column(nullable = false)
     public String password;
+    
+    @Column(nullable = false)
     public String token;
+    
     public boolean active;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -54,6 +72,10 @@ public class User extends Model implements Subject {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Transaction> transactions;
+    
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    public Subscription subscription;
     
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     public KBAQuestions kbaQuestions;

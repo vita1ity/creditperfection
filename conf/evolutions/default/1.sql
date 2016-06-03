@@ -15,12 +15,12 @@ create table auth_net_account (
 
 create table credit_card (
   id                            bigint auto_increment not null,
-  name                          varchar(255),
-  card_type                     integer,
-  digits                        varchar(255),
-  exp_date                      date,
-  cvv                           integer,
-  user_id                       bigint,
+  name                          varchar(255) not null,
+  card_type                     integer not null,
+  digits                        varchar(255) not null,
+  exp_date                      date not null,
+  cvv                           integer not null,
+  user_id                       bigint not null,
   constraint ck_credit_card_card_type check (card_type in (0,1,2,3)),
   constraint pk_credit_card primary key (id)
 );
@@ -41,8 +41,8 @@ create table credit_report_field (
 
 create table kbaquestions (
   id                            bigint auto_increment not null,
-  url                           varchar(255),
-  user_id                       bigint,
+  url                           varchar(255) not null,
+  user_id                       bigint not null,
   constraint uq_kbaquestions_user_id unique (user_id),
   constraint pk_kbaquestions primary key (id)
 );
@@ -55,9 +55,9 @@ create table payment_gateway (
 
 create table product (
   id                            bigint auto_increment not null,
-  name                          varchar(255),
-  price                         double,
-  sale_price                    double,
+  name                          varchar(255) not null,
+  price                         double not null,
+  sale_price                    double not null,
   constraint pk_product primary key (id)
 );
 
@@ -67,25 +67,36 @@ create table security_role (
   constraint pk_security_role primary key (id)
 );
 
+create table subscription (
+  id                            bigint auto_increment not null,
+  user_id                       bigint not null,
+  product_id                    bigint not null,
+  status                        integer not null,
+  subscription_date             datetime(6) not null,
+  constraint ck_subscription_status check (status in (0,1,2,3)),
+  constraint uq_subscription_user_id unique (user_id),
+  constraint pk_subscription primary key (id)
+);
+
 create table transaction (
   id                            bigint auto_increment not null,
-  user_id                       bigint,
-  credit_card_id                bigint,
-  product_id                    bigint,
+  user_id                       bigint not null,
+  credit_card_id                bigint not null,
+  product_id                    bigint not null,
   constraint pk_transaction primary key (id)
 );
 
 create table user (
   id                            bigint auto_increment not null,
-  first_name                    varchar(255),
-  last_name                     varchar(255),
-  email                         varchar(255),
-  address                       varchar(255),
-  city                          varchar(255),
-  state                         varchar(255),
-  zip                           varchar(255),
-  password                      varchar(255),
-  token                         varchar(255),
+  first_name                    varchar(255) not null,
+  last_name                     varchar(255) not null,
+  email                         varchar(255) not null,
+  address                       varchar(255) not null,
+  city                          varchar(255) not null,
+  state                         varchar(255) not null,
+  zip                           varchar(255) not null,
+  password                      varchar(255) not null,
+  token                         varchar(255) not null,
   active                        tinyint(1) default 0,
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id)
@@ -104,6 +115,11 @@ alter table credit_report_field add constraint fk_credit_report_field_credit_rep
 create index ix_credit_report_field_credit_report_id on credit_report_field (credit_report_id);
 
 alter table kbaquestions add constraint fk_kbaquestions_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+alter table subscription add constraint fk_subscription_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+alter table subscription add constraint fk_subscription_product_id foreign key (product_id) references product (id) on delete restrict on update restrict;
+create index ix_subscription_product_id on subscription (product_id);
 
 alter table transaction add constraint fk_transaction_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 create index ix_transaction_user_id on transaction (user_id);
@@ -130,6 +146,11 @@ alter table credit_report_field drop foreign key fk_credit_report_field_credit_r
 drop index ix_credit_report_field_credit_report_id on credit_report_field;
 
 alter table kbaquestions drop foreign key fk_kbaquestions_user_id;
+
+alter table subscription drop foreign key fk_subscription_user_id;
+
+alter table subscription drop foreign key fk_subscription_product_id;
+drop index ix_subscription_product_id on subscription;
 
 alter table transaction drop foreign key fk_transaction_user_id;
 drop index ix_transaction_user_id on transaction;
@@ -161,6 +182,8 @@ drop table if exists payment_gateway;
 drop table if exists product;
 
 drop table if exists security_role;
+
+drop table if exists subscription;
 
 drop table if exists transaction;
 

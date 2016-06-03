@@ -13,6 +13,7 @@ public class SecurityRole extends Model implements Role {
 	 
 	@Id
 	public int id;
+	
 	@Required
 	public String name;
 	

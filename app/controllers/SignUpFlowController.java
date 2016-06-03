@@ -1,7 +1,9 @@
 package controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,11 +19,13 @@ import models.CreditCard;
 import models.KBAQuestions;
 import models.Product;
 import models.SecurityRole;
+import models.Subscription;
 import models.Transaction;
 import models.User;
 import models.enums.CardType;
 import models.enums.Month;
 import models.enums.State;
+import models.enums.SubscriptionStatus;
 import models.enums.Year;
 import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
@@ -33,10 +37,13 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Akka;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import scala.concurrent.duration.Duration;
+import scheduler.CreditCardChargeJob;
 import services.CreditCardService;
 import services.CreditReportService;
 import services.MailService;
@@ -221,7 +228,7 @@ public class SignUpFlowController extends Controller {
     	    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
     	    	
     	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
-    	    			transactionKey, product.price, creditCard);
+    	    			transactionKey, product.salePrice, creditCard);
     	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
     	    		
@@ -238,6 +245,18 @@ public class SignUpFlowController extends Controller {
         			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
         			user.kbaQuestions = kbaQuestions;
         			user.update();
+        			
+        			//subscribe user
+        			Subscription subscription = new Subscription(user, product, SubscriptionStatus.TRIAL, LocalDateTime.now());
+        			subscription.save();
+        			
+        			//TODO subscribe user 
+        			/*Akka.system().scheduler().schedule(
+        	                Duration.create(5, TimeUnit.SECONDS), //Initial delay 0 milliseconds
+        	                Duration.create(10, TimeUnit.SECONDS),     //Frequency 30 minutes
+        	                new CreditCardChargeJob(),
+        	                Akka.system().dispatcher()
+        	        );*/
     	    		
         			//clear session
         			session().remove("userEmail");

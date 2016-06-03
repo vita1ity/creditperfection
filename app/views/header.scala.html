@@ -30,7 +30,17 @@
 	      		<li ><a href="@routes.AdminController.transactions">Transactions</a></li>
 	      		<li ><a href="@routes.AdminController.authNetAccounts">Merchant Accounts</a></li>
 	      	}else{
-	      		<li ><a href="@routes.UserController.userPage">Account</a></li>
+	      		<li ><a href="@routes.CreditReportController.reportPage">Report</a></li>
+	      		@if(session.get("email")!=null){
+		      		<li class="dropdown">
+				        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
+				        <span class="caret"></span></a>
+				        <ul class="dropdown-menu">
+				          <li><a href="@routes.SubscriptionController.upgradeSubscriptionPage">Upgrade Subscription</a></li>
+				          <li><a href="#">Cancel Subscription</a></li>
+				        </ul>
+				    </li>
+			    }
 	      	}
 	      	
 	        <!-- <li class="active"><a href="#">Home</a></li>
@@ -102,7 +112,7 @@
 		                </div>
 		                <div class="modal-footer">
 			                <button type="button" class="btn btn-default" role="toggle_forgot_password_form">Back</button>
-			                <button id="sendPassword" class="btn btn-warning btn-ok" 
+			                <button id="sendPassword" class="btn btn-success btn-ok" 
 			                	data-url="@routes.LoginController.forgotPassword()">Send Password</button>
 			            </div>
 			        </div>    
@@ -152,10 +162,10 @@
 			            </div>
 			            <div class="modal-footer">
 			                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			                <button id="sendLogin" class="btn btn-warning btn-ok" 
+			                <button id="sendLogin" class="btn btn-success btn-ok" 
 			                	data-url="@routes.LoginController.login()" 
 			                	data-admin-url="@routes.AdminController.users()" 
-			                	data-user-url="@routes.UserController.userPage()">Login</button>
+			                	data-user-url="@routes.CreditReportController.reportPage()">Login</button>
 			            </div>
 			            
 			        </div>   

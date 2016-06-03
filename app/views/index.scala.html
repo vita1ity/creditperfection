@@ -12,10 +12,10 @@ states: Array[models.enums.State], months: Array[models.enums.Month], years: Arr
 		    @if(flash.get("message")!=null){
 		    	<div class="alert alert-success">
 		    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		    		<span id="alert-message">@flash.get("message")</span>
+		    		<span id="alert-message">@flash.get("message")</span> 
 		    	</div>
 		    }
-		    @if(user.email != null){
+		     @if(user.email != null){
 		    	<div class="alert alert-info">
 		    		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		    		<span id="alert-message">You have unfinished registration process. Please proceed from where you left.</span>

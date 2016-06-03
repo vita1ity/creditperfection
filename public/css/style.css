@@ -32,7 +32,7 @@ html, body {
 }
 
 .footer-link {
-	color: #264d73
+	color: #455375
 }
 .without-margin {
 	margin: 0;
@@ -49,14 +49,14 @@ html, body {
 }
 
 .form-title {
-	color: #EC971F;
+	color: #73B140;
 	margin-bottom: 35px;
 }
 .form-label {
 	margin-bottom: 5px;
 }
 .title {
-	color: #EC971F;
+	color: #73B140;
 }
 .btn-center {
 	margin: 25px auto 0 auto;
@@ -142,6 +142,7 @@ html, body {
 	width: 80%;
 	margin: 20px auto 0 auto; 
 }
+
 .nav .welcome {
     display: block;
     padding: 15px 15px;
@@ -150,5 +151,26 @@ html, body {
 .success-message {
 	color: green;
 	margin: 0 auto;
+}
+
+.current-product, .update-subscription-form {
+	width: 50%;
+	margin: 20px auto 0 auto;
+	
+}
+
+.current-product h4 {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+
+.product {
+	font-weight: bold;
+}
+
+.double-separator {
+	width: 80%;
+	margin: 50px auto 50px  auto;
 }
  

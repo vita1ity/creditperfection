@@ -1,0 +1,66 @@
+@(subscription: models.Subscription, productList: java.util.List[models.Product])
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @head.render
+    <script src="/assets/js/subscription.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="wrapper">
+		@header.render(false)
+		<div class="container">
+			
+			<div id="alert-box">
+			</div>
+		
+			<div class="current-product">
+				<h4 class="title">Upgrade Subscription</h4>
+				
+				<p>Current product:</p>
+				<p class="product">@subscription.product.name - @subscription.product.price</p>
+				
+			</div>
+			
+			<hr class="double-separator">	
+			
+			<form class="form-horizontal update-subscription-form" role="form">
+			 
+			    <div class="row form-group">
+			    	
+			    	<div class="col-sm-12">
+			    		<label class="control-label" for="product">Choose Product:</label>
+			    	</div>
+			   </div>
+			   <div class="row form-group"> 	
+			    	<div class="col-sm-12">
+					    <select name="product" class="form-input form-control">
+					    	@if(subscription.product.id == 0){
+					    		<option value="">Choose product</option>
+					    	}
+					        @for(p <- productList) {
+					        	@if(subscription.product.id == p.id){
+					    			<option value="@p.id" selected>@p.name - @p.price</option>
+					    		}else{
+					    			<option value="@p.id">@p.name - @p.price</option>
+					    		}
+							}
+					    </select>
+					    <span class="error" id="product-error"></span>
+				    </div>
+			    </div>
+			    
+			    <div class="row form-group">
+			     
+				    <div class="col-sm-12 text-center">
+			    		<button class="btn btn-success btn-center" id="upgradeSubscription" 
+			    			data-url="@routes.SubscriptionController.upgradeSubscription" type="submit">Confirm</button>
+					</div>
+				</div>
+			</form>
+			
+		</div>
+		<div class="push"></div>
+	</div>
+	@footer.render()
+</body>
+</html>

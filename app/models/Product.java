@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -21,14 +22,23 @@ public class Product extends Model {
 	
     @Id
     public long id;
+    
+    @Column(nullable = false)
     public String name;
     
+    @Column(nullable = false)
     public double price;
+    
+    @Column(nullable = false)
     public double salePrice;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     public List<Transaction> transactions;
+    
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    public List<Subscription> subscriptions;
     
     public static Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
     

@@ -11,6 +11,7 @@ POST    /payment-details            controllers.SignUpFlowController.processPaym
 
 # report
 POST	/get-report					controllers.CreditReportController.processUrl
+GET     /report                     controllers.CreditReportController.reportPage
 
 # login
 
@@ -19,7 +20,10 @@ GET     /logout                     controllers.LoginController.logout
 POST    /forgotpassword             controllers.LoginController.forgotPassword
 
 # user
-GET    /account                     controllers.UserController.userPage
+
+#subscription
+GET		/subscription/upgrade		controllers.SubscriptionController.upgradeSubscriptionPage
+POST	/subscription/upgrade		controllers.SubscriptionController.upgradeSubscription
 
 # admin
 GET    /admin/users                       controllers.AdminController.users
