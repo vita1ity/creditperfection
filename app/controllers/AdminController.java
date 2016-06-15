@@ -23,10 +23,14 @@ import models.User;
 import models.enums.CardType;
 import models.enums.Month;
 import models.enums.State;
+import models.enums.TransactionStatus;
 import models.enums.Year;
+import models.json.JSONResponse;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
 import models.json.TransactionResponse;
+import net.authorize.api.contract.v1.CreateTransactionResponse;
+import play.Configuration;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -34,6 +38,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.CreditCardService;
 import services.MailService;
 import utils.Tokener;
 
@@ -47,6 +52,11 @@ public class AdminController extends Controller {
 	@Inject
     private MailService mailService;
 	
+	@Inject
+	private CreditCardService creditCardService;
+	
+	@Inject
+	private Configuration conf;
 	
 	//users
 	public Result users() {
@@ -313,8 +323,9 @@ public class AdminController extends Controller {
 		List<User> allUsers = User.find.all();
 		List<Product> allProducts = Product.find.all();
 		List<Transaction> allTransactions = Transaction.find.all();
+		TransactionStatus[] allStatuses = TransactionStatus.values(); 
 		
-		return ok(views.html.adminTransactions.render(allTransactions, allUsers, allProducts));
+		return ok(views.html.adminTransactions.render(allTransactions, allUsers, allProducts, allStatuses));
 		
 	}
 	
@@ -379,6 +390,48 @@ public class AdminController extends Controller {
 		transaction.delete();
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
+		
+	}
+	
+	public Result refundTransaction() {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("id"));
+		
+		Transaction transaction = Transaction.find.byId(id);
+		
+		String loginId = null;
+    	String transactionKey = null;
+    	
+    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
+    	
+    	Logger.info("Choosen Account: " + account);
+    	
+    	if (account == null) {
+    		loginId = conf.getString("authorise.net.login.id");
+	    	transactionKey = conf.getString("authorise.net.transaction.key");
+    	}
+    	else {
+    		loginId = account.loginId;
+	    	transactionKey = account.transactionKey;
+    	}
+    	
+    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
+    	
+    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.refundTransaction(loginId, transactionKey, transaction);
+		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+    	if (transactionResponse instanceof MessageResponse) {
+    		
+    		transaction.status = TransactionStatus.REFUNDED;
+    		transaction.update();
+    		return ok(Json.toJson(transactionResponse)); 
+    		
+    	}
+    	else {
+    		
+    		return badRequest(Json.toJson(transactionResponse));
+    	}
+		
 		
 	}
 	

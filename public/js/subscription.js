@@ -37,6 +37,31 @@ $(document).ready(function() {
 	    });
 	});
 	
+	
+	$(document).on('click', '#confirmCancelSubscription', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data("url");
+		
+		$.ajax({
+			
+	        type: "POST",
+	        url: url,
+	        dataType: 'json'
+		
+	    }).done (function(data) {
+	    	
+	    	showSuccessAlert(data.message);
+	    	$('#cancelSubscription').modal('toggle');
+	    
+	    }).fail (function(err) {
+	    	console.log(err);
+	    	showErrorAlert(err.responseJSON.errorMessage);
+	    	$('#cancelSubscription').modal('toggle');
+	    });
+	});
+	
 });
 
 function clearErrors() {
@@ -49,6 +74,15 @@ function clearErrors() {
 function showSuccessAlert(message) {
 	var alertHtml = "";
 	alertHtml += "<div class=\"alert alert-success\">\n";
+	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
+		
+	$('#alert-box').html(alertHtml);
+}
+
+function showErrorAlert(message) {
+	var alertHtml = "";
+	alertHtml += "<div class=\"alert alert-danger\">\n";
 	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
 	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
 		

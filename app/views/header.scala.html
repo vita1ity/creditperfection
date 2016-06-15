@@ -37,7 +37,7 @@
 				        <span class="caret"></span></a>
 				        <ul class="dropdown-menu">
 				          <li><a href="@routes.SubscriptionController.upgradeSubscriptionPage">Upgrade Subscription</a></li>
-				          <li><a href="#">Cancel Subscription</a></li>
+				          <li><a href="#" data-toggle="modal" data-target="#cancelSubscription">Cancel Subscription</a></li>
 				        </ul>
 				    </li>
 			    }
@@ -175,3 +175,22 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="cancelSubscription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong>Confirm Cancel Subscription</strong>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel the subscription?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                <a id="confirmCancelSubscription" class="btn btn-danger btn-ok" 
+                	data-url="@routes.SubscriptionController.cancelSubscription()" >Yes</a>
+            </div>
+        </div>
+    </div>
+</div>

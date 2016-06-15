@@ -1,4 +1,5 @@
-@(allTransactions: java.util.List[models.Transaction], allUsers: java.util.List[models.User], allProducts: java.util.List[models.Product])
+@(allTransactions: java.util.List[models.Transaction], allUsers: java.util.List[models.User], 
+	allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.TransactionStatus])
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,6 +57,13 @@
 							    <p><strong>Product Name: </strong><span class="product-name"></span></p>
 							    <p><strong>Price: </strong><span class="product-price"></span></p>
 							    <p><strong>Sale Price: </strong><span class="sale-price"></span></p>
+							    
+							    </br>
+							    <p><strong>Transaction Amount: </strong><span class="amount"></span></p>
+							    
+							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId"></span></p>
+							    
+							    <p><strong>Transaction Status: </strong><span class="status"></span></p>
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -63,6 +71,8 @@
 								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteTransaction">Delete Transaction</span>
+							    		<span class="btn btn-danger" data-toggle="modal" 
+							    			data-target="#refundTransaction">Refund Transaction</span>	
 									</div>
 								</div>
 							</form>
@@ -111,6 +121,13 @@
 							    <p><strong>Product Name: </strong><span class="product-name">@t.product.name</span></p>
 							    <p><strong>Price: </strong><span class="product-price">@t.product.price</span></p>
 							    <p><strong>Sale Price: </strong><span class="sale-price">@t.product.salePrice</span></p>
+							    
+							    </br>
+							    <p><strong>Transaction Amount: </strong><span class="amount">@t.amount</span></p>
+							        
+							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId">@t.transactionId</span></p>
+							    
+							    <p><strong>Transaction Status: </strong><span class="status">@t.status</span></p>    
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -118,6 +135,8 @@
 								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteTransaction">Delete Transaction</span>
+								    	<span class="btn btn-danger" data-toggle="modal" 
+								    		data-target="#refundTransaction">Refund Transaction</span>	
 									</div>
 								</div>
 							</form>
@@ -200,6 +219,38 @@
 						    	<span class="error product-error"></span>
 						    </div>
 	    				</div>   
+	    				
+	    				<div class="row form-group">
+	    
+							<div class="col-sm-4 ">
+						    	<label class="control-label" for="amount">Transaction Amount:</label>
+						    </div>
+						
+						    <div class="col-sm-8">
+						    	
+						    	<input class="form-input form-control" type="text" name="amount" 
+						    		placeholder="Transation Amount">
+								<span class="error" id="amount-error"></span>
+								
+						    </div>
+	    				</div> 
+	    				
+	    				<div class="row form-group">
+	    
+							<div class="col-sm-4 ">
+						    	<label class="control-label" for="transactionId">Transaction ID:</label>
+						    </div>
+						
+						    <div class="col-sm-8">
+						    	
+						    	<input class="form-input form-control" type="text" name="transactionId" 
+						    		placeholder="Transaction Id">
+								<span class="error" id="transactionId-error"></span>
+								
+						    </div>
+	    				</div> 
+	    				
+	    				
 						    
 		            </div>
 		            <div class="modal-footer">
@@ -277,8 +328,57 @@
 						    	
 						    	<span class="error product-error"></span>
 						    </div>
-	    				</div>   
-						    
+						</div>
+						
+						<div class="row form-group">
+	    
+							<div class="col-sm-4 ">
+						    	<label class="control-label" for="amount">Transaction Amount:</label>
+						    </div>
+						
+						    <div class="col-sm-8">
+						    	
+						    	<input class="form-input form-control" id="amountTransactionEdit" type="text" name="amount" 
+						    		placeholder="Transaction Amount">
+								<span class="error" id="amount-error"></span>
+								
+						    </div>
+	    				</div> 
+						
+	    				<div class="row form-group">
+	    
+							<div class="col-sm-4 ">
+						    	<label class="control-label" for="transactionId">Transaction ID:</label>
+						    </div>
+						
+						    <div class="col-sm-8">
+						    	
+						    	<input class="form-input form-control" id="idTransactionEdit" type="text" name="transactionId" 
+						    		placeholder="Transation Id">
+								<span class="error" id="transactionId-error"></span>
+								
+						    </div>
+	    				</div>
+		    				
+	    				<div class="row form-group">
+    
+							<div class="col-sm-4 ">
+						    	<label class="control-label" for="status">Transaction Status:</label>
+						    </div>
+		    				<div class="col-sm-8">
+						    	<select class="form-input form-control" id="statusTransactionEdit" name="status" class="width5 expiry-field gray-text">
+					
+									@for((s, i) <- allStatuses.zipWithIndex){
+										<option value="@s">@s</option>
+										
+									}
+									
+								</select>
+						    	
+						    	<span class="error product-error"></span>
+						    </div>
+	    				 </div> 
+	    				    
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -304,6 +404,26 @@
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmDeleteTransaction" class="btn btn-danger btn-ok" 
 		                	data-url="@routes.AdminController.deleteTransaction()" >Delete</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<div class="modal fade" id="refundTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <strong>Confirm Refund</strong>
+		            </div>
+		            <div class="modal-body">
+		                <p>You are about to refund the transaction, this procedure is irreversible.</p>
+	
+						<p>Do you want to proceed?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		                <a id="confirmRefundTransaction" class="btn btn-danger btn-ok" 
+		                	data-url="@routes.AdminController.refundTransaction()" >Refund</a>
 		            </div>
 		        </div>
 		    </div>

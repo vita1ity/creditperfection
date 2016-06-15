@@ -83,6 +83,10 @@ create table transaction (
   user_id                       bigint not null,
   credit_card_id                bigint not null,
   product_id                    bigint not null,
+  amount                        double not null,
+  transaction_id                varchar(255) not null,
+  status                        integer not null,
+  constraint ck_transaction_status check (status in (0,1)),
   constraint pk_transaction primary key (id)
 );
 

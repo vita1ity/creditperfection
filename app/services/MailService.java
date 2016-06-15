@@ -12,6 +12,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import models.User;
 import play.Configuration;
 import play.Logger;
 
@@ -30,7 +31,7 @@ public class MailService {
         final String url = conf.getString("app.host");
         //final String url = conf.getString("app.localhost");
        
-        final String from = conf.getString("email.from");
+        final String from = conf.getString("email.support");
         final String subject = "Credit Perfection Registration";
         final String text = "Click the link below to verify your Credit Perfection account \n\n" + 
         		url + "/registertoken/" + token;
@@ -40,7 +41,7 @@ public class MailService {
     }
 
     public void sendEmailPassword(String email, String tempPass){
-        final String from = conf.getString("email.from");
+        final String from = conf.getString("email.support");
         
         final String subject = "Credit Perfection Password";
         final String text = "Please change your password after logging in\n\n" + "Password: " + tempPass;
@@ -48,6 +49,17 @@ public class MailService {
         sendEmail(from, email, subject, text);
        
     }
+    
+    public void sendCancelSubscriptionNotification(User user) {
+    	final String to = conf.getString("email.support");
+    	
+        final String subject = "Subscription Cancellation Notification";
+        final String text = "User " + user.firstName + " " + user.lastName + " "
+        		+ "has submitted request about cancellation of his subscription.\n"
+        		+ "Please confirm the request in the admin area";
+        
+        sendEmail(user.email, to, subject, text);
+	}
     
     private void sendEmail(String from, String to, String subject, String body) {
 		
@@ -96,4 +108,6 @@ public class MailService {
 			
 		}
 	}
+
+	
 }

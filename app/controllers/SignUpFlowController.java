@@ -26,6 +26,7 @@ import models.enums.CardType;
 import models.enums.Month;
 import models.enums.State;
 import models.enums.SubscriptionStatus;
+import models.enums.TransactionStatus;
 import models.enums.Year;
 import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
@@ -70,7 +71,7 @@ public class SignUpFlowController extends Controller {
 
     public Result index(Boolean login){
     	
-    	//session().clear();
+    	session().clear();
     	
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
@@ -207,8 +208,6 @@ public class SignUpFlowController extends Controller {
     	    	
     	    	Logger.info("Product to be purchased: " + product);
     	    	
-    	    	//final String loginId = conf.getString("authorise.net.sandbox.login.id");
-    	    	//final String transactionKey = conf.getString("authorise.net.sandbox.transaction.key");
     	    	String loginId = null;
     	    	String transactionKey = null;
     	    	
@@ -235,9 +234,11 @@ public class SignUpFlowController extends Controller {
     	    		//save credit card 
         	    	creditCard.user = user;
         	    	creditCard.save();
-    	    		
+        	    	
+        	    	String transactionId = creditCardService.getTransactionId(response);
     	    		//save transaction
-    	    		Transaction transaction = new Transaction(user, creditCard, product);
+    	    		Transaction transaction = new Transaction(user, creditCard, product, product.salePrice, 
+    	    				transactionId, TransactionStatus.SUCCESSFUL);
     	    		transaction.save();
     	    		
     	    		//save kba questions url for user

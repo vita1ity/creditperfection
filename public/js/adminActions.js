@@ -6,6 +6,8 @@ var deleteCreditCardId = '';
 var deleteCreditCardPanel = new Object();
 var deleteTransactionId = '';
 var deleteTransactionPanel = new Object();
+var refundTransactionId = '';
+var refundTransactionPanel = new Object();
 var deleteAuthNetAccountId = '';
 var deleteAuthNetAccountPanel = new Object();
 
@@ -698,10 +700,13 @@ $(document).ready(function() {
 		var userId = $(this).closest('.modal-content').find('[name="user"]').val();
 		var cardId = $(this).closest('.modal-content').find('[name="creditCard"]').val();
 		var productId = $(this).closest('.modal-content').find('[name="product"]').val();
+		var amount = $(this).closest('.modal-content').find('[name="amount"]').val();
+		var transactionId = $(this).closest('.modal-content').find('[name="transactionId"]').val();
 		
 		var form = $(this).closest('.modal-content');
 		
-		var transactionJSON = {userId: userId, cardId: cardId, productId: productId};
+		var transactionJSON = {userId: userId, cardId: cardId, productId: productId,
+				amount: amount, transactionId: transactionId};
 		
 		$.ajax({
 			
@@ -739,6 +744,12 @@ $(document).ready(function() {
 	    	var productPrice = data.transaction.product.price;
 	    	var productSalePrice = data.transaction.product.salePrice;
 	    	
+	    	var amount = data.transaction.amount;
+	    	var transactionId = data.transaction.transactionId;
+	    	var status = data.transaction.status;
+	    	
+	    	console.log("amount: " + amount + ", transaction id: " + transactionId);
+	    	
 	    	var transactionHtml = $('.panel').html();
 	    	transactionHtml = '<div class="panel panel-default">\n' + transactionHtml + "\n</div>";
 	    	
@@ -769,7 +780,9 @@ $(document).ready(function() {
 	    	$('.product-name:last').text(productName);
 	    	$('.product-price:last').text(productPrice);
 	    	$('.sale-price:last').text(productSalePrice);
-	    	
+	    	$('.amount:last').text(amount);
+	    	$('.authorizeNetTransactionId:last').text(transactionId);
+	    	$('.status:last').text(status);
 	    	
 		}).fail (function(err) {
 			
@@ -795,6 +808,9 @@ $(document).ready(function() {
 		var productId = $(this).closest('.edit-form').find('.product-id').text();
 		var productPrice = $(this).closest('.edit-form').find('.product-price').text();
 		var productName = $(this).closest('.edit-form').find('.product-name').text();
+		var amount = $(this).closest('.edit-form').find('.amount').text();
+		var authorizeNetTransactionId = $(this).closest('.edit-form').find('.authorizeNetTransactionId').text();
+		var status = $(this).closest('.edit-form').find('.status').text();
 		
 		console.log(userId);
 		
@@ -811,6 +827,18 @@ $(document).ready(function() {
 		$('#productTransactionEdit > option').each(function() {
 			
 			if (this.value == productId) {
+				$(this).attr("selected", "selected");
+			}
+			
+		});
+		
+		
+		$('#amountTransactionEdit').val(amount);
+		$('#idTransactionEdit').val(authorizeNetTransactionId);
+		
+		$('#statusTransactionEdit > option').each(function() {
+			
+			if (this.value == status) {
 				$(this).attr("selected", "selected");
 			}
 			
@@ -865,14 +893,18 @@ $(document).ready(function() {
 		
 		var url = $(this).data('url');
 		
-		var transactionId = $('#transactionIdModal').val();
+		var id = $('#transactionIdModal').val();
 		var userId = $('#userTransactionEdit').val();
 		var cardId = $('#creditCardTransactionEdit').val();
 		var productId = $('#productTransactionEdit').val();
+		var amount = $('#amountTransactionEdit').val();
+		var transactionId = $('#idTransactionEdit').val();
+		var status = $('#statusTransactionEdit').val();
 		
 		var form = $(this).closest('.modal-content');
 		
-		var transactionJSON = {transactionId: transactionId, userId: userId, cardId: cardId, productId: productId};
+		var transactionJSON = {id: id, userId: userId, cardId: cardId, productId: productId,
+				 amount: amount, transactionId: transactionId, status: status};
 		
 		console.log(transactionJSON);
 		
@@ -911,6 +943,10 @@ $(document).ready(function() {
 	    	var productPrice = data.transaction.product.price;
 	    	var productSalePrice = data.transaction.product.salePrice;
 	    	
+	    	var amount = data.transaction.amount;
+	    	var transactionId = data.transaction.transactionId;
+	    	var status = data.transaction.status;
+	    	
 	    	var index = parseInt($('.index:last').text());
 	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
 	    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
@@ -931,6 +967,10 @@ $(document).ready(function() {
 	    	$('.product-name:last').text(productName);
 	    	$('.product-price:last').text(productPrice);
 	    	$('.sale-price:last').text(productSalePrice);
+	    	
+	    	$('.amount:last').text(amount);
+	    	$('.authorizeNetTransactionId:last').text(transactionId);
+	    	$('.status:last').text(status);
 	    	
 			
 		}).fail (function(err) {
@@ -984,7 +1024,55 @@ $(document).ready(function() {
 		
 	});
 	
+	$('#refundTransaction').on('show.bs.modal', function (e) {
+	    var trigger = $(e.relatedTarget);
+	    var id = $(trigger).closest('.edit-form').find('.transactionId').text();
+	    
+	    refundTransactionId = id;
+	    refundTransactionPanel = $(trigger).closest('.panel');
+	});
 	
+	$(document).on('click', '#confirmRefundTransaction', function(e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		var id = refundTransactionId;
+		var panel = refundTransactionPanel; 
+		
+		$.ajax({
+			
+			type: 'POST',
+			url: url,
+			data: {id: id},
+			dataType: 'json'
+			
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			showSuccessAlert(data.message);
+	    
+	    	//$(panel).remove();
+			$(panel).find('.status').text('REFUNDED');
+	    	
+	    	$('#refundTransaction').modal('toggle');
+	    	
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+			
+		}).fail (function(err) {
+			
+			console.error(err);
+			showErrorAlert(err.responseJSON.errorMessage);
+			
+			$('#refundTransaction').modal('toggle');
+	    	
+	    	$("html, body").animate({ scrollTop: 0 }, "slow");
+			
+			
+		});
+		
+	});
 	
 	$(document).on('click', '#confirmAddAuthNetAccount', function(e) {
 		
@@ -1166,6 +1254,15 @@ $(document).ready(function() {
     	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
     		
     	$('#alert-box').html(alertHtml);
+	}
+	
+	function showErrorAlert(message) {
+		var alertHtml = "";
+		alertHtml += "<div class=\"alert alert-danger\">\n";
+		alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+		alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
+			
+		$('#alert-box').html(alertHtml);
 	}
 	
 });

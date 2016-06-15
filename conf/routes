@@ -24,33 +24,35 @@ POST    /forgotpassword             controllers.LoginController.forgotPassword
 #subscription
 GET		/subscription/upgrade		controllers.SubscriptionController.upgradeSubscriptionPage
 POST	/subscription/upgrade		controllers.SubscriptionController.upgradeSubscription
+POST	/subscription/cancel		controllers.SubscriptionController.cancelSubscription
 
 # admin
 GET    /admin/users                       controllers.AdminController.users
-POST   /admin/users/edit-user             controllers.AdminController.editUser
-POST   /admin/users/delete-user           controllers.AdminController.deleteUser
-POST   /admin/users/add-user              controllers.AdminController.addUser
+POST   /admin/users/edit	              controllers.AdminController.editUser
+POST   /admin/users/delete	              controllers.AdminController.deleteUser
+POST   /admin/users/add		              controllers.AdminController.addUser
 
 GET    /admin/products                    controllers.AdminController.products
-POST   /admin/products/edit-product       controllers.AdminController.editProduct
-POST   /admin/products/delete-product     controllers.AdminController.deleteProduct
-POST   /admin/products/add-product        controllers.AdminController.addProduct
+POST   /admin/products/edit		          controllers.AdminController.editProduct
+POST   /admin/products/delete		      controllers.AdminController.deleteProduct
+POST   /admin/products/add		          controllers.AdminController.addProduct
 
 GET    /admin/credit-cards                controllers.AdminController.creditCards
-POST   /admin/credit-cards/edit-card      controllers.AdminController.editCreditCard
-POST   /admin/credit-cards/delete-card    controllers.AdminController.deleteCreditCard
-POST   /admin/credit-cards/add-card       controllers.AdminController.addCreditCard
+POST   /admin/credit-cards/edit      	  controllers.AdminController.editCreditCard
+POST   /admin/credit-cards/delete         controllers.AdminController.deleteCreditCard
+POST   /admin/credit-cards/add	          controllers.AdminController.addCreditCard
 
 GET    /admin/transactions                			controllers.AdminController.transactions
 GET    /admin/transactions/get-credit-cards        	controllers.AdminController.getUserCreditCards
-POST   /admin/transactions/edit-transaction         controllers.AdminController.editTransaction
-POST   /admin/transactions/delete-transaction       controllers.AdminController.deleteTransaction
-POST   /admin/transactions/add-transaction          controllers.AdminController.addTransaction
+POST   /admin/transactions/edit         			controllers.AdminController.editTransaction
+POST   /admin/transactions/delete			        controllers.AdminController.deleteTransaction
+POST   /admin/transactions/add			            controllers.AdminController.addTransaction
+POST   /admin/transactions/refund			        controllers.AdminController.refundTransaction
 
 GET    /admin/auth-net-accounts                     controllers.AdminController.authNetAccounts
-POST   /admin/auth-net-accounts/add-account         controllers.AdminController.addAuthNetAccount
-POST   /admin/auth-net-accounts/edit-account        controllers.AdminController.editAuthNetAccount
-POST   /admin/auth-net-accounts/delete-account      controllers.AdminController.deleteAuthNetAccount
+POST   /admin/auth-net-accounts/add         		controllers.AdminController.addAuthNetAccount
+POST   /admin/auth-net-accounts/edit        		controllers.AdminController.editAuthNetAccount
+POST   /admin/auth-net-accounts/delete		        controllers.AdminController.deleteAuthNetAccount
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

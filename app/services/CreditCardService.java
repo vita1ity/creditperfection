@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Singleton;
-import javax.persistence.Column;
 
 import models.AuthNetAccount;
 import models.CreditCard;
+import models.Transaction;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
@@ -128,6 +128,11 @@ public class CreditCardService {
 
     }
 	
+	public String getTransactionId(CreateTransactionResponse response) {
+		TransactionResponse result = response.getTransactionResponse();
+		return result.getTransId();
+	}
+	
 	public JSONResponse checkTransaction(CreateTransactionResponse response) {
 		
 		JSONResponse jsonResponse = null;
@@ -195,5 +200,74 @@ public class CreditCardService {
 		
 	}
 	
+	
+	public ANetApiResponse refundTransaction(String apiLoginId, String transactionKey, 
+			Transaction transaction) {
+        
+        //Common code to set for all requests
+        ApiOperationBase.setEnvironment(Environment.PRODUCTION);
+
+        MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
+        merchantAuthenticationType.setName(apiLoginId);
+        merchantAuthenticationType.setTransactionKey(transactionKey);
+        ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
+
+        // Create a payment object, last 4 of the credit card and expiration date are required
+        PaymentType paymentType = new PaymentType();
+        CreditCardType creditCard = new CreditCardType();
+        creditCard.setCardNumber(transaction.creditCard.digits);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+        creditCard.setExpirationDate(transaction.creditCard.expDate.format(formatter));
+        paymentType.setCreditCard(creditCard);
+
+        // Create the payment transaction request
+        TransactionRequestType txnRequest = new TransactionRequestType();
+        txnRequest.setTransactionType(TransactionTypeEnum.REFUND_TRANSACTION.value());
+        txnRequest.setRefTransId(transaction.transactionId);
+        txnRequest.setAmount(new BigDecimal(transaction.amount));
+        txnRequest.setPayment(paymentType);
+
+        // Make the API Request
+        CreateTransactionRequest apiRequest = new CreateTransactionRequest();
+        apiRequest.setTransactionRequest(txnRequest);
+        CreateTransactionController controller = new CreateTransactionController(apiRequest);
+        controller.execute(); 
+
+        CreateTransactionResponse response = controller.getApiResponse();
+
+        return response;
+        
+        /*if (response!=null) {
+
+            // If API Response is ok, go ahead and check the transaction response
+            if (response.getMessages().getResultCode() == MessageTypeEnum.OK) {
+
+                TransactionResponse result = response.getTransactionResponse();
+                if (result.getResponseCode().equals("1")) {
+                    System.out.println(result.getResponseCode());
+                    System.out.println("Successfully Refunded Transaction");
+                    System.out.println(result.getAuthCode());
+                    System.out.println(result.getTransId());
+                }
+                else
+                {
+                    System.out.println("Failed Transaction"+result.getResponseCode());
+                }
+            }
+            else
+            {
+                System.out.println("Failed Transaction:  "+response.getMessages().getResultCode());
+                if(!response.getMessages().getMessage().isEmpty())
+                    System.out.println("Error: " + response.getMessages().getMessage().get(0).getCode() + "  " + response.getMessages().getMessage().get(0).getText());
+
+                if (response.getTransactionResponse() != null)
+                    if(!response.getTransactionResponse().getErrors().getError().isEmpty())
+                        System.out.println("Transaction Error : " + response.getTransactionResponse().getErrors().getError().get(0).getErrorCode() + " " + response.getTransactionResponse().getErrors().getError().get(0).getErrorText());
+            }
+        }
+		return response;
+         */
+    }
+
 	
 }
