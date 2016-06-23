@@ -70,9 +70,11 @@ create table security_role (
 create table subscription (
   id                            bigint auto_increment not null,
   user_id                       bigint not null,
+  credit_card_id                bigint not null,
   product_id                    bigint not null,
   status                        integer not null,
   subscription_date             datetime(6) not null,
+  last_charge_date              datetime(6) not null,
   constraint ck_subscription_status check (status in (0,1,2,3)),
   constraint uq_subscription_user_id unique (user_id),
   constraint pk_subscription primary key (id)
@@ -122,6 +124,9 @@ alter table kbaquestions add constraint fk_kbaquestions_user_id foreign key (use
 
 alter table subscription add constraint fk_subscription_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+alter table subscription add constraint fk_subscription_credit_card_id foreign key (credit_card_id) references credit_card (id) on delete restrict on update restrict;
+create index ix_subscription_credit_card_id on subscription (credit_card_id);
+
 alter table subscription add constraint fk_subscription_product_id foreign key (product_id) references product (id) on delete restrict on update restrict;
 create index ix_subscription_product_id on subscription (product_id);
 
@@ -152,6 +157,9 @@ drop index ix_credit_report_field_credit_report_id on credit_report_field;
 alter table kbaquestions drop foreign key fk_kbaquestions_user_id;
 
 alter table subscription drop foreign key fk_subscription_user_id;
+
+alter table subscription drop foreign key fk_subscription_credit_card_id;
+drop index ix_subscription_credit_card_id on subscription;
 
 alter table subscription drop foreign key fk_subscription_product_id;
 drop index ix_subscription_product_id on subscription;

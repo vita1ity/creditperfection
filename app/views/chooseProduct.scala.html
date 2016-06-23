@@ -1,6 +1,6 @@
-@(user: models.User, product: models.Product, productList: java.util.List[models.Product])
+@(user: models.User, product: models.Product, productList: java.util.List[models.Product], prePopulateOnly: java.lang.Boolean)
 
-@if(user.email == null){
+@if(user.email == null && !prePopulateOnly){
 	<form class="form-horizontal choose-product-form register-flow-form hidden"
 		data-url="@routes.SignUpFlowController.chooseProduct()" role="form">
 }else{

@@ -32,6 +32,15 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 	 
 	 public boolean isLastUsed;
 	 
+	 public AuthNetAccount() {
+		 
+	 }
+	 
+	 public AuthNetAccount(String loginId, String transactionKey) {
+		 this.loginId = loginId;
+		 this.transactionKey = transactionKey;
+	 }
+	 
 	 public static Finder<Long, AuthNetAccount> find = new Finder<Long, AuthNetAccount>(AuthNetAccount.class);
 
 	@Override

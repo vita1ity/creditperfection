@@ -173,4 +173,10 @@ html, body {
 	width: 80%;
 	margin: 50px auto 50px  auto;
 }
+
+.standart-margin {
+	width: 80%;
+    margin: 0 auto 40px auto;
+    
+}
  

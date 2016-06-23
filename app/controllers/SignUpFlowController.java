@@ -71,7 +71,7 @@ public class SignUpFlowController extends Controller {
 
     public Result index(Boolean login){
     	
-    	session().clear();
+    	//session().clear();
     	
     	List<Product> productList = Product.getAllProducts();
     	CardType[] allTypes = CardType.values();
@@ -81,6 +81,7 @@ public class SignUpFlowController extends Controller {
     	if (login == null) {
     		login = false;
     	}
+    	boolean prePopulateOnly = false;
     	User user = new User();
     	String userEmail = session().get("userEmail");
     	if (userEmail != null) {
@@ -92,9 +93,32 @@ public class SignUpFlowController extends Controller {
 			product = Product.getById(productId);
 		}
     	
-        return ok(index.render(user, product, productList, allTypes, states, months, years, login));
+        return ok(index.render(user, product, productList, allTypes, states, months, years, login, prePopulateOnly));
     }
     
+    
+    public Result prePopulateRegisterForm(){
+    	
+    	session().clear();
+    	
+    	List<Product> productList = Product.getAllProducts();
+    	CardType[] allTypes = CardType.values();
+    	State[] states = State.values();
+    	Month[] months = Month.values();
+    	Year[] years = Year.values();
+    	
+    	boolean login = false;
+    	boolean prePopulateOnly = true;
+    	
+    	Form<User> userForm = formFactory.form(User.class);
+    	User user = userForm.bindFromRequest().get();
+    	
+    	Logger.info("User: " + user);
+    	
+    	Product product = new Product();
+    	
+        return ok(index.render(user, product, productList, allTypes, states, months, years, login, prePopulateOnly));
+    }	
     
     @BodyParser.Of(BodyParser.Json.class)
     public Result register() throws Exception {
@@ -208,26 +232,7 @@ public class SignUpFlowController extends Controller {
     	    	
     	    	Logger.info("Product to be purchased: " + product);
     	    	
-    	    	String loginId = null;
-    	    	String transactionKey = null;
-    	    	
-    	    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
-    	    	
-    	    	Logger.info("Choosen Account: " + account);
-    	    	
-    	    	if (account == null) {
-    	    		loginId = conf.getString("authorise.net.login.id");
-    		    	transactionKey = conf.getString("authorise.net.transaction.key");
-    	    	}
-    	    	else {
-    	    		loginId = account.loginId;
-    		    	transactionKey = account.transactionKey;
-    	    	}
-    	    	
-    	    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
-    	    	
-    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(loginId, 
-    	    			transactionKey, product.salePrice, creditCard);
+    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.salePrice, creditCard);
     	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
     	    		
@@ -248,7 +253,8 @@ public class SignUpFlowController extends Controller {
         			user.update();
         			
         			//subscribe user
-        			Subscription subscription = new Subscription(user, product, SubscriptionStatus.TRIAL, LocalDateTime.now());
+        			Subscription subscription = new Subscription(user, creditCard, product, 
+        					SubscriptionStatus.TRIAL, LocalDateTime.now(), LocalDateTime.now());
         			subscription.save();
         			
         			//TODO subscribe user 

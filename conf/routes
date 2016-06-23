@@ -4,6 +4,7 @@
 
 # signup flow
 GET     /                           controllers.SignUpFlowController.index(login: java.lang.Boolean ?= null)
+POST	/							controllers.SignUpFlowController.prePopulateRegisterForm
 POST    /register                   controllers.SignUpFlowController.register
 GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
@@ -53,6 +54,13 @@ GET    /admin/auth-net-accounts                     controllers.AdminController.
 POST   /admin/auth-net-accounts/add         		controllers.AdminController.addAuthNetAccount
 POST   /admin/auth-net-accounts/edit        		controllers.AdminController.editAuthNetAccount
 POST   /admin/auth-net-accounts/delete		        controllers.AdminController.deleteAuthNetAccount
+
+GET	   /admin/subscriptions							controllers.AdminController.subscriptions
+POST   /admin/subscriptions/edit         			controllers.AdminController.editSubscription
+POST   /admin/subscriptions/delete			        controllers.AdminController.deleteSubscription
+POST   /admin/subscriptions/add			            controllers.AdminController.addSubscription
+POST   /admin/subscriptions/cancel			        controllers.AdminController.cancelSubscription
+GET    /admin/subscriptions/filter					controllers.AdminController.filterSubscriptions
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

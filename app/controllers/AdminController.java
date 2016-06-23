@@ -13,22 +13,25 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.ProductForm;
+import forms.SubscriptionForm;
 import forms.TransactionForm;
 import models.AuthNetAccount;
 import models.CreditCard;
 import models.Product;
 import models.SecurityRole;
+import models.Subscription;
 import models.Transaction;
 import models.User;
 import models.enums.CardType;
 import models.enums.Month;
 import models.enums.State;
+import models.enums.SubscriptionStatus;
 import models.enums.TransactionStatus;
 import models.enums.Year;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
-import models.json.TransactionResponse;
+import models.json.ObjectResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Configuration;
 import play.Logger;
@@ -360,7 +363,7 @@ public class AdminController extends Controller {
     	
 		transaction.save();
 		
-		return ok(Json.toJson(new TransactionResponse("SUCCESS", "Transaction was added successfully", transaction)));
+		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Transaction was added successfully", transaction)));
 		
 	}
 	
@@ -377,7 +380,7 @@ public class AdminController extends Controller {
 		Transaction transaction = Transaction.createTransaction(transactionForm);
 		transaction.update();
 		
-		return ok(Json.toJson(new TransactionResponse("SUCCESS", "Transaction was edited successfully", transaction)));
+		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Transaction was edited successfully", transaction)));
 		
 	}
 	
@@ -400,25 +403,7 @@ public class AdminController extends Controller {
 		
 		Transaction transaction = Transaction.find.byId(id);
 		
-		String loginId = null;
-    	String transactionKey = null;
-    	
-    	AuthNetAccount account = creditCardService.chooseMerchantAccount();
-    	
-    	Logger.info("Choosen Account: " + account);
-    	
-    	if (account == null) {
-    		loginId = conf.getString("authorise.net.login.id");
-	    	transactionKey = conf.getString("authorise.net.transaction.key");
-    	}
-    	else {
-    		loginId = account.loginId;
-	    	transactionKey = account.transactionKey;
-    	}
-    	
-    	Logger.info("Merchant Account: Login ID - " + loginId + ", Transaction Key - " + transactionKey);
-    	
-    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.refundTransaction(loginId, transactionKey, transaction);
+    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.refundTransaction(transaction);
 		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	if (transactionResponse instanceof MessageResponse) {
     		
@@ -486,6 +471,101 @@ public class AdminController extends Controller {
 		account.delete();
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was deleted successfully")));
+		
+	}
+	
+	public Result subscriptions() {
+		
+		List<User> allUsers = User.find.all();
+		List<Product> allProducts = Product.find.all();
+		List<Subscription> allSubscriptions = Subscription.find.all();
+		SubscriptionStatus[] allStatuses = SubscriptionStatus.values(); 
+		
+		return ok(views.html.adminSubscriptions.render(allSubscriptions, allUsers, allProducts, allStatuses));
+		
+	}
+	
+	public Result addSubscription() {
+		
+		JsonNode json = request().body().asJson();
+		SubscriptionForm subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
+		
+		List<ValidationError> errors = subscriptionForm.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		
+    	Subscription subscription = Subscription.createSubscription(subscriptionForm);
+    	
+		subscription.save();
+		
+		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was added successfully", subscription)));
+			
+	}
+	public Result editSubscription() {
+
+		JsonNode json = request().body().asJson();
+		SubscriptionForm subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
+		
+		List<ValidationError> errors = subscriptionForm.validate();
+    	if (errors != null) {
+    		
+    		return badRequest(Json.toJson(errors));
+    	}
+		Subscription subscription = Subscription.createSubscription(subscriptionForm);
+		subscription.update();
+		
+		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was edited successfully", subscription)));
+		
+		
+	}
+	public Result deleteSubscription() {
+
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("id"));
+		
+		Subscription subscription = Subscription.find.byId(id);
+		subscription.delete();
+		
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription was deleted successfully")));
+		
+	}
+
+	public Result cancelSubscription() {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		long id = Long.parseLong(form.get("id"));
+		
+		Subscription subscription = Subscription.find.byId(id);
+		
+		subscription.status = SubscriptionStatus.CANCELLED;
+		subscription.update();
+		
+		
+		return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription was canceled successfully")));
+		
+	}
+	
+	public Result filterSubscriptions() {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		String status = form.get("status");
+		
+		Logger.info("Subscription Filter: " + status);
+		
+		List<Subscription> subscriptions = null;
+		if (status.equals("ALL")) {
+			subscriptions = Subscription.find.all();
+		}
+		else {
+			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
+			subscriptions = Subscription.findByStatus(subscriptionStatus);
+		}
+		
+		
+		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscriptions Filtered", subscriptions)));
 		
 	}
 	

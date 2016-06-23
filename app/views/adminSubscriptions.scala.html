@@ -1,6 +1,6 @@
-@import models.enums.TransactionStatus
-@(allTransactions: java.util.List[models.Transaction], allUsers: java.util.List[models.User], 
-	allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.TransactionStatus])
+@import models.enums.SubscriptionStatus
+@(allSubscriptions: java.util.List[models.Subscription], allUsers: java.util.List[models.User], 
+	allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.SubscriptionStatus])
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,27 +15,45 @@
 			<div class="row" id="alert-box">
 			</div>
 			
-			<!-- DEFAULT TEMPLATE -->
-			<span class="btn btn-success add-btn-center" data-toggle="modal" data-target="#add-transaction" >Add Transaction</span>
 			
+			<span class="btn btn-success add-btn-center" data-toggle="modal" 
+				data-target="#add-subscription" >Add Subscription</span>
+			
+			<div class="subscription-filter standart-margin">
+				
+				<p>Subscription Filter:</p>
+				
+				<select class="form-input form-control" id="subscriptionFilterSelect" name="status" 
+		    		class="width5 expiry-field gray-text" data-url="@routes.AdminController.filterSubscriptions()">
+					<option value="ALL">ALL</option>
+					@for((s, i) <- allStatuses.zipWithIndex){
+						<option value="@s">@s</option>
+						
+					}
+					
+				</select>	
+				
+			</div>
+			
+							
 				<div class="panel-group" id="accordion">
 				
+					<!-- DEFAULT TEMPLATE -->
 					<div class="panel panel-default hidden">
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
-					        	<span class="index">0</span>. 
-					        	DEFAULT</a>
+					        	<span class="index">0</span>. DEFAULT</a>
 					      </h4>
 					    </div>
 					    <div id="collapse" class="panel-collapse collapse">
 					      <div class="panel-body">
 					      
-					      	<form class="form-horizontal edit-form" role="form">
-							    <h3 class="text-center title">Transaction info:</h3>
+					      	<form class="form-horizontal edit-form validate-product" role="form">
+							    <h3 class="text-center title">Subscription Info:</h3>
 							    <div class="row form-group">
 							    	<div class="col-sm-12 ">
-							    		<h4>Id: <span class="transactionId">0</span></h4>
+							    		<h4>Id: <span class="subscriptionID">0</span></h4>
 							    	</div>
 							    </div>
 							    
@@ -60,21 +78,18 @@
 							    <p><strong>Sale Price: </strong><span class="sale-price"></span></p>
 							    
 							    </br>
-							    <p><strong>Transaction Amount: </strong><span class="amount"></span></p>
 							    
-							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId"></span></p>
-							    
-							    <p><strong>Transaction Status: </strong><span class="status"></span></p>
+							    <p><strong>Subscription Status: </strong><span class="status"></span></p>
+							    <p><strong>Subscription Date: </strong><span class="subscription-date"></span></p>  
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
-								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
+								    	<button class="btn btn-success left-button" id="editSubscription" 
+								    		data-url="@routes.AdminController.editSubscription()" type="submit">Edit Subscription</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteTransaction">Delete Transaction</span>
+								    		data-target="#deleteSubscription" >Delete Subscription</span>
 								    	
-							    		<span class="btn btn-danger refund-btn" data-toggle="modal" 
-							    			data-target="#refundTransaction">Refund Transaction</span>	
 									</div>
 								</div>
 							</form>
@@ -83,66 +98,65 @@
 					    </div>
 					</div>
 				
-				@for((t, index) <- allTransactions.zipWithIndex) {
+				@for((s, index) <- allSubscriptions.zipWithIndex) {
 				
 					<div class="panel panel-default">
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
 					        	<span class="index">@(index + 1)</span>. 
-					        	@t.user.firstName @t.user.lastName (card: @t.creditCard.digits) - @t.product.name</a>
+					        	@s.user.firstName @s.user.lastName - @s.product.name</a>
 					      </h4>
 					    </div>
 					    <div id="collapse@index" class="panel-collapse collapse">
 					      <div class="panel-body">
 					      
-					      	<form class="form-horizontal edit-form" role="form">
-							    <h3 class="text-center title">Transaction info:</h3>
+					      	<form class="form-horizontal edit-form validate-subscription" role="form">
+							    <h3 class="text-center title">Subscription Info:</h3>
 							    <div class="row form-group">
 							    	<div class="col-sm-12 ">
-							    		<h4>Id: <span class="transactionId">@t.id</span></h4>
+							    		<h4>Id: <span class="subscriptionID">@s.id</span></h4>
 							    	</div>
 							    </div>
 							    
 							    <h4 class="text-center title">User:</h4>
-							    <p><strong>User Id: </strong><span class="user-id">@t.user.id</span></p>
-							    <p><strong>First Name: </strong><span class="first-name">@t.user.firstName</span></p>
-							    <p><strong>Last Name: </strong><span class="last-name">@t.user.lastName</span></p>
-							    <p><strong>Email: </strong><span class="email">@t.user.email</span></p> 
+							    <p><strong>User Id: </strong><span class="user-id">@s.user.id</span></p>
+							    <p><strong>First Name: </strong><span class="first-name">@s.user.firstName</span></p>
+							    <p><strong>Last Name: </strong><span class="last-name">@s.user.lastName</span></p>
+							    <p><strong>Email: </strong><span class="email">@s.user.email</span></p> 
 							    
 							    <h4 class="text-center title">Credit Card:</h4>
-							    <p><strong>Card Id: </strong><span class="card-id">@t.creditCard.id</span></p>
-							    <p><strong>Card Holder Name: </strong><span class="card-name">@t.creditCard.name</span></p>
-							    <p><strong>Card Type: </strong><span class="card-type">@t.creditCard.cardType</span></p>
-							    <p><strong>Card Number: </strong><span class="card-number">@t.creditCard.digits</span></p>
-							    <p><strong>Exp. Date: </strong><span class="exp-date">@t.creditCard.expDate</span></p>
-							    <p><strong>CVV: </strong><span class="cvv">@t.creditCard.cvv</span></p>
+							    <p><strong>Card Id: </strong><span class="card-id">@s.creditCard.id</span></p>
+							    <p><strong>Card Holder Name: </strong><span class="card-name">@s.creditCard.name</span></p>
+							    <p><strong>Card Type: </strong><span class="card-type">@s.creditCard.cardType</span></p>
+							    <p><strong>Card Number: </strong><span class="card-number">@s.creditCard.digits</span></p>
+							    <p><strong>Exp. Date: </strong><span class="exp-date">@s.creditCard.expDate</span></p>
+							    <p><strong>CVV: </strong><span class="cvv">@s.creditCard.cvv</span></p>
 							    
 							    <h4 class="text-center title">Product:</h4>
-							    <p><strong>Product Id: </strong><span class="product-id">@t.product.id</span></p>
-							    <p><strong>Product Name: </strong><span class="product-name">@t.product.name</span></p>
-							    <p><strong>Price: </strong><span class="product-price">@t.product.price</span></p>
-							    <p><strong>Sale Price: </strong><span class="sale-price">@t.product.salePrice</span></p>
+							    <p><strong>Product Id: </strong><span class="product-id">@s.product.id</span></p>
+							    <p><strong>Product Name: </strong><span class="product-name">@s.product.name</span></p>
+							    <p><strong>Price: </strong><span class="product-price">@s.product.price</span></p>
+							    <p><strong>Sale Price: </strong><span class="sale-price">@s.product.salePrice</span></p>
 							    
 							    </br>
-							    <p><strong>Transaction Amount: </strong><span class="amount">@t.amount</span></p>
-							        
-							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId">@t.transactionId</span></p>
 							    
-							    <p><strong>Transaction Status: </strong><span class="status">@t.status</span></p>    
+							    <p><strong>Subscription Status: </strong><span class="status">@s.status</span></p>
+							    <p><strong>Subscription Date: </strong><span class="subscription-date">@s.subscriptionDate</span></p>
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
-								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
+								    	<button class="btn btn-success left-button" id="editSubscription" 
+								    		data-url="@routes.AdminController.editSubscription()" type="submit">Edit Subscription</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteTransaction">Delete Transaction</span>
-								    	@if(t.status != TransactionStatus.REFUNDED){
-								    		<span class="btn btn-danger refund-btn" data-toggle="modal" 
-								    			data-target="#refundTransaction">Refund Transaction</span>
+								    		data-target="#deleteSubscription" >Delete Subscription</span>
+								    	@if(s.status == SubscriptionStatus.PENDING){
+								    		<span class="btn btn-danger cancel-btn" data-toggle="modal" 
+								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
 								    	}
-								    		
 									</div>
+									
 								</div>
 							</form>
 					      
@@ -155,11 +169,11 @@
 		
 		</div>
 		
-		<div class="modal fade" id="add-transaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal fade" id="add-subscription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		    <div class="modal-dialog">
-		        <div class="modal-content">
+		        <div class="modal-content validate-product">
 		            <div class="modal-header">
-		                <h4 class="title">Add Transaction</h4>
+		                <h4 class="title">Add New Subscription</h4>
 		            </div>
 		            <div class="modal-body">
 		                 
@@ -170,8 +184,8 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control user-cards" id="user" name="user" class="width5 expiry-field gray-text"
-						    		data-url="@routes.AdminController.getUserCreditCards()">
+						    	<select class="form-input form-control user-cards" id="user" 
+						    		name="user" data-url="@routes.AdminController.getUserCreditCards()">
 					
 									<option value="">Select User</option>
 									@for((u, i) <- allUsers.zipWithIndex){
@@ -184,7 +198,7 @@
 						    	<span class="error user-error"></span>
 						    </div>
 	    				</div>
-						    
+						
 						<div class="row form-group">
 	    
 							<div class="col-sm-4 ">
@@ -203,7 +217,7 @@
 						    	<span class="error creditCard-error"></span>
 						    </div>
 	    				</div>  
-	    				
+						
 	    				<div class="row form-group">
 	    
 							<div class="col-sm-4 ">
@@ -224,59 +238,27 @@
 						    	<span class="error product-error"></span>
 						    </div>
 	    				</div>   
-	    				
-	    				<div class="row form-group">
-	    
-							<div class="col-sm-4 ">
-						    	<label class="control-label" for="amount">Transaction Amount:</label>
-						    </div>
-						
-						    <div class="col-sm-8">
-						    	
-						    	<input class="form-input form-control" type="text" name="amount" 
-						    		placeholder="Transation Amount">
-								<span class="error" id="amount-error"></span>
-								
-						    </div>
-	    				</div> 
-	    				
-	    				<div class="row form-group">
-	    
-							<div class="col-sm-4 ">
-						    	<label class="control-label" for="transactionId">Transaction ID:</label>
-						    </div>
-						
-						    <div class="col-sm-8">
-						    	
-						    	<input class="form-input form-control" type="text" name="transactionId" 
-						    		placeholder="Transaction Id">
-								<span class="error" id="transactionId-error"></span>
-								
-						    </div>
-	    				</div> 
-	    				
-	    				
-						    
+	    				    
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <button id="confirmAddTransaction" class="btn btn-success btn-ok" data-url="@routes.AdminController.addTransaction()" >
-		                	Add Transaction</button>
+		                <button id="confirmAddSubscription" class="btn btn-success btn-ok" 
+		                	data-url="@routes.AdminController.addSubscription()" >Add Subscription</button>
 		            </div>
 		        </div>
 		    </div>
 		</div>
 		
-		
-		<div class="modal fade" id="edit-transaction" tabindex="-1" role="dialog" aria-labelledby="editTransactionLabel" aria-hidden="true">
+		<div class="modal fade" id="edit-subscription" tabindex="-1" role="dialog" 
+			aria-labelledby="editSubscriptionLabel" aria-hidden="true">
 		    <div class="modal-dialog">
 		        <div class="modal-content">
 		            <div class="modal-header">
-		                <h4 class="title">Edit Transaction</h4>
+		                <h4 class="title">Edit Subscription</h4>
 		            </div>
 		            <div class="modal-body">
 		                 
-		               <input type="hidden" id="transactionIdModal" value=""/>  
+		               <input type="hidden" id="subscriptionIdModal" value=""/>  
 					   <div class="row form-group">
 	    
 							<div class="col-sm-4 ">
@@ -284,8 +266,8 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control user-cards" id="userTransactionEdit" name="user" class="width5 expiry-field gray-text"
-						    		data-url="@routes.AdminController.getUserCreditCards()">
+						    	<select class="form-input form-control user-cards" id="userSubscriptionEdit" name="user" 
+						    	data-url="@routes.AdminController.getUserCreditCards()">
 					
 									@for((u, i) <- allUsers.zipWithIndex){
 										<option value="@u.id">@u.id. @u.firstName @u.lastName</option>
@@ -305,7 +287,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control credit-card" id="creditCardTransactionEdit" name="creditCard" 
+						    	<select class="form-input form-control credit-card" id="creditCardSubscriptionEdit" name="creditCard" 
 						    		class="width5 expiry-field gray-text" disabled>
 									
 									
@@ -322,7 +304,8 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control" id="productTransactionEdit" name="product" class="width5 expiry-field gray-text">
+						    	<select class="form-input form-control" id="productSubscriptionEdit" name="product" 
+						    		class="width5 expiry-field gray-text">
 					
 									@for((p, i) <- allProducts.zipWithIndex){
 										<option value="@p.id">@p.id. @p.name: @p.price</option>
@@ -335,43 +318,15 @@
 						    </div>
 						</div>
 						
-						<div class="row form-group">
-	    
-							<div class="col-sm-4 ">
-						    	<label class="control-label" for="amount">Transaction Amount:</label>
-						    </div>
-						
-						    <div class="col-sm-8">
-						    	
-						    	<input class="form-input form-control" id="amountTransactionEdit" type="text" name="amount" 
-						    		placeholder="Transaction Amount">
-								<span class="error" id="amount-error"></span>
-								
-						    </div>
-	    				</div> 
-						
-	    				<div class="row form-group">
-	    
-							<div class="col-sm-4 ">
-						    	<label class="control-label" for="transactionId">Transaction ID:</label>
-						    </div>
-						
-						    <div class="col-sm-8">
-						    	
-						    	<input class="form-input form-control" id="idTransactionEdit" type="text" name="transactionId" 
-						    		placeholder="Transation Id">
-								<span class="error" id="transactionId-error"></span>
-								
-						    </div>
-	    				</div>
 		    				
 	    				<div class="row form-group">
     
 							<div class="col-sm-4 ">
-						    	<label class="control-label" for="status">Transaction Status:</label>
+						    	<label class="control-label" for="status">Subscription Status:</label>
 						    </div>
 		    				<div class="col-sm-8">
-						    	<select class="form-input form-control" id="statusTransactionEdit" name="status" class="width5 expiry-field gray-text">
+						    	<select class="form-input form-control" id="statusSubscriptionEdit" name="status" 
+						    		class="width5 expiry-field gray-text">
 					
 									@for((s, i) <- allStatuses.zipWithIndex){
 										<option value="@s">@s</option>
@@ -380,64 +335,63 @@
 									
 								</select>
 						    	
-						    	<span class="error product-error"></span>
+						    	<span class="error status-error"></span>
 						    </div>
 	    				 </div> 
 	    				    
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <button id="confirmEditTransaction" class="btn btn-success btn-ok" data-url="@routes.AdminController.editTransaction()" >
-		                	Edit Transaction</button>
+		                <button id="confirmEditSubscription" class="btn btn-success btn-ok" 
+		                	data-url="@routes.AdminController.editSubscription()" >Edit Subscription</button>
 		            </div>
 		        </div>
 		    </div>
 		</div>
-	
-		<div class="modal fade" id="deleteTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		
+		
+		<div class="modal fade" id="deleteSubscription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		    <div class="modal-dialog">
 		        <div class="modal-content">
 		            <div class="modal-header">
 		                <strong>Confirm Delete</strong>
 		            </div>
 		            <div class="modal-body">
-		                <p>You are about to delete the transaction, this procedure is irreversible.</p>
+		                <p>You are about to delete the subscription, this procedure is irreversible.</p>
 	
 						<p>Do you want to proceed?</p>
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <a id="confirmDeleteTransaction" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.deleteTransaction()" >Delete</a>
+		                <a id="confirmDeleteSubscription" class="btn btn-danger btn-ok" 
+		                	data-url="@routes.AdminController.deleteSubscription()" >Delete</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	
+		<div class="modal fade" id="cancelSubscriptionAdmin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		    <div class="modal-dialog">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <strong>Confirm Subscription Cancellation</strong>
+		            </div>
+		            <div class="modal-body">
+		                <p>Are you sure you want to cancel the subscription?</p>
+		            </div>
+		            <div class="modal-footer">
+		                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+		                <a id="confirmCancelSubscriptionAdmin" class="btn btn-danger btn-ok" 
+		                	data-url="@routes.AdminController.cancelSubscription()" >Yes</a>
 		            </div>
 		        </div>
 		    </div>
 		</div>
 		
-		<div class="modal fade" id="refundTransaction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		    <div class="modal-dialog">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		                <strong>Confirm Refund</strong>
-		            </div>
-		            <div class="modal-body">
-		                <p>You are about to refund the transaction, this procedure is irreversible.</p>
 	
-						<p>Do you want to proceed?</p>
-		            </div>
-		            <div class="modal-footer">
-		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <a id="confirmRefundTransaction" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.refundTransaction()" >Refund</a>
-		            </div>
-		        </div>
-		    </div>
-		</div>
-
 		<div class="push"></div>
 
 	</div>
-
 	@footer.render()
 </body>
 </html>

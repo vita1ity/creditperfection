@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import models.AuthNetAccount;
@@ -30,16 +31,26 @@ import net.authorize.api.contract.v1.TransactionResponse.Errors.Error;
 import net.authorize.api.contract.v1.TransactionTypeEnum;
 import net.authorize.api.controller.CreateTransactionController;
 import net.authorize.api.controller.base.ApiOperationBase;
+import play.Configuration;
 import play.Logger;
 
 
 @Singleton
 public class CreditCardService {
 	
+	@Inject
+	private Configuration conf;
+	
 	public AuthNetAccount chooseMerchantAccount() {
 		List<AuthNetAccount> authNetAccounts = AuthNetAccount.find.all();
 		if (authNetAccounts.size() == 0) {
-			return null;
+			
+	    	String loginId = conf.getString("authorise.net.login.id");
+		    String transactionKey = conf.getString("authorise.net.transaction.key");
+		    
+		    AuthNetAccount defaultAccount = new AuthNetAccount(loginId, transactionKey);
+		    
+			return defaultAccount;
 		}
 		else {
 			Collections.sort(authNetAccounts);
@@ -80,16 +91,20 @@ public class CreditCardService {
 		}
 	}
 	
-	public ANetApiResponse charge(String apiLoginId, String transactionKey, Double amount, CreditCard userCreditCard) {
+	public ANetApiResponse charge(Double amount, CreditCard userCreditCard) {
 
+		Logger.info("Charging credit card: " + userCreditCard);
+		
+		AuthNetAccount account = chooseMerchantAccount();
+		
 		try {
 	        //Common code to set for all requests
 	        //ApiOperationBase.setEnvironment(Environment.SANDBOX);
 			ApiOperationBase.setEnvironment(Environment.PRODUCTION);
 	
 	        MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
-	        merchantAuthenticationType.setName(apiLoginId);
-	        merchantAuthenticationType.setTransactionKey(transactionKey);
+	        merchantAuthenticationType.setName(account.loginId);
+	        merchantAuthenticationType.setTransactionKey(account.transactionKey);
 	        ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
 	
 	        // Populate the payment data
@@ -201,15 +216,16 @@ public class CreditCardService {
 	}
 	
 	
-	public ANetApiResponse refundTransaction(String apiLoginId, String transactionKey, 
-			Transaction transaction) {
+	public ANetApiResponse refundTransaction(Transaction transaction) {
         
+		AuthNetAccount account = chooseMerchantAccount();
+		
         //Common code to set for all requests
         ApiOperationBase.setEnvironment(Environment.PRODUCTION);
 
         MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
-        merchantAuthenticationType.setName(apiLoginId);
-        merchantAuthenticationType.setTransactionKey(transactionKey);
+        merchantAuthenticationType.setName(account.loginId);
+        merchantAuthenticationType.setTransactionKey(account.transactionKey);
         ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
 
         // Create a payment object, last 4 of the credit card and expiration date are required
@@ -237,36 +253,6 @@ public class CreditCardService {
 
         return response;
         
-        /*if (response!=null) {
-
-            // If API Response is ok, go ahead and check the transaction response
-            if (response.getMessages().getResultCode() == MessageTypeEnum.OK) {
-
-                TransactionResponse result = response.getTransactionResponse();
-                if (result.getResponseCode().equals("1")) {
-                    System.out.println(result.getResponseCode());
-                    System.out.println("Successfully Refunded Transaction");
-                    System.out.println(result.getAuthCode());
-                    System.out.println(result.getTransId());
-                }
-                else
-                {
-                    System.out.println("Failed Transaction"+result.getResponseCode());
-                }
-            }
-            else
-            {
-                System.out.println("Failed Transaction:  "+response.getMessages().getResultCode());
-                if(!response.getMessages().getMessage().isEmpty())
-                    System.out.println("Error: " + response.getMessages().getMessage().get(0).getCode() + "  " + response.getMessages().getMessage().get(0).getText());
-
-                if (response.getTransactionResponse() != null)
-                    if(!response.getTransactionResponse().getErrors().getError().isEmpty())
-                        System.out.println("Transaction Error : " + response.getTransactionResponse().getErrors().getError().get(0).getErrorCode() + " " + response.getTransactionResponse().getErrors().getError().get(0).getErrorText());
-            }
-        }
-		return response;
-         */
     }
 
 	

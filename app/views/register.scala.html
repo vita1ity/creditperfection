@@ -1,4 +1,4 @@
-@(user: models.User, states: Array[models.enums.State])
+@(user: models.User, states: Array[models.enums.State], prePopulateOnly: java.lang.Boolean)
 
 <form class="form-horizontal register-form register-flow-form" data-url="@routes.SignUpFlowController.register()" role="form">
     <h3 class="text-center form-title">Register</h3>
@@ -125,7 +125,7 @@
     </div>
     <div class="row" id="registerSuccess">
     </div>
-    @if(user.email == null) {
+    @if(user.email == null && !prePopulateOnly) {
     	<div class="row form-group">
     }else{
     	<div class="row form-group hidden">

@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class KBAQuestions extends Model {
@@ -17,6 +18,7 @@ public class KBAQuestions extends Model {
 	@Column(nullable = false)
 	public String url;
 	
+	@JsonBackReference
 	@OneToOne
 	@JoinColumn(nullable = false)
 	public User user;

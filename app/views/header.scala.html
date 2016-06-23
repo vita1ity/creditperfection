@@ -25,6 +25,7 @@
 	      	<li ><a href="@routes.SignUpFlowController.index(false)">Home</a></li>
 	      	@if(session.get("admin")!=null){
 	      		<li ><a href="@routes.AdminController.users">Users</a></li>
+	      		<li ><a href="@routes.AdminController.subscriptions">Subscriptions</a></li>
 	      		<li ><a href="@routes.AdminController.products">Products</a></li>
 	      		<li ><a href="@routes.AdminController.creditCards">Credit Cards</a></li>
 	      		<li ><a href="@routes.AdminController.transactions">Transactions</a></li>

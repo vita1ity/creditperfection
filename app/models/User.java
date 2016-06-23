@@ -16,6 +16,7 @@ import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Role;
@@ -77,6 +78,7 @@ public class User extends Model implements Subject {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     public Subscription subscription;
     
+    @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     public KBAQuestions kbaQuestions;
     
