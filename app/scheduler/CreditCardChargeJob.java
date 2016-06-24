@@ -7,7 +7,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import models.Subscription;
+import models.Transaction;
 import models.enums.SubscriptionStatus;
+import models.enums.TransactionStatus;
+import models.json.JSONResponse;
+import models.json.MessageResponse;
+import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Logger;
 import services.CreditCardService;
 
@@ -28,12 +33,29 @@ public class CreditCardChargeJob implements Runnable {
         	
         	if (checkExpired(s.lastChargeDate)) {
         		//subscription expired. charge credit card
-        		creditCardService.charge(s.product.price, s.creditCard);
+        		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(s.product.price, s.creditCard);
+        		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+    	    	if (transactionResponse instanceof MessageResponse) {
         		
-        		if (s.status.equals(SubscriptionStatus.TRIAL)) {
-        			s.status = SubscriptionStatus.ACTIVE;
-        			s.update();
-        		}
+	        		s.lastChargeDate = LocalDateTime.now();
+	        				
+	        		if (s.status.equals(SubscriptionStatus.TRIAL)) {
+	        			s.status = SubscriptionStatus.ACTIVE;
+	        			
+	        		}
+	        		s.update();
+	        		
+	        		//save transaction
+	        		String transactionId = creditCardService.getTransactionId(response);
+    	    		Transaction transaction = new Transaction(s.user, s.creditCard, s.product, s.product.price, 
+    	    				transactionId, TransactionStatus.SUCCESSFUL);
+    	    		transaction.save();
+	        		
+    	    	}
+    	    	else {
+    	    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
+    	    		//TODO what to do if subscription cannot be renewed
+    	    	}
         	}
         }
         

@@ -9,27 +9,6 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	<body>
 	
 	<div class="wrapper">
-	
-		<div class="modal fade" id="add-credit-card" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		    <div class="modal-dialog">
-		        <div class="modal-content card-validation">
-		            <div class="modal-header">
-		                <h4 class="title">Add Credit Card</h4>
-		            </div>
-		            <div class="modal-body">
-		                 
-					   @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
-						<!-- add credit card to user-->    
-		
-						
-		            </div>
-		            <div class="modal-footer">
-		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <button id="confirmAddCreditCard" class="btn btn-success btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
-		            </div>
-		        </div>
-		    </div>
-		</div>
 		
 		@header.render(false)
 		<div class="container">
@@ -60,7 +39,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 							    	</div>
 							    </div>
 							    
-							    @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
+							    @creditCardFields.render(new CreditCard(), allTypes, null, months, years)
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -74,6 +53,29 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 							</form>
 					      
 					      </div>
+					    </div>
+					</div>
+				
+				
+				
+					<div class="modal fade" id="add-credit-card" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					    <div class="modal-dialog">
+					        <div class="modal-content card-validation">
+					            <div class="modal-header">
+					                <h4 class="title">Add Credit Card</h4>
+					            </div>
+					            <div class="modal-body">
+					                 
+								   @creditCardFields.render(new CreditCard(), allTypes, allUsers, months, years)
+									<!-- add credit card to user-->    
+					
+									
+					            </div>
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					                <button id="confirmAddCreditCard" class="btn btn-success btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
+					            </div>
+					        </div>
 					    </div>
 					</div>
 				

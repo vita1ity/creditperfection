@@ -94,6 +94,7 @@ public class Subscription extends Model {
 			subscription.id = Long.parseLong(subscriptionForm.id);
 			Subscription subFromDB = Subscription.find.byId(subscription.id);
 			subscription.subscriptionDate = subFromDB.subscriptionDate;
+			subscription.lastChargeDate = subFromDB.lastChargeDate;
 		}
 		return subscription;
 		

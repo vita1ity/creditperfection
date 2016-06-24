@@ -1,17 +1,17 @@
 var deleteUserId = '';
-var deletePanel = new Object();
+var userPanel = new Object();
 var deleteProductId = '';
-var deleteProductPanel = new Object();
+var productPanel = new Object();
 var deleteCreditCardId = '';
-var deleteCreditCardPanel = new Object();
+var creditCardPanel = new Object();
 var deleteTransactionId = '';
-var deleteTransactionPanel = new Object();
+var transactionPanel = new Object();
 var refundTransactionId = '';
 var refundTransactionPanel = new Object();
 var deleteAuthNetAccountId = '';
-var deleteAuthNetAccountPanel = new Object();
+var authNetAccountPanel = new Object();
 var deleteSubscriptionId = '';
-var deleteSubscriptionPanel = new Object();
+var subscriptionPanel = new Object();
 
 window.onload = function(){
 	
@@ -161,7 +161,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.userID').text();
 	    
 	    deleteUserId = id;
-	    deletePanel = $(trigger).closest('.panel');
+	    userPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteUser', function (e) {
@@ -171,7 +171,7 @@ $(document).ready(function() {
 		var url = $(this).data("url");
 		
 		var id = deleteUserId;
-		var panel = deletePanel;
+		var panel = userPanel;
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -326,7 +326,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.productID').text();
 	    
 	    deleteProductId = id;
-	    deleteProductPanel = $(trigger).closest('.panel');
+	    productPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteProduct', function (e) {
@@ -336,7 +336,7 @@ $(document).ready(function() {
 		var url = $(this).data("url");
 		
 		var id = deleteProductId;
-		var panel = deleteProductPanel;
+		var panel = productPanel;
 		
 		$.ajax({
 			
@@ -580,7 +580,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.cardID').text();
 	    
 	    deleteCreditCardId = id;
-	    deleteCreditCardPanel = $(trigger).closest('.panel');
+	    creditCardPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteCreditCard', function (e) {
@@ -590,7 +590,7 @@ $(document).ready(function() {
 		var url = $(this).data("url");
 		
 		var id = deleteCreditCardId;
-		var panel = deleteCreditCardPanel;
+		var panel = creditCardPanel;
 		
 		console.log("url: " + url + ", id: " + id);
 		
@@ -816,6 +816,8 @@ $(document).ready(function() {
 		var authorizeNetTransactionId = $(this).closest('.edit-form').find('.authorizeNetTransactionId').text();
 		var status = $(this).closest('.edit-form').find('.status').text();
 		
+		transactionPanel = $(this).closest('.edit-form');
+		
 		console.log(userId);
 		
 		$('#transactionIdModal').val(transactionId);
@@ -955,28 +957,27 @@ $(document).ready(function() {
 	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
 	    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
 	    	
-	    	$('.user-id:last').text(userId);
-	    	$('.first-name:last').text(firstName);
-	    	$('.last-name:last').text(lastName);
-	    	$('.email:last').text(email);
-			
-	    	$('.card-id:last').text(cardId);
-	    	$('.card-name:last').text(cardName);
-	    	$('.card-type:last').text(cardType);
-	    	$('.card-number:last').text(digits);
-	    	$('.exp-date:last').text(expDate);
-	    	$('.cvv:last').text(cvv);
+	    	$(transactionPanel).find('.user-id').text(userId);
+	    	$(transactionPanel).find('.first-name').text(firstName);
+	    	$(transactionPanel).find('.last-name').text(lastName);
+	    	$(transactionPanel).find('.email').text(email);
 	    	
-	    	$('.product-id:last').text(productId);
-	    	$('.product-name:last').text(productName);
-	    	$('.product-price:last').text(productPrice);
-	    	$('.sale-price:last').text(productSalePrice);
+	    	$(transactionPanel).find('.card-id').text(cardId);
+	    	$(transactionPanel).find('.card-name').text(cardName);
+	    	$(transactionPanel).find('.card-type').text(cardType);
+	    	$(transactionPanel).find('.card-number').text(digits);
+	    	$(transactionPanel).find('.exp-date').text(expDate);
+	    	$(transactionPanel).find('.cvv').text(cvv);
 	    	
-	    	$('.amount:last').text(amount);
-	    	$('.authorizeNetTransactionId:last').text(transactionId);
-	    	$('.status:last').text(status);
+	    	$(transactionPanel).find('.product-id').text(productId);
+	    	$(transactionPanel).find('.product-name').text(productName);
+	    	$(transactionPanel).find('.product-price').text(productPrice);
+	    	$(transactionPanel).find('.sale-price').text(productSalePrice);
 	    	
-			
+	    	$(transactionPanel).find('.amount').text(amount);
+	    	$(transactionPanel).find('.authorizeNetTransactionId').text(authorizeNetTransactionId);
+	    	$(transactionPanel).find('.status').text(status);
+	    	
 		}).fail (function(err) {
 			
 			console.log(err);
@@ -990,7 +991,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.transactionId').text();
 	    
 	    deleteTransactionId = id;
-	    deleteTransactionPanel = $(trigger).closest('.panel');
+	    transactionPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteTransaction', function(e) {
@@ -999,7 +1000,7 @@ $(document).ready(function() {
 		
 		var url = $(this).data('url');
 		var id = deleteTransactionId;
-		var panel = deleteTransactionPanel; 
+		var panel = transactionPanel; 
 		
 		$.ajax({
 			
@@ -1190,7 +1191,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.authNetAccountId').text();
 	    
 	    deleteAuthNetAccountId = id;
-	    deleteAuthNetAccountPanel = $(trigger).closest('.panel');
+	    authNetAccountPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteAuthNetAccount', function(e) {
@@ -1200,7 +1201,7 @@ $(document).ready(function() {
 		var url = $(this).data('url');
 		
 		var id = deleteAuthNetAccountId;
-		var deletePanel = deleteAuthNetAccountPanel;
+		var deletePanel = authNetAccountPanel;
 		
 		$.ajax({
 			type: 'POST',
@@ -1338,6 +1339,8 @@ $(document).ready(function() {
 		var productId = $(this).closest('.edit-form').find('.product-id').text();
 		var status = $(this).closest('.edit-form').find('.status').text();
 		
+		subscriptionPanel = $(this).closest('.edit-form');
+		
 		console.log(userId);
 		
 		$('#subscriptionIdModal').val(subscriptionId);
@@ -1468,25 +1471,32 @@ $(document).ready(function() {
 	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
 	    			index + "</span>. " + firstName + " " + lastName + " - " + productName);
 	    	
-	    	$('.user-id:last').text(userId);
-	    	$('.first-name:last').text(firstName);
-	    	$('.last-name:last').text(lastName);
-	    	$('.email:last').text(email);
-			
-	    	$('.card-id:last').text(cardId);
-	    	$('.card-name:last').text(cardName);
-	    	$('.card-type:last').text(cardType);
-	    	$('.card-number:last').text(digits);
-	    	$('.exp-date:last').text(expDate);
-	    	$('.cvv:last').text(cvv);
+	    	$(subscriptionPanel).find('.user-id').text(userId);
+	    	$(subscriptionPanel).find('.first-name').text(firstName);
+	    	$(subscriptionPanel).find('.last-name').text(lastName);
+	    	$(subscriptionPanel).find('.email').text(email);
 	    	
-	    	$('.product-id:last').text(productId);
-	    	$('.product-name:last').text(productName);
-	    	$('.product-price:last').text(productPrice);
-	    	$('.sale-price:last').text(productSalePrice);
+	    	$(subscriptionPanel).find('.card-id').text(cardId);
+	    	$(subscriptionPanel).find('.card-name').text(cardName);
+	    	$(subscriptionPanel).find('.card-type').text(cardType);
+	    	$(subscriptionPanel).find('.card-number').text(digits);
+	    	$(subscriptionPanel).find('.exp-date').text(expDate);
+	    	$(subscriptionPanel).find('.cvv').text(cvv);
 	    	
-	    	$('.status:last').text(status);
+	    	$(subscriptionPanel).find('.product-id').text(productId);
+	    	$(subscriptionPanel).find('.product-name').text(productName);
+	    	$(subscriptionPanel).find('.product-price').text(productPrice);
+	    	$(subscriptionPanel).find('.sale-price').text(productSalePrice);
 	    	
+	    	$(subscriptionPanel).find('.status').text(status);
+	    	
+	    	if (status == 'PENDING') {
+		    	$(subscriptionPanel).find('.cancel-subscription').removeClass('hidden');
+	    		
+	    	}
+	    	else {
+	    		$(subscriptionPanel).find('.cancel-subscription').addClass('hidden');
+	    	}
 			
 		}).fail (function(err) {
 			
@@ -1501,7 +1511,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.subscriptionID').text();
 	    
 	    deleteSubscriptionId = id;
-	    deleteSubscriptionPanel = $(trigger).closest('.panel');
+	    subscriptionPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmDeleteSubscription', function(e) {
@@ -1510,7 +1520,7 @@ $(document).ready(function() {
 		
 		var url = $(this).data('url');
 		var id = deleteSubscriptionId;
-		var panel = deleteSubscriptionPanel; 
+		var panel = subscriptionPanel; 
 		
 		$.ajax({
 			
@@ -1544,7 +1554,7 @@ $(document).ready(function() {
 	    var id = $(trigger).closest('.edit-form').find('.subscriptionID').text();
 	    
 	    deleteSubscriptionId = id;
-	    deleteSubscriptionPanel = $(trigger).closest('.panel');
+	    subscriptionPanel = $(trigger).closest('.panel');
 	});
 	
 	$(document).on('click', '#confirmCancelSubscriptionAdmin', function(e) {
@@ -1553,7 +1563,7 @@ $(document).ready(function() {
 		
 		var url = $(this).data('url');
 		var id = deleteSubscriptionId;
-		var panel = deleteSubscriptionPanel; 
+		var panel = subscriptionPanel; 
 		
 		$.ajax({
 			

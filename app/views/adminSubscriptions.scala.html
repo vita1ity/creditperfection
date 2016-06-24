@@ -80,7 +80,8 @@
 							    </br>
 							    
 							    <p><strong>Subscription Status: </strong><span class="status"></span></p>
-							    <p><strong>Subscription Date: </strong><span class="subscription-date"></span></p>  
+							    <p><strong>Subscription Date: </strong><span class="subscription-date"></span></p> 
+							    <p><strong>Last Payment Date: </strong><span class="last-payment-date"></span></p>  
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -89,7 +90,8 @@
 								    		data-url="@routes.AdminController.editSubscription()" type="submit">Edit Subscription</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteSubscription" >Delete Subscription</span>
-								    	
+								    	<span class="btn btn-danger cancel-btn hidden cancel-subscription" data-toggle="modal" 
+								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
 									</div>
 								</div>
 							</form>
@@ -143,6 +145,8 @@
 							    
 							    <p><strong>Subscription Status: </strong><span class="status">@s.status</span></p>
 							    <p><strong>Subscription Date: </strong><span class="subscription-date">@s.subscriptionDate</span></p>
+							    <p><strong>Last Payment Date: </strong><span class="last-payment-date">@s.lastChargeDate</span></p> 
+							     
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -152,9 +156,13 @@
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteSubscription" >Delete Subscription</span>
 								    	@if(s.status == SubscriptionStatus.PENDING){
-								    		<span class="btn btn-danger cancel-btn" data-toggle="modal" 
+								    		<span class="btn btn-danger cancel-btn cancel-subscription" data-toggle="modal" 
+								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
+								    	}else{
+								    		<span class="btn btn-danger cancel-btn cancel-subscription hidden" data-toggle="modal" 
 								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
 								    	}
+								    	
 									</div>
 									
 								</div>
