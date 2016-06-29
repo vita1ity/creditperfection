@@ -7,6 +7,7 @@ import com.avaje.ebean.Ebean;
 
 import models.SecurityRole;
 import models.User;
+import models.enums.SubscriptionStatus;
 import models.json.AuthenticationSuccessResponse;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
@@ -42,6 +43,11 @@ public class LoginController extends Controller {
             	
             	return badRequest(Json.toJson(new ErrorResponse("ERROR", "301", "Invalid Password")));
             }
+            else if (user.active == false && user.subscription != null && 
+            		user.subscription.status.equals(SubscriptionStatus.CANCELLED)) {
+            	
+            	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", false)));
+            }
             else if (user.active == false) {
             	mailService.sendEmailToken(user.email, user.token);
                 
@@ -63,7 +69,7 @@ public class LoginController extends Controller {
                 	session("email", email);
                     session("name", user.firstName);
                 	session("admin", "admin");
-                	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin")));
+                	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin", true)));
                 }
                 else {
                 	//store memberId in session
@@ -79,7 +85,7 @@ public class LoginController extends Controller {
                 		session("email", email);
                         session("name", user.firstName);
                         
-                        return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user")));
+                        return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", true)));
                 	}
                 	
                 	

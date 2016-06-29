@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import models.Subscription;
 import models.Transaction;
+import models.User;
 import models.enums.SubscriptionStatus;
 import models.enums.TransactionStatus;
 import models.json.JSONResponse;
@@ -53,8 +54,17 @@ public class CreditCardChargeJob implements Runnable {
 	        		
     	    	}
     	    	else {
+    	    		
     	    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
-    	    		//TODO what to do if subscription cannot be renewed
+    	    		
+    	    		//subscription cannot be renewed. make user inactive and cancel the subscription
+    	    		User user = s.user; 
+    	    		user.active = false;
+    	    		user.update();
+    	    		
+    	    		s.status = SubscriptionStatus.CANCELLED;
+    	    		s.update();
+    	    		
     	    	}
         	}
         }

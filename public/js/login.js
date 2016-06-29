@@ -23,6 +23,7 @@ $(document).ready(function() {
 		
 		var adminUrl = $(this).data("admin-url");
 		var userUrl = $(this).data("user-url");
+		var paymentUrl = $(this).data("payment-url");
 		
 		$.ajax({
 			
@@ -41,7 +42,13 @@ $(document).ready(function() {
 	    		window.location.href = adminUrl;
 	    	}
 	    	else {
-	    		window.location.href = userUrl;
+	    		if (data.subscription == false) {
+	    			window.location.href = paymentUrl;
+	    		}
+	    		else {
+	    			window.location.href = userUrl;
+	    		}
+	    		
 	    	}
 	    	
 	    

@@ -27,6 +27,9 @@ GET		/subscription/upgrade		controllers.SubscriptionController.upgradeSubscripti
 POST	/subscription/upgrade		controllers.SubscriptionController.upgradeSubscription
 POST	/subscription/cancel		controllers.SubscriptionController.cancelSubscription
 
+#payment
+GET 	/payment					controllers.PaymentController.paymentPage
+
 # admin
 GET    /admin/users                       controllers.AdminController.users
 POST   /admin/users/edit	              controllers.AdminController.editUser

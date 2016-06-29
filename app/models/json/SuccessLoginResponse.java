@@ -3,10 +3,12 @@ package models.json;
 public class SuccessLoginResponse extends JSONResponse {
 	
 	private String role;
+	private boolean subscription;
 	
-	public SuccessLoginResponse(String status, String role) {
+	public SuccessLoginResponse(String status, String role, boolean subscription) {
 		super(status);
 		this.role = role;
+		this.subscription = subscription;
 	}
 
 
@@ -19,7 +21,14 @@ public class SuccessLoginResponse extends JSONResponse {
 		this.role = role;
 	}
 
-	
-	
-	
+
+	public boolean getSubscription() {
+		return subscription;
+	}
+
+
+	public void setSubscription(boolean subscription) {
+		this.subscription = subscription;
+	}
+
 }
