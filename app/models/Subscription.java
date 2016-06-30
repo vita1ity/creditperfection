@@ -23,25 +23,81 @@ public class Subscription extends Model {
 	
 	@OneToOne
 	@JoinColumn(nullable = false)
-	public User user;
+	private User user;
 	
 	@ManyToOne
     @JoinColumn(nullable = false)
-    public CreditCard creditCard;
+	private CreditCard creditCard;
 	
 	@ManyToOne
 	@JoinColumn(nullable = false)
-	public Product product;
+	private Product product;
 	
 	@Column(nullable = false)
-	public SubscriptionStatus status;
+	private SubscriptionStatus status;
 	
 	@Column(nullable = false)
-	public LocalDateTime subscriptionDate;
+	private LocalDateTime subscriptionDate;
 	
 	@Column(nullable = false)
-	public LocalDateTime lastChargeDate;
+	private LocalDateTime lastChargeDate;
 	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public SubscriptionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(SubscriptionStatus status) {
+		this.status = status;
+	}
+
+	public LocalDateTime getSubscriptionDate() {
+		return subscriptionDate;
+	}
+
+	public void setSubscriptionDate(LocalDateTime subscriptionDate) {
+		this.subscriptionDate = subscriptionDate;
+	}
+
+	public LocalDateTime getLastChargeDate() {
+		return lastChargeDate;
+	}
+
+	public void setLastChargeDate(LocalDateTime lastChargeDate) {
+		this.lastChargeDate = lastChargeDate;
+	}
+
 	public Subscription() {
 		
 	}
@@ -57,47 +113,8 @@ public class Subscription extends Model {
 		this.lastChargeDate = lastChargeDate;
 	}
 	
-	public static Finder<Long, Subscription> find = new Finder<Long, Subscription>(Subscription.class);
-
-	public static Subscription findByUser(User user) {
-		Subscription subscription = Subscription.find.where().eq("user", user).findUnique();
-		return subscription;
-	}
 	
-	public static List<Subscription> findByStatus(SubscriptionStatus status) {
-		List<Subscription> subscriptionList = Subscription.find.where().eq("status", status).findList();
-		return subscriptionList;
-	}
 	
-	public static List<Subscription> findExcludingStatus(SubscriptionStatus status) {
-		List<Subscription> subscriptionList = Subscription.find.where().ne("status", status).findList();
-		return subscriptionList;
-	}
 	
-	public static Subscription createSubscription(SubscriptionForm subscriptionForm) {
-
-		User user = User.find.byId(Long.parseLong(subscriptionForm.userId));
-		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(subscriptionForm.cardId));
-		Product product = Product.find.byId(Long.parseLong(subscriptionForm.productId));
-		
-		SubscriptionStatus status = null;
-		if (subscriptionForm.status != null) {
-			status = subscriptionForm.status;
-		}
-		else {
-			status = SubscriptionStatus.TRIAL;
-		}
-		
-		Subscription subscription = new Subscription(user, creditCard, product, status, LocalDateTime.now(), LocalDateTime.now());
-		
-		if (subscriptionForm.id != null){
-			subscription.id = Long.parseLong(subscriptionForm.id);
-			Subscription subFromDB = Subscription.find.byId(subscription.id);
-			subscription.subscriptionDate = subFromDB.subscriptionDate;
-			subscription.lastChargeDate = subFromDB.lastChargeDate;
-		}
-		return subscription;
-		
-	}
 	
 }

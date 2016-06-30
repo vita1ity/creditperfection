@@ -2,6 +2,7 @@ package services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +11,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import forms.CreditCardForm;
 import models.AuthNetAccount;
 import models.CreditCard;
 import models.Transaction;
+import models.enums.CardType;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
@@ -33,6 +36,7 @@ import net.authorize.api.controller.CreateTransactionController;
 import net.authorize.api.controller.base.ApiOperationBase;
 import play.Configuration;
 import play.Logger;
+import repository.CreditCardRepository;
 
 
 @Singleton
@@ -41,8 +45,40 @@ public class CreditCardService {
 	@Inject
 	private Configuration conf;
 	
+	@Inject
+	private AuthNetAccountService authNetAccountService;
+	
+	@Inject 
+	private CreditCardRepository creditCardRepository;
+	
+	public CreditCard createCreditCard(CreditCardForm creditCardForm) {
+		
+		CreditCard creditCard = new CreditCard();
+		if (creditCardForm.id != null) {
+			creditCard.setId(Long.parseLong(creditCardForm.id));
+		}
+		creditCard.setName(creditCardForm.name);
+		creditCard.setCardType(CardType.valueOf(creditCardForm.cardType));
+		creditCard.setDigits(creditCardForm.digits);
+		creditCard.setCvv(Integer.parseInt(creditCardForm.cvv));
+		String expDateStr = creditCardForm.month + "/" + creditCardForm.year;
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+    	YearMonth expDate = YearMonth.parse(expDateStr, formatter);
+    	creditCard.setExpDate(expDate); 
+		
+		return creditCard;
+	}
+	
+	public List<CreditCard> getAll() {
+		return creditCardRepository.getAll();
+	}
+	
+	public CreditCard getById(long id) {
+		return creditCardRepository.getById(id);
+	}
+	
 	public AuthNetAccount chooseMerchantAccount() {
-		List<AuthNetAccount> authNetAccounts = AuthNetAccount.find.all();
+		List<AuthNetAccount> authNetAccounts = authNetAccountService.getAll();
 		if (authNetAccounts.size() == 0) {
 			
 	    	String loginId = conf.getString("authorise.net.login.id");
@@ -59,21 +95,21 @@ public class CreditCardService {
 				
 				AuthNetAccount account = authNetAccounts.get(i); 
 				
-				if (account.isLastUsed) {
+				if (account.getIsLastUsed()) {
 					//if last account was previously used return first account
 					
 					if (i == authNetAccounts.size() - 1) {
 						AuthNetAccount firstAccount = authNetAccounts.get(0);
-						account.isLastUsed= false;
-						firstAccount.isLastUsed = true;
+						account.setIsLastUsed(false);
+						firstAccount.setIsLastUsed(true);
 						account.update();
 						firstAccount.update();
 						return firstAccount;
 					}
 					else {
 						AuthNetAccount nextAccount = authNetAccounts.get(i + 1);
-						account.isLastUsed = false;
-						nextAccount.isLastUsed = true;
+						account.setIsLastUsed(false);
+						nextAccount.setIsLastUsed(true);
 						account.update();
 						nextAccount.update();
 						return nextAccount;
@@ -84,7 +120,7 @@ public class CreditCardService {
 			
 			//last used account not found. use first
 			AuthNetAccount firstAccount = authNetAccounts.get(0);
-			firstAccount.isLastUsed = true;
+			firstAccount.setIsLastUsed(true);
 			firstAccount.update();
 			return firstAccount;
 			
@@ -103,18 +139,18 @@ public class CreditCardService {
 			ApiOperationBase.setEnvironment(Environment.PRODUCTION);
 	
 	        MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
-	        merchantAuthenticationType.setName(account.loginId);
-	        merchantAuthenticationType.setTransactionKey(account.transactionKey);
+	        merchantAuthenticationType.setName(account.getLoginId());
+	        merchantAuthenticationType.setTransactionKey(account.getTransactionKey());
 	        ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
 	
 	        // Populate the payment data
 	        PaymentType paymentType = new PaymentType();
 	        CreditCardType creditCard = new CreditCardType();
-	        creditCard.setCardNumber(userCreditCard.digits);
+	        creditCard.setCardNumber(userCreditCard.getDigits());
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-	        String expDateStr = userCreditCard.expDate.format(formatter);
+	        String expDateStr = userCreditCard.getExpDate().format(formatter);
 	        creditCard.setExpirationDate(expDateStr);
-	        creditCard.setCardCode(Integer.toString(userCreditCard.cvv));
+	        creditCard.setCardCode(Integer.toString(userCreditCard.getCvv()));
 	        paymentType.setCreditCard(creditCard);
 	
 	        // Create the payment transaction request
@@ -224,23 +260,23 @@ public class CreditCardService {
         ApiOperationBase.setEnvironment(Environment.PRODUCTION);
 
         MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
-        merchantAuthenticationType.setName(account.loginId);
-        merchantAuthenticationType.setTransactionKey(account.transactionKey);
+        merchantAuthenticationType.setName(account.getLoginId());
+        merchantAuthenticationType.setTransactionKey(account.getTransactionKey());
         ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
 
         // Create a payment object, last 4 of the credit card and expiration date are required
         PaymentType paymentType = new PaymentType();
         CreditCardType creditCard = new CreditCardType();
-        creditCard.setCardNumber(transaction.creditCard.digits);
+        creditCard.setCardNumber(transaction.getCreditCard().getDigits());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-        creditCard.setExpirationDate(transaction.creditCard.expDate.format(formatter));
+        creditCard.setExpirationDate(transaction.getCreditCard().getExpDate().format(formatter));
         paymentType.setCreditCard(creditCard);
 
         // Create the payment transaction request
         TransactionRequestType txnRequest = new TransactionRequestType();
         txnRequest.setTransactionType(TransactionTypeEnum.REFUND_TRANSACTION.value());
-        txnRequest.setRefTransId(transaction.transactionId);
-        txnRequest.setAmount(new BigDecimal(transaction.amount));
+        txnRequest.setRefTransId(transaction.getTransactionId());
+        txnRequest.setAmount(new BigDecimal(transaction.getAmount()));
         txnRequest.setPayment(paymentType);
 
         // Make the API Request

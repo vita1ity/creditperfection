@@ -19,6 +19,8 @@ import play.Logger;
 import play.libs.Yaml;
 import scala.concurrent.duration.Duration;
 import scheduler.CreditCardChargeJob;
+import services.ProductService;
+import services.RoleService;
 
 @Singleton
 public class StartupController {
@@ -27,13 +29,20 @@ public class StartupController {
 	
 	private CreditCardChargeJob chargeJob;
 	
+	private ProductService productService;
+	
+	private RoleService roleService;
+	
 	@Inject
-	public StartupController(ActorSystem system, CreditCardChargeJob chargeJob) {
+	public StartupController(ActorSystem system, CreditCardChargeJob chargeJob, 
+			ProductService productService, RoleService roleService) {
 		
 		Logger.info("Application startup...");
 		
 		this.system = system;
 		this.chargeJob = chargeJob;
+		this.productService = productService;
+		this.roleService = roleService;
 		
 		fillDatabase();
 		
@@ -44,13 +53,13 @@ public class StartupController {
 	@SuppressWarnings("unchecked")
 	private void fillDatabase() {
 
-        if (Product.find.findRowCount() == 0) {
+        if (productService.checkIsEmpty()) {
         	InputStream is = this.getClass().getClassLoader().getResourceAsStream("initial-products.yml");
         	Ebean.saveAll((List<Product>)Yaml.load(is, this.getClass().getClassLoader()));
             //Ebean.saveAll((List<Product>)Yaml.load("initial-products.yml"));
             Logger.info("Database filled with products");
         }
-        if (SecurityRole.find.findRowCount() == 0) {
+        if (roleService.checkIsEmpty()) {
         	InputStream is = this.getClass().getClassLoader().getResourceAsStream("initial-roles.yml");
         	Ebean.saveAll((List<SecurityRole>)Yaml.load(is, this.getClass().getClassLoader()));
             //Ebean.saveAll((List<SecurityRole>)Yaml.load("initial-roles.yml"));

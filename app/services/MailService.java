@@ -54,11 +54,11 @@ public class MailService {
     	final String to = conf.getString("email.support");
     	
         final String subject = "Subscription Cancellation Notification";
-        final String text = "User " + user.firstName + " " + user.lastName + " "
+        final String text = "User " + user.getFirstName() + " " + user.getLastName() + " "
         		+ "has submitted request about cancellation of his subscription.\n"
         		+ "Please confirm the request in the admin area";
         
-        sendEmail(user.email, to, subject, text);
+        sendEmail(user.getEmail(), to, subject, text);
 	}
     
     private void sendEmail(String from, String to, String subject, String body) {

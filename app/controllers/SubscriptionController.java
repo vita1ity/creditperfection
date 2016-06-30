@@ -17,6 +17,8 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import services.MailService;
+import services.ProductService;
+import services.UserService;
 
 @Security.Authenticated(Secured.class)
 public class SubscriptionController extends Controller {
@@ -27,14 +29,20 @@ public class SubscriptionController extends Controller {
 	@Inject
 	private MailService mailService; 
 	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private ProductService productService;
+	
 	public Result upgradeSubscriptionPage() {
 		
 		String email = session().get("email");
-		User user = User.findByEmail(email);
+		User user = userService.findByEmail(email);
 		
-		Subscription subscription = user.subscription;
+		Subscription subscription = user.getSubscription();
 		
-		List<Product> productList = Product.find.all();
+		List<Product> productList = productService.getAll();
 		
 		return ok(views.html.upgradeSubscription.render(subscription, productList));
 		
@@ -43,7 +51,7 @@ public class SubscriptionController extends Controller {
 	public Result upgradeSubscription() {
 		
 		String email = session().get("email");
-		User user = User.findByEmail(email);
+		User user = userService.findByEmail(email);
 		if (user == null) {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "501", "User not found")));
 		}
@@ -51,13 +59,13 @@ public class SubscriptionController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
     	String productId = form.get("product");
     	
-    	Product product = Product.getById(Long.parseLong(productId));
+    	Product product = productService.getById(Long.parseLong(productId));
     	if (product == null) {
     		return badRequest(Json.toJson(new ErrorResponse("ERROR", "502", "Product not found")));
     	}
     	
-    	Subscription subscription = user.subscription;
-    	subscription.product = product;
+    	Subscription subscription = user.getSubscription();
+    	subscription.setProduct(product);
     	subscription.update();
     	
     	return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription updated successfully")));
@@ -67,23 +75,23 @@ public class SubscriptionController extends Controller {
 	public Result cancelSubscription() {
 		
 		String email = session().get("email");
-		User user = User.findByEmail(email);
+		User user = userService.findByEmail(email);
 		if (user == null) {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "501", "User not found")));
 		}
 		
-		Subscription subscription = user.subscription;
+		Subscription subscription = user.getSubscription();
 		if (subscription == null) {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "601", "You don't have any subscription")));
 		}
-		else if (subscription.status == SubscriptionStatus.PENDING) {
+		else if (subscription.getStatus() == SubscriptionStatus.PENDING) {
 			return ok(Json.toJson(new MessageResponse("SUCCESS", "Your subscription is in status Pending. "
 					+ "It will be cancelled shortly")));
 		}
-		else if (subscription.status == SubscriptionStatus.CANCELLED) {
+		else if (subscription.getStatus() == SubscriptionStatus.CANCELLED) {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "603", "Your subscription is already cancelled")));
 		}
-		subscription.status = SubscriptionStatus.PENDING;
+		subscription.setStatus(SubscriptionStatus.PENDING);
 		
 		subscription.update();
 		

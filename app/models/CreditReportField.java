@@ -12,5 +12,5 @@ public class CreditReportField extends Model {
     public String name;
     public String value;
     @ManyToOne(cascade = CascadeType.ALL)
-    public CreditReport credit_report;
+    public CreditReport creditReport;
 }

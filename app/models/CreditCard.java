@@ -27,32 +27,32 @@ import play.data.format.Formats;
 public class CreditCard extends Model {
 	
     @Id
-    public long id;
+    private long id;
     
     @Column(nullable = false)
-    public String name;
+    private String name;
     
     @Column(nullable = false)
-    public CardType cardType;
+    private CardType cardType;
     
     @Column(nullable = false)
-    public String digits;
+    private String digits;
     
     @Formats.DateTime(pattern="MM/yyyy")
     @Column(nullable = false)
-    public YearMonth expDate;
+    private YearMonth expDate;
     
     @Column(nullable = false)
-    public int cvv;
+    private int cvv;
     
     @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
-    public User user;
+    private User user;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "creditCard")
-    public List<Transaction> transactions;
+    private List<Transaction> transactions;
 
     public CreditCard() {
     	
@@ -68,8 +68,71 @@ public class CreditCard extends Model {
 		this.cvv = cvv;
 		this.user = user;
 	}
+	
+	public long getId() {
+		return id;
+	}
 
-	public static Finder<Long, CreditCard> find = new Finder<Long, CreditCard>(CreditCard.class);
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public CardType getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(CardType cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getDigits() {
+		return digits;
+	}
+
+	public void setDigits(String digits) {
+		this.digits = digits;
+	}
+
+	public YearMonth getExpDate() {
+		return expDate;
+	}
+
+	public void setExpDate(YearMonth expDate) {
+		this.expDate = expDate;
+	}
+
+	public int getCvv() {
+		return cvv;
+	}
+
+	public void setCvv(int cvv) {
+		this.cvv = cvv;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
 	
 	@Override
 	public String toString() {
@@ -123,23 +186,7 @@ public class CreditCard extends Model {
 		
 	}
 
-	public static CreditCard createCreditCard(CreditCardForm creditCardForm) {
-		
-		CreditCard creditCard = new CreditCard();
-		if (creditCardForm.id != null) {
-			creditCard.id = Long.parseLong(creditCardForm.id);
-		}
-		creditCard.name = creditCardForm.name;
-		creditCard.cardType = CardType.valueOf(creditCardForm.cardType);
-		creditCard.digits = creditCardForm.digits;
-		creditCard.cvv = Integer.parseInt(creditCardForm.cvv);
-		String expDateStr = creditCardForm.month + "/" + creditCardForm.year;
-    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-    	YearMonth expDate = YearMonth.parse(expDateStr, formatter);
-    	creditCard.expDate = expDate; 
-		
-		return creditCard;
-	}
+	
     
     
     

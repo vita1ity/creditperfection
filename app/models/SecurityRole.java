@@ -12,17 +12,23 @@ import play.data.validation.Constraints.Required;
 public class SecurityRole extends Model implements Role {
 	 
 	@Id
-	public int id;
+	private int id;
 	
 	@Required
-	public String name;
+	private String name;
 	
-	public static Finder<Long, SecurityRole> find = new Finder<Long, SecurityRole>(SecurityRole.class);
-    
-    public static SecurityRole findByName(String name) {
-		SecurityRole userRole = SecurityRole.find.where().eq("name", name).findUnique();
-		return userRole;
+	public int getId() {
+		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 
     @Override
 	public String getName() {

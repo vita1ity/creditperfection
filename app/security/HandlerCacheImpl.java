@@ -10,16 +10,18 @@ import be.objectify.deadbolt.java.ConfigKeys;
 import be.objectify.deadbolt.java.DeadboltHandler;
 import be.objectify.deadbolt.java.ExecutionContextProvider;
 import be.objectify.deadbolt.java.cache.HandlerCache;
+import services.UserService;
 
 @Singleton
 public class HandlerCacheImpl implements HandlerCache {
+	
     private final DeadboltHandler defaultHandler;
     private final Map<String, DeadboltHandler> handlers = new HashMap<>();
-
+    
     @Inject
-    public HandlerCacheImpl(final ExecutionContextProvider ecProvider) {
-        defaultHandler = new DeadboltHandlerImpl(ecProvider);
-
+    public HandlerCacheImpl(final ExecutionContextProvider ecProvider, UserService userService) {
+        defaultHandler = new DeadboltHandlerImpl(ecProvider, userService);
+        
         handlers.put(ConfigKeys.DEFAULT_HANDLER_KEY, defaultHandler);
     }
     

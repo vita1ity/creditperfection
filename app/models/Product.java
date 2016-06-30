@@ -21,36 +21,73 @@ import forms.ProductForm;
 public class Product extends Model {
 	
     @Id
-    public long id;
+    private long id;
     
     @Column(nullable = false)
-    public String name;
+    private String name;
     
     @Column(nullable = false)
-    public double price;
+    private double price;
     
     @Column(nullable = false)
-    public double salePrice;
+    private double salePrice;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
-    public List<Transaction> transactions;
+    private List<Transaction> transactions;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
-    public List<Subscription> subscriptions;
+    private List<Subscription> subscriptions;
     
-    public static Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
-    
-    public static List<Product> getAllProducts() {
-    	List<Product> allProducts = Product.find.all();
-    	return allProducts;
-    }
-    
-    public static Product getById(long id) {
-    	Product product = Product.find.byId(id);
-    	return product;
-    }
+    public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public double getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(double salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	public List<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+
 
 	public List<ValidationError> validate() {
 		
@@ -92,16 +129,6 @@ public class Product extends Model {
 		
 	}
 
-	public static Product createProduct(ProductForm productForm) {
-		Product product = new Product();
-		if (productForm.id != null) {
-			product.id = Long.parseLong(productForm.id);
-		}
-		product.name = productForm.name;
-		product.price = Double.parseDouble(productForm.price);
-		product.salePrice = Double.parseDouble(productForm.salePrice);
-		
-		return product;
-	}
+	
 	
 }

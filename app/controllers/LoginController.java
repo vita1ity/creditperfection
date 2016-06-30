@@ -8,9 +8,7 @@ import com.avaje.ebean.Ebean;
 import models.SecurityRole;
 import models.User;
 import models.enums.SubscriptionStatus;
-import models.json.AuthenticationSuccessResponse;
 import models.json.ErrorResponse;
-import models.json.JSONResponse;
 import models.json.MessageResponse;
 import models.json.SuccessLoginResponse;
 import play.data.DynamicForm;
@@ -20,6 +18,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import services.CreditReportService;
 import services.MailService;
+import services.RoleService;
 
 @Singleton
 public class LoginController extends Controller {
@@ -33,23 +32,26 @@ public class LoginController extends Controller {
 	@Inject
 	private CreditReportService creditReportService;
     
+	@Inject
+	private RoleService roleService;
+	
     public Result login(){
         DynamicForm form = formFactory.form().bindFromRequest();
         String email = form.get("email");
         User user = Ebean.find(User.class).where().eq("email", email).findUnique();
         
         if (user != null){
-            if (!user.password.equals(form.get("password"))) {
+            if (!user.getPassword().equals(form.get("password"))) {
             	
             	return badRequest(Json.toJson(new ErrorResponse("ERROR", "301", "Invalid Password")));
             }
-            else if (user.active == false && user.subscription != null && 
-            		user.subscription.status.equals(SubscriptionStatus.CANCELLED)) {
+            else if (user.getActive() == false && user.getSubscription() != null && 
+            		user.getSubscription().getStatus().equals(SubscriptionStatus.CANCELLED)) {
             	
             	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", false)));
             }
-            else if (user.active == false) {
-            	mailService.sendEmailToken(user.email, user.token);
+            else if (user.getActive() == false) {
+            	mailService.sendEmailToken(user.getEmail(), user.getToken());
                 
                 return badRequest(Json.toJson(new ErrorResponse("ERROR", "302", "Account not verified - e-mail verification sent")));
             }
@@ -64,10 +66,10 @@ public class LoginController extends Controller {
             	
                 
                 //check if admin user
-                SecurityRole adminRole = SecurityRole.findByName("admin");
-                if (user.roles.contains(adminRole)) {
+                SecurityRole adminRole = roleService.findByName("admin");
+                if (user.getRoles().contains(adminRole)) {
                 	session("email", email);
-                    session("name", user.firstName);
+                    session("name", user.getFirstName());
                 	session("admin", "admin");
                 	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin", true)));
                 }
@@ -77,13 +79,13 @@ public class LoginController extends Controller {
                 	String memberId = authResponse.getMemberId();
                 	session("memberId", memberId);*/
                 	
-                	if (user.kbaQuestions == null) {
+                	if (user.getKbaQuestions() == null) {
                     	return badRequest(Json.toJson(new ErrorResponse("ERROR", "304", "You haven't completed registration process. "
                     			+ "Please contact support for help: support@creditperfection.org ")));
                     }
                 	else {
                 		session("email", email);
-                        session("name", user.firstName);
+                        session("name", user.getFirstName());
                         
                         return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", true)));
                 	}
@@ -109,7 +111,7 @@ public class LoginController extends Controller {
         String email = form.get("email");
         User user = Ebean.find(User.class).where().eq("email", email).findUnique();
         if (user != null) {
-            mailService.sendEmailPassword(user.email, user.password);
+            mailService.sendEmailPassword(user.getEmail(), user.getPassword());
             return ok(Json.toJson(new MessageResponse("SUCCESS", "Password sent to email")));
         }
         else {

@@ -41,8 +41,14 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.AuthNetAccountService;
 import services.CreditCardService;
 import services.MailService;
+import services.ProductService;
+import services.RoleService;
+import services.SubscriptionService;
+import services.TransactionService;
+import services.UserService;
 import utils.Tokener;
 
 @Singleton
@@ -61,13 +67,31 @@ public class AdminController extends Controller {
 	@Inject
 	private Configuration conf;
 	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private ProductService productService;
+	
+	@Inject
+	private AuthNetAccountService authNetAccountService; 
+	
+	@Inject
+	private RoleService roleService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
+	
+	@Inject
+	private TransactionService transactionService;
+	
 	//users
 	public Result users() {
 		
 		String email = session().get("email");
-		User user = User.findByEmail(email);
+		User user = userService.findByEmail(email);
 		
-		List<User> allUsers = User.find.all();
+		List<User> allUsers = userService.getAll();
 		State[] states = State.values();
 		
 		return ok(views.html.adminUsers.render(user, allUsers, states));
@@ -84,15 +108,15 @@ public class AdminController extends Controller {
 	    }
 	    else {
 	    	
-	    	List<ValidationError> errors = user.validate(true);
+	    	List<ValidationError> errors = userService.validate(user, true);
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	User userDB = User.find.byId(user.id);
+	    	User userDB = userService.getById(user.getId());
 	    	if (userDB == null) {
-	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id" + user.id + "is not found")));
+	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id" + user.getId() + "is not found")));
 	    	}
 	    	userDB.updateUserInfo(user);
 	    	userDB.save();
@@ -107,7 +131,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		
 		long id = Long.parseLong(form.get("id"));
-		User user = User.find.byId(id);
+		User user = userService.getById(id);
 		boolean deleted = user.delete();
 		
 		if (deleted) {
@@ -130,22 +154,22 @@ public class AdminController extends Controller {
 	    }
 	    else {
 	    	
-	    	List<ValidationError> errors = user.validate(true);
+	    	List<ValidationError> errors = userService.validate(user, true);
 	    	if (errors != null) {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	user.token = Tokener.randomString(48);
+	    	user.setToken(Tokener.randomString(48));
 	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
-	    	SecurityRole userRole = SecurityRole.findByName("user");
+	    	SecurityRole userRole = roleService.findByName("user");
 	    	roles.add(userRole);
-	    	user.roles = roles;
+	    	user.setRoles(roles);
         	user.save();
         	
-        	mailService.sendEmailToken(user.email, user.token);
+        	mailService.sendEmailToken(user.getEmail(), user.getToken());
         	
-	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.id)));
+	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
 	    }
 		
 	}
@@ -153,7 +177,7 @@ public class AdminController extends Controller {
 	//products
 	public Result products() {
 		
-		List<Product> allProducts = Product.find.all();
+		List<Product> allProducts = productService.getAll();
 		return ok(views.html.adminProducts.render(allProducts));
 		
 	}
@@ -177,10 +201,10 @@ public class AdminController extends Controller {
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	Product product = Product.createProduct(productForm);
+	    	Product product = productService.createProduct(productForm);
         	product.save();
         	
-	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Product was created successfully", product.id)));
+	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Product was created successfully", product.getId())));
 	    }
 	
 	}
@@ -202,10 +226,10 @@ public class AdminController extends Controller {
 	    		
 	    		return badRequest(Json.toJson(errors));
 	    	}
-	    	Product product = Product.createProduct(productForm);
-	    	Product productDB = Product.find.byId(product.id);
+	    	Product product = productService.createProduct(productForm);
+	    	Product productDB = productService.getById(product.getId());
 	    	if (productDB == null) {
-	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Product with id" + product.id + "is not found")));
+	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Product with id" + product.getId() + "is not found")));
 	    	}
 	    	productDB.updateProductInfo(product);
 	    	productDB.save();
@@ -220,7 +244,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		
 		long id = Long.parseLong(form.get("id"));
-		Product product = Product.find.byId(id);
+		Product product = productService.getById(id);
 		boolean deleted = product.delete();
 		
 		if (deleted) {
@@ -235,8 +259,8 @@ public class AdminController extends Controller {
 	//credit cards
 	public Result creditCards() {
 		
-		List<CreditCard> allCards = CreditCard.find.all();
-		List<User> allUsers = User.find.all();
+		List<CreditCard> allCards = creditCardService.getAll();
+		List<User> allUsers = userService.getAll();
 		CardType[] allTypes = CardType.values();
 		Month[] months = Month.values();
     	Year[] years = Year.values();
@@ -261,14 +285,15 @@ public class AdminController extends Controller {
 	    	}
 	    	
 	    	long ownerId = json.findPath("ownerId").asLong();
-	    	User owner = User.find.byId(ownerId);
+	    	User owner = userService.getById(ownerId);
 	    	
-	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
+	    	CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
 	    	
-	    	creditCard.user = owner;
+	    	creditCard.setUser(owner);
 	    	creditCard.save();
 	    	
-	    	return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Credit Card was created successfully", creditCard.id)));
+	    	return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Credit Card was created successfully",
+	    			creditCard.getId())));
 	    }
 	}
 	
@@ -288,11 +313,12 @@ public class AdminController extends Controller {
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	
-	    	CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
+	    	CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
 	    	
-	    	CreditCard creditCardDB = CreditCard.find.byId(creditCard.id);
+	    	CreditCard creditCardDB = creditCardService.getById(creditCard.getId());
 	    	if (creditCardDB == null) {
-	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Credit Card with id" + creditCard.id + "is not found")));
+	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Credit Card with id" + 
+	    				creditCard.getId() + "is not found")));
 	    	}
 	    	creditCardDB.updateCreditCardInfo(creditCard);
 	    	creditCardDB.save();
@@ -307,7 +333,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		
 		long id = Long.parseLong(form.get("id"));
-		CreditCard creditCard = CreditCard.find.byId(id);
+		CreditCard creditCard = creditCardService.getById(id);
 		boolean deleted = creditCard.delete();
 		
 		if (deleted) {
@@ -323,9 +349,9 @@ public class AdminController extends Controller {
 	//transactions
 	public Result transactions() {
 		
-		List<User> allUsers = User.find.all();
-		List<Product> allProducts = Product.find.all();
-		List<Transaction> allTransactions = Transaction.find.all();
+		List<User> allUsers = userService.getAll();
+		List<Product> allProducts = productService.getAll();
+		List<Transaction> allTransactions = transactionService.findAll();
 		TransactionStatus[] allStatuses = TransactionStatus.values(); 
 		
 		return ok(views.html.adminTransactions.render(allTransactions, allUsers, allProducts, allStatuses));
@@ -337,8 +363,8 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("userId"));
 		
-		User user = User.find.byId(id);
-		List<CreditCard> userCreditCards = user.creditCards;
+		User user = userService.getById(id);
+		List<CreditCard> userCreditCards = user.getCreditCards();
 		
 		for (CreditCard creditCard: userCreditCards) {
 			Logger.info("Credit Card: " + creditCard);
@@ -359,7 +385,7 @@ public class AdminController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		
-    	Transaction transaction = Transaction.createTransaction(transactionForm);
+    	Transaction transaction = transactionService.createTransaction(transactionForm);
     	
 		transaction.save();
 		
@@ -377,7 +403,7 @@ public class AdminController extends Controller {
     		
     		return badRequest(Json.toJson(errors));
     	}
-		Transaction transaction = Transaction.createTransaction(transactionForm);
+		Transaction transaction = transactionService.createTransaction(transactionForm);
 		transaction.update();
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Transaction was edited successfully", transaction)));
@@ -389,7 +415,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("id"));
 		
-		Transaction transaction = Transaction.find.byId(id);
+		Transaction transaction = transactionService.findById(id);
 		transaction.delete();
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
@@ -401,13 +427,13 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("id"));
 		
-		Transaction transaction = Transaction.find.byId(id);
+		Transaction transaction = transactionService.findById(id);
 		
     	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.refundTransaction(transaction);
 		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	if (transactionResponse instanceof MessageResponse) {
     		
-    		transaction.status = TransactionStatus.REFUNDED;
+    		transaction.setStatus(TransactionStatus.REFUNDED);
     		transaction.update();
     		return ok(Json.toJson(transactionResponse)); 
     		
@@ -423,7 +449,7 @@ public class AdminController extends Controller {
 	//Authorize .NET Accounts
 	public Result authNetAccounts() {
 		
-		List<AuthNetAccount> allAccounts = AuthNetAccount.find.all();
+		List<AuthNetAccount> allAccounts = authNetAccountService.getAll();
 		
 		return ok(views.html.adminAuthNetAccounts.render(allAccounts));
 		
@@ -443,7 +469,8 @@ public class AdminController extends Controller {
 		
 		account.save();
 		
-		return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Merchant Account was added successfully", account.id)));
+		return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Merchant Account was added successfully", 
+				account.getId())));
 		
 	}
 	
@@ -467,7 +494,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("id"));
 		
-		AuthNetAccount account = AuthNetAccount.find.byId(id);
+		AuthNetAccount account = authNetAccountService.getById(id);
 		account.delete();
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was deleted successfully")));
@@ -476,9 +503,9 @@ public class AdminController extends Controller {
 	
 	public Result subscriptions() {
 		
-		List<User> allUsers = User.find.all();
-		List<Product> allProducts = Product.find.all();
-		List<Subscription> allSubscriptions = Subscription.find.all();
+		List<User> allUsers = userService.getAll();
+		List<Product> allProducts = productService.getAll();
+		List<Subscription> allSubscriptions = subscriptionService.findAll();
 		SubscriptionStatus[] allStatuses = SubscriptionStatus.values(); 
 		
 		return ok(views.html.adminSubscriptions.render(allSubscriptions, allUsers, allProducts, allStatuses));
@@ -496,7 +523,7 @@ public class AdminController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		
-    	Subscription subscription = Subscription.createSubscription(subscriptionForm);
+    	Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
     	
 		subscription.save();
 		
@@ -513,7 +540,7 @@ public class AdminController extends Controller {
     		
     		return badRequest(Json.toJson(errors));
     	}
-		Subscription subscription = Subscription.createSubscription(subscriptionForm);
+		Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
 		subscription.update();
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was edited successfully", subscription)));
@@ -525,7 +552,7 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("id"));
 		
-		Subscription subscription = Subscription.find.byId(id);
+		Subscription subscription = subscriptionService.findById(id);
 		subscription.delete();
 		
 		
@@ -538,9 +565,9 @@ public class AdminController extends Controller {
 		DynamicForm form = formFactory.form().bindFromRequest();
 		long id = Long.parseLong(form.get("id"));
 		
-		Subscription subscription = Subscription.find.byId(id);
+		Subscription subscription = subscriptionService.findById(id);
 		
-		subscription.status = SubscriptionStatus.CANCELLED;
+		subscription.setStatus(SubscriptionStatus.CANCELLED);
 		subscription.update();
 		
 		
@@ -557,11 +584,11 @@ public class AdminController extends Controller {
 		
 		List<Subscription> subscriptions = null;
 		if (status.equals("ALL")) {
-			subscriptions = Subscription.find.all();
+			subscriptions = subscriptionService.findAll();
 		}
 		else {
 			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
-			subscriptions = Subscription.findByStatus(subscriptionStatus);
+			subscriptions = subscriptionService.findByStatus(subscriptionStatus);
 		}
 		
 		

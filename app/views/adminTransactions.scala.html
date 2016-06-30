@@ -90,7 +90,7 @@
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
 					        	<span class="index">@(index + 1)</span>. 
-					        	@t.user.firstName @t.user.lastName (card: @t.creditCard.digits) - @t.product.name</a>
+					        	@t.getUser.getFirstName @t.getUser.getLastName (card: @t.getCreditCard.getDigits) - @t.getProduct.getName</a>
 					      </h4>
 					    </div>
 					    <div id="collapse@index" class="panel-collapse collapse">
@@ -100,36 +100,36 @@
 							    <h3 class="text-center title">Transaction info:</h3>
 							    <div class="row form-group">
 							    	<div class="col-sm-12 ">
-							    		<h4>Id: <span class="transactionId">@t.id</span></h4>
+							    		<h4>Id: <span class="transactionId">@t.getId</span></h4>
 							    	</div>
 							    </div>
 							    
 							    <h4 class="text-center title">User:</h4>
-							    <p><strong>User Id: </strong><span class="user-id">@t.user.id</span></p>
-							    <p><strong>First Name: </strong><span class="first-name">@t.user.firstName</span></p>
-							    <p><strong>Last Name: </strong><span class="last-name">@t.user.lastName</span></p>
-							    <p><strong>Email: </strong><span class="email">@t.user.email</span></p> 
+							    <p><strong>User Id: </strong><span class="user-id">@t.getUser.getId</span></p>
+							    <p><strong>First Name: </strong><span class="first-name">@t.getUser.getFirstName</span></p>
+							    <p><strong>Last Name: </strong><span class="last-name">@t.getUser.getLastName</span></p>
+							    <p><strong>Email: </strong><span class="email">@t.getUser.getEmail</span></p> 
 							    
 							    <h4 class="text-center title">Credit Card:</h4>
-							    <p><strong>Card Id: </strong><span class="card-id">@t.creditCard.id</span></p>
-							    <p><strong>Card Holder Name: </strong><span class="card-name">@t.creditCard.name</span></p>
-							    <p><strong>Card Type: </strong><span class="card-type">@t.creditCard.cardType</span></p>
-							    <p><strong>Card Number: </strong><span class="card-number">@t.creditCard.digits</span></p>
-							    <p><strong>Exp. Date: </strong><span class="exp-date">@t.creditCard.expDate</span></p>
-							    <p><strong>CVV: </strong><span class="cvv">@t.creditCard.cvv</span></p>
+							    <p><strong>Card Id: </strong><span class="card-id">@t.getCreditCard.getId</span></p>
+							    <p><strong>Card Holder Name: </strong><span class="card-name">@t.getCreditCard.getName</span></p>
+							    <p><strong>Card Type: </strong><span class="card-type">@t.getCreditCard.getCardType</span></p>
+							    <p><strong>Card Number: </strong><span class="card-number">@t.getCreditCard.getDigits</span></p>
+							    <p><strong>Exp. Date: </strong><span class="exp-date">@t.getCreditCard.getExpDate</span></p>
+							    <p><strong>CVV: </strong><span class="cvv">@t.getCreditCard.getCvv</span></p>
 							    
 							    <h4 class="text-center title">Product:</h4>
-							    <p><strong>Product Id: </strong><span class="product-id">@t.product.id</span></p>
-							    <p><strong>Product Name: </strong><span class="product-name">@t.product.name</span></p>
-							    <p><strong>Price: </strong><span class="product-price">@t.product.price</span></p>
-							    <p><strong>Sale Price: </strong><span class="sale-price">@t.product.salePrice</span></p>
+							    <p><strong>Product Id: </strong><span class="product-id">@t.getProduct.getId</span></p>
+							    <p><strong>Product Name: </strong><span class="product-name">@t.getProduct.getName</span></p>
+							    <p><strong>Price: </strong><span class="product-price">@t.getProduct.getPrice</span></p>
+							    <p><strong>Sale Price: </strong><span class="sale-price">@t.getProduct.getSalePrice</span></p>
 							    
 							    </br>
-							    <p><strong>Transaction Amount: </strong><span class="amount">@t.amount</span></p>
+							    <p><strong>Transaction Amount: </strong><span class="amount">@t.getAmount</span></p>
 							        
-							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId">@t.transactionId</span></p>
+							    <p><strong>Authorize .NET Transaction ID: </strong><span class="authorizeNetTransactionId">@t.getTransactionId</span></p>
 							    
-							    <p><strong>Transaction Status: </strong><span class="status">@t.status</span></p>    
+							    <p><strong>Transaction Status: </strong><span class="status">@t.getStatus</span></p>    
 							        
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -137,7 +137,7 @@
 								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteTransaction">Delete Transaction</span>
-								    	@if(t.status != TransactionStatus.REFUNDED){
+								    	@if(t.getStatus != TransactionStatus.REFUNDED){
 								    		<span class="btn btn-danger refund-btn" data-toggle="modal" 
 								    			data-target="#refundTransaction">Refund Transaction</span>
 								    	}
@@ -175,7 +175,7 @@
 					
 									<option value="">Select User</option>
 									@for((u, i) <- allUsers.zipWithIndex){
-										<option value="@u.id">@u.id. @u.firstName @u.lastName</option>
+										<option value="@u.getId">@u.getId. @u.getFirstName @u.getLastName</option>
 										
 									}
 									
@@ -215,7 +215,7 @@
 					
 									<option value="">Select Product</option>
 									@for((p, i) <- allProducts.zipWithIndex){
-										<option value="@p.id">@p.id. @p.name: @p.price</option>
+										<option value="@p.getId">@p.getId. @p.getName: @p.getPrice</option>
 										
 									}
 									
@@ -288,7 +288,7 @@
 						    		data-url="@routes.AdminController.getUserCreditCards()">
 					
 									@for((u, i) <- allUsers.zipWithIndex){
-										<option value="@u.id">@u.id. @u.firstName @u.lastName</option>
+										<option value="@u.getId">@u.getId. @u.getFirstName @u.getLastName</option>
 										
 									}
 									
@@ -325,7 +325,7 @@
 						    	<select class="form-input form-control" id="productTransactionEdit" name="product" class="width5 expiry-field gray-text">
 					
 									@for((p, i) <- allProducts.zipWithIndex){
-										<option value="@p.id">@p.id. @p.name: @p.price</option>
+										<option value="@p.getId">@p.getId. @p.getName: @p.getPrice</option>
 										
 									}
 									

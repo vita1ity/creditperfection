@@ -5,16 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import com.avaje.ebean.Model;
 
 import errors.ValidationError;
 import models.Subscription;
 import models.User;
 import models.enums.SubscriptionStatus;
-import models.json.MessageResponse;
-import play.libs.Json;
+import services.SubscriptionService;
+import services.UserService;
 
 public class SubscriptionForm extends Model {
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private SubscriptionService subscriptionService;
 	
 	public String id;
 	
@@ -42,9 +50,9 @@ public class SubscriptionForm extends Model {
 			}
 		}
 		if (!userId.equals("") && userId != null && id == null) {
-			User user = User.find.byId(Long.parseLong(userId));
+			User user = userService.getById(Long.parseLong(userId));
 			
-			Subscription subFromDb = Subscription.findByUser(user);
+			Subscription subFromDb = subscriptionService.findByUser(user);
 	    	if (subFromDb != null) {
 	    		errors.add(new ValidationError("user", "User is already subscribed"));
 	    	}

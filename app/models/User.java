@@ -1,9 +1,6 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,69 +18,190 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Role;
 import be.objectify.deadbolt.java.models.Subject;
-import errors.ValidationError;
 import forms.RegisterForm;
 import play.data.validation.Constraints.Required;
-import utils.EmailValidator;
 
 @Entity
 public class User extends Model implements Subject {
 	
     @Id
-    public long id;
+    private long id;
     
     @Required
     @Column(nullable = false)
-    public String firstName;
+    private String firstName;
     
     @Required
     @Column(nullable = false)
-    public String lastName;
+    private String lastName;
     
     @Column(unique = true, nullable = false)
-    public String email;
+    private String email;
     
     @Column(nullable = false)
-    public String address;
+    private String address;
     
     @Column(nullable = false)
-    public String city;
+    private String city;
     
     @Column(nullable = false)
-    public String state;
+    private String state;
     
     @Column(nullable = false)
-    public String zip;
+    private String zip;
     
     @Column(nullable = false)
-    public String password;
+    private String password;
     
     @Column(nullable = false)
-    public String token;
+    private String token;
     
-    public boolean active;
+    private boolean active;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_role")
-    public List<SecurityRole> roles;
+    private List<SecurityRole> roles;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    public List<CreditCard> creditCards;
+    private List<CreditCard> creditCards;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    public List<Transaction> transactions;
+    private List<Transaction> transactions;
     
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    public Subscription subscription;
+    private Subscription subscription;
     
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    public KBAQuestions kbaQuestions;
+    private KBAQuestions kbaQuestions;
     
-    public static Finder<Long, User> find = new Finder<Long, User>(User.class);
     
+    public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public List<CreditCard> getCreditCards() {
+		return creditCards;
+	}
+
+	public void setCreditCards(List<CreditCard> creditCards) {
+		this.creditCards = creditCards;
+	}
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public KBAQuestions getKbaQuestions() {
+		return kbaQuestions;
+	}
+
+	public void setKbaQuestions(KBAQuestions kbaQuestions) {
+		this.kbaQuestions = kbaQuestions;
+	}
+
+	public void setRoles(List<SecurityRole> roles) {
+		this.roles = roles;
+	}
+
     public User() {
     	
     }
@@ -101,67 +219,6 @@ public class User extends Model implements Subject {
 		
 	}
 
-	public static User findByEmail(String email) {
-		User user = User.find.where().eq("email", email).findUnique();
-		return user;
-	}
-
-    public List<ValidationError> validate(boolean isEdit) {
-		
-		List<ValidationError> errors = new ArrayList<ValidationError>();
-		
-		Map<ValidationError, String> fieldErrorMap = new HashMap<ValidationError, String>();
-		fieldErrorMap.put(new ValidationError("firstName", "Please enter First Name"), firstName);
-		fieldErrorMap.put(new ValidationError("lastName", "Please enter Last Name"), lastName);
-		fieldErrorMap.put(new ValidationError("email", "Please enter Email"), email);
-		fieldErrorMap.put(new ValidationError("address", "Please enter your Address"), address);
-		fieldErrorMap.put(new ValidationError("city", "Please enter City"), city);
-		fieldErrorMap.put(new ValidationError("state", "Please select State"), state);
-		fieldErrorMap.put(new ValidationError("zip", "Please enter Zip code"), zip);
-		fieldErrorMap.put(new ValidationError("password", "Please enter Password"), password);
-		
-		for (Map.Entry<ValidationError, String> entry: fieldErrorMap.entrySet()) {
-			String field = entry.getValue(); 
-			if (field == null || field.equals("")) {
-				errors.add(entry.getKey());
-			}
-		}
-		
-		EmailValidator emailValidator = new EmailValidator();
-	    if (!emailValidator.validate(email)) {
-	    	ValidationError error = new ValidationError("email", "Please enter a valid email address");
-			errors.add(error);
-	    }
-	    
-	    if (state.length() != 2 ) {
-	    	ValidationError error = new ValidationError("state", "Please enter a valid state");
-			errors.add(error);
-	    }
-	    
-	    if (!zip.matches("[0-9]+") || zip.length() != 5) {
-	    	ValidationError error = new ValidationError("zip", "Zip code should contain 5 digits");
-			errors.add(error);
-	    }
-	    
-	    if (password.length() < 5) {
-	    	ValidationError error = new ValidationError("password", "Password should contain at least 5 characers");
-			errors.add(error);
-	    }
-	    
-		if (!isEdit) {
-			User userByEmail = findByEmail(this.email);
-			if (userByEmail != null) {
-				errors.add(new ValidationError("email", "User with such email is already registered"));
-				
-			}
-		}
-		
-		if (errors.size() != 0) {
-			return errors;
-		}
-		return null;
-	    
-	}
 
 	@Override
 	public String toString() {

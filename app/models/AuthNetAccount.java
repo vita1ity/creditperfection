@@ -17,20 +17,20 @@ import errors.ValidationError;
 public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> {
 	
 	 @Id
-	 public long id;
+	 private long id;
 	 
 	 @Column(nullable = false)
-	 public String name;
+	 private String name;
 	 
-	 public String description;
-	 
-	 @Column(nullable = false)
-	 public String loginId;
+	 private String description;
 	 
 	 @Column(nullable = false)
-	 public String transactionKey;
+	 private String loginId;
 	 
-	 public boolean isLastUsed;
+	 @Column(nullable = false)
+	 private String transactionKey;
+	 
+	 private boolean isLastUsed;
 	 
 	 public AuthNetAccount() {
 		 
@@ -41,7 +41,54 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 		 this.transactionKey = transactionKey;
 	 }
 	 
-	 public static Finder<Long, AuthNetAccount> find = new Finder<Long, AuthNetAccount>(AuthNetAccount.class);
+	 public long getId() {
+			return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
+	}
+
+	public String getTransactionKey() {
+		return transactionKey;
+	}
+
+	public void setTransactionKey(String transactionKey) {
+		this.transactionKey = transactionKey;
+	}
+
+	public boolean getIsLastUsed() {
+		return isLastUsed;
+	}
+
+	public void setIsLastUsed(boolean isLastUsed) {
+		this.isLastUsed = isLastUsed;
+	}
+	 
 
 	@Override
 	public String toString() {
@@ -80,5 +127,9 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 		return (int)(this.id - o.id);
 		
 	}
+
+	
+	
+	
 	
 }

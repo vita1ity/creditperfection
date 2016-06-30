@@ -5,19 +5,28 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.DynamicResourceHandler;
 import be.objectify.deadbolt.java.ExecutionContextProvider;
 import be.objectify.deadbolt.java.models.Subject;
-import models.User;
+import play.Logger;
 import play.mvc.Http;
 import play.mvc.Result;
+import services.UserService;
 import views.html.accessFailed;
 
+@Singleton
 public class DeadboltHandlerImpl extends AbstractDeadboltHandler {
-
-	public DeadboltHandlerImpl(ExecutionContextProvider ecProvider) {
+	
+	private UserService userService;
+	
+	@Inject
+	public DeadboltHandlerImpl(ExecutionContextProvider ecProvider, UserService userService) {
 		super(ecProvider);
+		this.userService = userService;
 	}
 
 	public CompletionStage<Optional<Result>> beforeAuthCheck(final Http.Context context) {
@@ -28,7 +37,9 @@ public class DeadboltHandlerImpl extends AbstractDeadboltHandler {
         
 		String email = context.session().get("email");
 		
-        return CompletableFuture.supplyAsync(() -> Optional.ofNullable(User.findByEmail(email)),
+		Logger.info("UserService: " + userService);
+		
+        return CompletableFuture.supplyAsync(() -> Optional.ofNullable(userService.findByEmail(email)),
                                              (Executor) executionContextProvider.get());
     }
 

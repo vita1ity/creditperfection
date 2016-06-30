@@ -7,7 +7,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 
 	<div class="col-sm-4">
-		<input class="form-input form-control name " type="text" name="name" placeholder="Card Holder Name" value="@c.name"/>
+		<input class="form-input form-control name " type="text" name="name" placeholder="Card Holder Name" value="@c.getName"/>
 		<span class="error" id="name-error"></span>
 	</div>
 	
@@ -17,12 +17,12 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	
 	<div class="col-sm-4">
 		<select class="form-input form-control card-type" name="cardType">
-			@if(c.cardType == null){
+			@if(c.getCardType == null){
 	    		<option value="" >Choose Card Type</option>
 	    	}
 	    	
 	        @for(cardType <- allTypes) {
-	        	@if(c.cardType != null && c.cardType.value == cardType.value) {
+	        	@if(c.getCardType != null && c.getCardType.value == cardType.value) {
 	        		<option value="@cardType" selected>@cardType.value</option>
 	        	}else{
 	    			<option value="@cardType">@cardType.value</option>
@@ -41,7 +41,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
    	
     <div class="col-sm-4">
-   	 	<input class="form-input form-control digits" type="text" name="digits" placeholder="Card Number" value="@c.digits"/>
+   	 	<input class="form-input form-control digits" type="text" name="digits" placeholder="Card Number" value="@c.getDigits"/>
    	 	<span class="error" id="digits-error"></span>
     </div>
     
@@ -50,7 +50,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
     
     <div class="col-sm-4">
-		<input class="form-input form-control cvv" type="text" name="cvv" placeholder="CVV Number" value="@c.cvv" />
+		<input class="form-input form-control cvv" type="text" name="cvv" placeholder="CVV Number" value="@c.getCvv" />
 		<span class="error cvv-error" ></span>
 	</div>
 	
@@ -65,12 +65,12 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    	<div class="col-sm-2">
 
 		<select class="form-input form-control month" id="ccmonth" name="month" class="width5 expiry-field gray-text">
-			@if(c.expDate == null){
+			@if(c.getExpDate == null){
 				<option value="">Month</option>	
 			}
 			
 			@for(m <- months) {
-				@if(c.expDate != null && c.expDate.getMonthValue == m.getNum) {
+				@if(c.getExpDate != null && c.getExpDate.getMonthValue == m.getNum) {
 					<option value="@m.getNum" selected>@m.getName</option>
 				}else{
 					<option value="@m.getNum">@m.getName</option>
@@ -83,11 +83,11 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 	<div class="col-sm-2">
 		<select class="form-input form-control year" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
-			@if(c.expDate == null){
+			@if(c.getExpDate == null){
 				<option value="">Year</option>
 			}
 			@for(y <- years) {
-				@if(c.expDate != null && c.expDate.getYear == y.getValue) {
+				@if(c.getExpDate != null && c.getExpDate.getYear == y.getValue) {
 					<option value="@y.getValue" selected>@y.getValue</option>
 				}else{
 					<option value="@y.getValue">@y.getValue</option>
@@ -99,7 +99,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		
 		<span class="error" id="monthyear-error"></span>
 	</div>
-	@if(c.name == null && allUsers != null){
+	@if(c.getName == null && allUsers != null){
 		<div class="col-sm-2">
 	    	<label class="control-label" >Card Owner:</label>
 	    </div>
@@ -110,7 +110,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 				
 				<option value="">Select Card Owner</option>
 				@for((u, i) <- allUsers.zipWithIndex){
-					<option value="@u.id">@u.id. @u.firstName @u.lastName</option>
+					<option value="@u.getId">@u.getId. @u.getFirstName @u.getLastName</option>
 					
 				}
 				

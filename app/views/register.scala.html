@@ -9,7 +9,7 @@
     	</div>
     	
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" value="@user.firstName">
+	    	<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" value="@user.getFirstName">
 	    	<span class="error" id="firstname-error"></span>
 	    </div>
 	    
@@ -18,7 +18,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" value="@user.lastName">
+	    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" value="@user.getLastName">
 	    	<span class="error" id="lastname-error"></span>
 	    </div>
 	    
@@ -30,7 +30,7 @@
     	</div>
     
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="email" name="email" placeholder="Email" value="@user.email">
+	    	<input class="form-input form-control" type="email" name="email" placeholder="Email" value="@user.getEmail">
 	    	<span class="error" id="email-error"></span>
 	    </div>
 	    
@@ -39,7 +39,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-    		<input class="form-input form-control" type="password" name="password" placeholder="Password" value="@user.password">
+    		<input class="form-input form-control" type="password" name="password" placeholder="Password" value="@user.getPassword">
     		<span class="error" id="password-error"></span>
     	</div>
     	
@@ -52,7 +52,7 @@
     	</div>
     
     	<div class="col-sm-4">
-	    	<input class="form-input form-control" type="email" name="confirmEmail" placeholder="Confirm Email" value="@user.email">
+	    	<input class="form-input form-control" type="email" name="confirmEmail" placeholder="Confirm Email" value="@user.getEmail">
 	    	<span class="error" id="confirmEmail-error"></span>
 	    </div>
 	    
@@ -62,7 +62,7 @@
 	    
 	    <div class="col-sm-4">
     		<input class="form-input form-control" type="password" name="confirmPassword" 
-    			placeholder="Confirm Password" value="@user.password">
+    			placeholder="Confirm Password" value="@user.getPassword">
     		<span class="error" id="confirmPassword-error"></span>
     	</div>
     	
@@ -75,7 +75,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="address" placeholder="Address" value="@user.address">
+	    	<input class="form-input form-control" type="text" name="address" placeholder="Address" value="@user.getAddress">
 	    	<span class="error" id="address-error"></span>
 	    </div>
 	    
@@ -84,7 +84,7 @@
 	    </div>
 	    
 	    <div class="col-sm-4">
-	    	<input class="form-input form-control" type="text" name="city" placeholder="City" value="@user.city">
+	    	<input class="form-input form-control" type="text" name="city" placeholder="City" value="@user.getCity">
 	    	<span class="error" id="city-error"></span>
 	    </div>
     </div>
@@ -97,12 +97,12 @@
     
 	    <div class="col-sm-4">
 		    <select name="state" class="form-input form-control" >
-		    	@if(user.state == null){
+		    	@if(user.getState == null){
 		    		<option value=""></option>
 		    	}
 					
 				@for(state <- states) {
-					@if(state.getName == user.state){
+					@if(state.getName == user.getState){
 						<option value="@state.getCode" selected>@state.getName</option>
 					}else{
 						<option value="@state.getCode">@state.getName</option>
@@ -118,14 +118,14 @@
 		</div>
 		
 	    <div class="col-sm-4">
-		    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" value="@user.zip">
+		    <input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" value="@user.getZip">
 		    <span class="error" id="zip-error"></span>
 	    </div>
     	
     </div>
     <div class="row" id="registerSuccess">
     </div>
-    @if(user.email == null && !prePopulateOnly) {
+    @if(user.getEmail == null && !prePopulateOnly) {
     	<div class="row form-group">
     }else{
     	<div class="row form-group hidden">

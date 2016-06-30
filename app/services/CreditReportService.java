@@ -110,23 +110,23 @@ public class CreditReportService {
     		  "<Product>&#xD;" +
     		    "<PackageId>" + packageId + "</PackageId>&#xD;" +
     		    "<ProductUser>&#xD;" +
-    		      "<Memberid>" + user.email + "</Memberid>&#xD;" +
-    		      "<EmailAddress>" + user.email + "</EmailAddress>&#xD;" +
-    		      "<Password>" + user.password + "</Password>&#xD;" +
+    		      "<Memberid>" + user.getEmail() + "</Memberid>&#xD;" +
+    		      "<EmailAddress>" + user.getEmail() + "</EmailAddress>&#xD;" +
+    		      "<Password>" + user.getPassword() + "</Password>&#xD;" +
     		      "<Address>&#xD;" +
-    		        "<Address1>" + user.address + "</Address1>&#xD;" +
+    		        "<Address1>" + user.getAddress() + "</Address1>&#xD;" +
     		        "<Address2 xsi:type=\"xsd:string\" />&#xD;" +
-    		        "<City>" + user.city + "</City>&#xD;" +
-    		        "<State>" + user.state + "</State>&#xD;" +
-    		        "<ZipCode>" + user.zip + "</ZipCode>&#xD;" +
+    		        "<City>" + user.getCity() + "</City>&#xD;" +
+    		        "<State>" + user.getState() + "</State>&#xD;" +
+    		        "<ZipCode>" + user.getZip() + "</ZipCode>&#xD;" +
     		      "</Address>&#xD;" +
     		      "<Phone>&#xD;" +
     		        "<PhoneNumber></PhoneNumber>&#xD;" +
     		        "<PhoneType xsi:type=\"xsd:string\"></PhoneType>&#xD;" +
     		      "</Phone>&#xD;" +
     		      "<Person>&#xD;" +
-    		        "<FirstName>" + user.firstName + "</FirstName>&#xD;" +
-    		        "<LastName>" + user.lastName + "</LastName>&#xD;" +
+    		        "<FirstName>" + user.getFirstName() + "</FirstName>&#xD;" +
+    		        "<LastName>" + user.getLastName() + "</LastName>&#xD;" +
     		        "<MiddleName></MiddleName>&#xD;" +
     		      "</Person>&#xD;" +
     		    "</ProductUser>&#xD;" +
@@ -479,7 +479,7 @@ public class CreditReportService {
     	        	//handle success
     	        	if (responseStr.contains("<Status>SUCCESS</Status>")) {
     	        		
-    	    	        //TODO get report from the response
+    	    	        // get report from the response
     	        		if (responseStr.contains("<Report>")) {
     	    	        	String report = responseStr.substring(responseStr.indexOf("<Report>") + "<Report>".length(), 
     	    	        			responseStr.indexOf("</Report>"));

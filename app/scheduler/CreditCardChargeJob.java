@@ -16,39 +16,44 @@ import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Logger;
 import services.CreditCardService;
+import services.SubscriptionService;
 
 public class CreditCardChargeJob implements Runnable {
 	
 	@Inject
 	private CreditCardService creditCardService;
 	
+	@Inject
+	private SubscriptionService subscriptionService;
+	
     @Override
     public void run() {
     	
         Logger.info("Credit card charging job is running...");
      
-        List<Subscription> activeSubscriptions = Subscription.findExcludingStatus(SubscriptionStatus.CANCELLED);
+        List<Subscription> activeSubscriptions = subscriptionService.findExcludingStatus(SubscriptionStatus.CANCELLED);
         for (Subscription s: activeSubscriptions) {
         	
         	Logger.info("subscription: " + s);
         	
-        	if (checkExpired(s.lastChargeDate)) {
+        	if (checkExpired(s.getLastChargeDate())) {
         		//subscription expired. charge credit card
-        		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(s.product.price, s.creditCard);
+        		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(s.getProduct().getPrice(), 
+        				s.getCreditCard());
         		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
         		
-	        		s.lastChargeDate = LocalDateTime.now();
+	        		s.setLastChargeDate(LocalDateTime.now());
 	        				
-	        		if (s.status.equals(SubscriptionStatus.TRIAL)) {
-	        			s.status = SubscriptionStatus.ACTIVE;
+	        		if (s.getStatus().equals(SubscriptionStatus.TRIAL)) {
+	        			s.setStatus(SubscriptionStatus.ACTIVE);
 	        			
 	        		}
 	        		s.update();
 	        		
 	        		//save transaction
 	        		String transactionId = creditCardService.getTransactionId(response);
-    	    		Transaction transaction = new Transaction(s.user, s.creditCard, s.product, s.product.price, 
+    	    		Transaction transaction = new Transaction(s.getUser(), s.getCreditCard(), s.getProduct(), s.getProduct().getPrice(), 
     	    				transactionId, TransactionStatus.SUCCESSFUL);
     	    		transaction.save();
 	        		
@@ -58,11 +63,11 @@ public class CreditCardChargeJob implements Runnable {
     	    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
     	    		
     	    		//subscription cannot be renewed. make user inactive and cancel the subscription
-    	    		User user = s.user; 
-    	    		user.active = false;
+    	    		User user = s.getUser(); 
+    	    		user.setActive(false);
     	    		user.update();
     	    		
-    	    		s.status = SubscriptionStatus.CANCELLED;
+    	    		s.setStatus(SubscriptionStatus.CANCELLED);
     	    		s.update();
     	    		
     	    	}

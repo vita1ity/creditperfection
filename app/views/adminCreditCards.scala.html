@@ -85,7 +85,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
-					        <span class="index">@(index + 1)</span>. @c.name - @c.digits</a>
+					        <span class="index">@(index + 1)</span>. @c.getName - @c.getDigits</a>
 					      </h4>
 					    </div>
 					    <div id="collapse@index" class="panel-collapse collapse">
@@ -95,7 +95,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 							    <h3 class="text-center title">Credit Card Info:</h3>
 							    <div class="row form-group">
 							    	<div class="col-sm-12 ">
-							    		<h4>Id: <span class="cardID">@c.id</span></h4>
+							    		<h4>Id: <span class="cardID">@c.getId</span></h4>
 							    	</div>
 							    </div>
 							    

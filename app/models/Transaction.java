@@ -15,29 +15,86 @@ import models.enums.TransactionStatus;
 public class Transaction extends Model {
     
 	@Id
-    public long id;
+	private long id;
 	
     @ManyToOne
     @JoinColumn(nullable = false)
-    public User user;
+    private User user;
     
     @ManyToOne
     @JoinColumn(nullable = false)
-    public CreditCard creditCard;
+    private CreditCard creditCard;
     
     @ManyToOne
     @JoinColumn(nullable = false)
-    public Product product;
+    private Product product;
     
     @Column(nullable = false)
-    public double amount;
+    private double amount;
     
     @Column(nullable = false)
-    public String transactionId;
+    private String transactionId;
     
     @Column(nullable = false)
-    public TransactionStatus status;
+    private TransactionStatus status;
     
+    
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public TransactionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TransactionStatus status) {
+		this.status = status;
+	}
+
 	public Transaction(User user, CreditCard creditCard, Product product, double amount, 
 			String transactionId, TransactionStatus status) {
 		super();
@@ -61,31 +118,5 @@ public class Transaction extends Model {
 		this.status = status;
 	}
 
-	public static Finder<Long, Transaction> find = new Finder<Long, Transaction>(Transaction.class);
-
-	public static Transaction createTransaction(TransactionForm transactionForm) {
-		
-		User user = User.find.byId(Long.parseLong(transactionForm.userId));
-		CreditCard creditCard = CreditCard.find.byId(Long.parseLong(transactionForm.cardId));
-		Product product = Product.find.byId(Long.parseLong(transactionForm.productId));
-		double amount = Double.parseDouble(transactionForm.amount);
-		String transactionId = transactionForm.transactionId;
-		
-		TransactionStatus status = null;
-		if (transactionForm.status != null) {
-			status = transactionForm.status;
-		}
-		else {
-			status = TransactionStatus.SUCCESSFUL;
-		}
-		
-		Transaction transaction = new Transaction(user, creditCard, product, amount, transactionId, status);
-		
-		if (transactionForm.id != null){
-			transaction.id = Long.parseLong(transactionForm.id);
-		}
-		return transaction;
-	}
-    
-
+	
 }

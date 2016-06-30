@@ -10,12 +10,16 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import services.UserService;
 
 @Singleton
 public class CreditReportController extends Controller {
 
 	@Inject
     private FormFactory formFactory;
+	
+	@Inject
+	private UserService userService;
 	
 	public Result processUrl() {
 		
@@ -30,7 +34,7 @@ public class CreditReportController extends Controller {
 	public Result reportPage() {
 		
 		String email = session().get("email");
-		User user = User.findByEmail(email);
+		User user = userService.findByEmail(email);
 		
     	//TODO get user report
 		/*String memberId = session().get("memberId");
@@ -48,7 +52,7 @@ public class CreditReportController extends Controller {
     		//do something with report
     	}*/
 		
-		Logger.info("KBA Questions url: " + user.kbaQuestions.url);
+		Logger.info("KBA Questions url: " + user.getKbaQuestions().getUrl());
 		
         return ok(views.html.userReport.render(user));
     }

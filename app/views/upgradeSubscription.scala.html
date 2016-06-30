@@ -17,7 +17,7 @@
 				<h4 class="title">Upgrade Subscription</h4>
 				
 				<p>Current product:</p>
-				<p class="product">@subscription.product.name - @subscription.product.price</p>
+				<p class="product">@subscription.getProduct.getName - @subscription.getProduct.getPrice</p>
 				
 			</div>
 			
@@ -34,14 +34,14 @@
 			   <div class="row form-group"> 	
 			    	<div class="col-sm-12">
 					    <select name="product" class="form-input form-control">
-					    	@if(subscription.product.id == 0){
+					    	@if(subscription.getProduct.getId == 0){
 					    		<option value="">Choose product</option>
 					    	}
 					        @for(p <- productList) {
-					        	@if(subscription.product.id == p.id){
-					    			<option value="@p.id" selected>@p.name - @p.price</option>
+					        	@if(subscription.getProduct.getId == p.getId){
+					    			<option value="@p.getId" selected>@p.getName - @p.getPrice</option>
 					    		}else{
-					    			<option value="@p.id">@p.name - @p.price</option>
+					    			<option value="@p.getId">@p.getName - @p.getPrice</option>
 					    		}
 							}
 					    </select>

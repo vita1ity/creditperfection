@@ -13,15 +13,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class KBAQuestions extends Model {
 	
 	@Id
-	public long id;
+	private long id;
 	
 	@Column(nullable = false)
-	public String url;
+	private String url;
 	
 	@JsonBackReference
 	@OneToOne
 	@JoinColumn(nullable = false)
-	public User user;
+	private User user;
 	
 	public KBAQuestions() {
 		
@@ -33,6 +33,29 @@ public class KBAQuestions extends Model {
 		this.user = user;
 	}
 
-	public static Finder<Long, KBAQuestions> find = new Finder<Long, KBAQuestions>(KBAQuestions.class);
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	
 }

@@ -1,6 +1,6 @@
 @(user: models.User, product: models.Product, productList: java.util.List[models.Product], prePopulateOnly: java.lang.Boolean)
 
-@if(user.email == null && !prePopulateOnly){
+@if(user.getEmail == null && !prePopulateOnly){
 	<form class="form-horizontal choose-product-form register-flow-form hidden"
 		data-url="@routes.SignUpFlowController.chooseProduct()" role="form">
 }else{
@@ -17,21 +17,21 @@
     	
     	<div class="col-sm-8">
 		    <select name="product" class="form-input form-control">
-		    	@if(product.id == 0){
+		    	@if(product.getId == 0){
 		    		<option value="">Choose product</option>
 		    	}
 		        @for(p <- productList) {
-		        	@if(product.id == p.id){
-		    			<option value="@p.id" selected>@p.name - @p.price</option>
+		        	@if(product.getId == p.getId){
+		    			<option value="@p.getId" selected>@p.getName - @p.getPrice</option>
 		    		}else{
-		    			<option value="@p.id">@p.name - @p.price</option>
+		    			<option value="@p.getId">@p.getName - @p.getPrice</option>
 		    		}
 				}
 		    </select>
 		    <span class="error" id="product-error"></span>
 	    </div>
     </div>
-    @if(product.id == 0) {
+    @if(product.getId == 0) {
     	<div class="row form-group">
     }else{
     	<div class="row form-group hidden">

@@ -3,7 +3,6 @@ package controllers;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.RegisterForm;
-import models.AuthNetAccount;
 import models.CreditCard;
 import models.KBAQuestions;
 import models.Product;
@@ -38,16 +36,16 @@ import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
-import play.libs.Akka;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import scala.concurrent.duration.Duration;
-import scheduler.CreditCardChargeJob;
 import services.CreditCardService;
 import services.CreditReportService;
 import services.MailService;
+import services.ProductService;
+import services.RoleService;
+import services.UserService;
 import utils.Tokener;
 import views.html.index;
 
@@ -68,12 +66,21 @@ public class SignUpFlowController extends Controller {
     
     @Inject
 	private Configuration conf;
+    
+    @Inject
+    private UserService userService;
 
+    @Inject
+    private ProductService productService;
+
+    @Inject
+    private RoleService roleService;
+    
     public Result index(Boolean login){
     	
     	//session().clear();
     	
-    	List<Product> productList = Product.getAllProducts();
+    	List<Product> productList = productService.getAll();
     	CardType[] allTypes = CardType.values();
     	State[] states = State.values();
     	Month[] months = Month.values();
@@ -85,12 +92,12 @@ public class SignUpFlowController extends Controller {
     	User user = new User();
     	String userEmail = session().get("userEmail");
     	if (userEmail != null) {
-    		user = User.findByEmail(userEmail);
+    		user = userService.findByEmail(userEmail);
     	}
     	Product product = new Product();
     	if (session().get("productId") != null) {
     		long productId = Long.parseLong(session().get("productId"));
-			product = Product.getById(productId);
+			product = productService.getById(productId);
 		}
     	
         return ok(index.render(user, product, productList, allTypes, states, months, years, login, prePopulateOnly));
@@ -101,7 +108,7 @@ public class SignUpFlowController extends Controller {
     	
     	session().clear();
     	
-    	List<Product> productList = Product.getAllProducts();
+    	List<Product> productList = productService.getAll();
     	CardType[] allTypes = CardType.values();
     	State[] states = State.values();
     	Month[] months = Month.values();
@@ -139,12 +146,12 @@ public class SignUpFlowController extends Controller {
 	    	
 	    	User user = new User(registerForm);
 	    	
-	    	User userByEmail = User.findByEmail(user.email);
+	    	User userByEmail = userService.findByEmail(user.getEmail());
 			if (userByEmail != null) {
 				//user is already registered
-				if (userByEmail.kbaQuestions == null) {
+				if (userByEmail.getKbaQuestions() == null) {
 					//registration process is not completed
-					session("userEmail", user.email);
+					session("userEmail", user.getEmail());
 					userByEmail.updateUserInfo(user);
 					userByEmail.update();
 					return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
@@ -157,17 +164,17 @@ public class SignUpFlowController extends Controller {
 			}
 
 	    	
-	    	user.token = Tokener.randomString(48);
+	    	user.setToken(Tokener.randomString(48));
 	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
-	    	SecurityRole userRole = SecurityRole.findByName("user");
+	    	SecurityRole userRole = roleService.findByName("user");
 	    	roles.add(userRole);
-	    	user.roles = roles;
+	    	user.setRoles(roles);
         	user.save();
         	
-        	Logger.info("Sending email to : " + user.email);
-        	mailService.sendEmailToken(user.email, user.token);
+        	Logger.info("Sending email to : " + user.getEmail());
+        	mailService.sendEmailToken(user.getEmail(), user.getToken());
         	
-        	session("userEmail", user.email);
+        	session("userEmail", user.getEmail());
 	        return ok(Json.toJson(new MessageResponse("SUCCESS", "Email verification sent")));
 	    }
     	
@@ -176,7 +183,7 @@ public class SignUpFlowController extends Controller {
     public Result registerToken(String token) {
         User user = Ebean.find(User.class).where().eq("token", token).findUnique();
         if (user != null) {
-            user.active = true;
+            user.setActive(true);
             user.update();
             flash("message", "Account verified, please login");
         } 
@@ -215,7 +222,7 @@ public class SignUpFlowController extends Controller {
 	    		return badRequest(Json.toJson(errors));
 	    	}
 	    	String userEmail = session().get("userEmail");
-	    	User user = User.findByEmail(userEmail);
+	    	User user = userService.findByEmail(userEmail);
 	    	
 	    	//get kba questions
 	    	JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
@@ -224,32 +231,32 @@ public class SignUpFlowController extends Controller {
     		}
     		else {
     			
-    			CreditCard creditCard = CreditCard.createCreditCard(creditCardForm);
+    			CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
     			
     	    	//charge amount for the product from credit card
     	    	long productId = Long.parseLong(session().get("productId"));
-    	    	Product product = Product.getById(productId);
+    	    	Product product = productService.getById(productId);
     	    	
     	    	Logger.info("Product to be purchased: " + product);
     	    	
-    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.salePrice, creditCard);
+    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
     	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
     	    		
     	    		//save credit card 
-        	    	creditCard.user = user;
+        	    	creditCard.setUser(user);
         	    	creditCard.save();
         	    	
         	    	String transactionId = creditCardService.getTransactionId(response);
     	    		//save transaction
-    	    		Transaction transaction = new Transaction(user, creditCard, product, product.salePrice, 
+    	    		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
     	    				transactionId, TransactionStatus.SUCCESSFUL);
     	    		transaction.save();
     	    		
     	    		//save kba questions url for user
     	    		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
         			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
-        			user.kbaQuestions = kbaQuestions;
+        			user.setKbaQuestions(kbaQuestions);
         			user.update();
         			
         			//subscribe user
