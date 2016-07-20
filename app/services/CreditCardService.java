@@ -54,14 +54,14 @@ public class CreditCardService {
 	public CreditCard createCreditCard(CreditCardForm creditCardForm) {
 		
 		CreditCard creditCard = new CreditCard();
-		if (creditCardForm.id != null) {
-			creditCard.setId(Long.parseLong(creditCardForm.id));
+		if (creditCardForm.getId() != null) {
+			creditCard.setId(Long.parseLong(creditCardForm.getId()));
 		}
-		creditCard.setName(creditCardForm.name);
-		creditCard.setCardType(CardType.valueOf(creditCardForm.cardType));
-		creditCard.setDigits(creditCardForm.digits);
-		creditCard.setCvv(Integer.parseInt(creditCardForm.cvv));
-		String expDateStr = creditCardForm.month + "/" + creditCardForm.year;
+		creditCard.setName(creditCardForm.getName());
+		creditCard.setCardType(CardType.valueOf(creditCardForm.getCardType()));
+		creditCard.setDigits(creditCardForm.getDigits());
+		creditCard.setCvv(Integer.parseInt(creditCardForm.getCvv()));
+		String expDateStr = creditCardForm.getMonth() + "/" + creditCardForm.getYear();
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
     	YearMonth expDate = YearMonth.parse(expDateStr, formatter);
     	creditCard.setExpDate(expDate); 
@@ -102,16 +102,16 @@ public class CreditCardService {
 						AuthNetAccount firstAccount = authNetAccounts.get(0);
 						account.setIsLastUsed(false);
 						firstAccount.setIsLastUsed(true);
-						account.update();
-						firstAccount.update();
+						authNetAccountService.update(account);
+						authNetAccountService.update(firstAccount);
 						return firstAccount;
 					}
 					else {
 						AuthNetAccount nextAccount = authNetAccounts.get(i + 1);
 						account.setIsLastUsed(false);
 						nextAccount.setIsLastUsed(true);
-						account.update();
-						nextAccount.update();
+						authNetAccountService.update(account);
+						authNetAccountService.update(nextAccount);
 						return nextAccount;
 					}
 					
@@ -121,7 +121,7 @@ public class CreditCardService {
 			//last used account not found. use first
 			AuthNetAccount firstAccount = authNetAccounts.get(0);
 			firstAccount.setIsLastUsed(true);
-			firstAccount.update();
+			authNetAccountService.update(firstAccount);
 			return firstAccount;
 			
 		}
@@ -132,6 +132,8 @@ public class CreditCardService {
 		Logger.info("Charging credit card: " + userCreditCard);
 		
 		AuthNetAccount account = chooseMerchantAccount();
+		
+		Logger.info("Account: " + account);
 		
 		try {
 	        //Common code to set for all requests

@@ -26,6 +26,13 @@ public class AuthNetAccountRepositoryImpl implements AuthNetAccountRepository {
 		return accountList;
 	}
 
+	@Override
+	public void update(AuthNetAccount account) {
+		
+		account.update();
+		
+	}
+
 	
 	
 }

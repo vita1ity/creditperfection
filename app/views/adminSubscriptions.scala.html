@@ -5,7 +5,9 @@
 <html>
 <head>
 	@head.render
-	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/adminCommon.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/creditCardActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/subscriptionActions.js" type="text/javascript"></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -24,7 +26,7 @@
 				<p>Subscription Filter:</p>
 				
 				<select class="form-input form-control" id="subscriptionFilterSelect" name="status" 
-		    		class="width5 expiry-field gray-text" data-url="@routes.AdminController.filterSubscriptions()">
+		    		class="width5 expiry-field gray-text" data-url="@admin.routes.SubscriptionController.filterSubscriptions()">
 					<option value="ALL">ALL</option>
 					@for((s, i) <- allStatuses.zipWithIndex){
 						<option value="@s">@s</option>
@@ -87,7 +89,7 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editSubscription" 
-								    		data-url="@routes.AdminController.editSubscription()" type="submit">Edit Subscription</button>
+								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit Subscription</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteSubscription" >Delete Subscription</span>
 								    	<span class="btn btn-danger cancel-btn hidden cancel-subscription" data-toggle="modal" 
@@ -152,7 +154,7 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editSubscription" 
-								    		data-url="@routes.AdminController.editSubscription()" type="submit">Edit Subscription</button>
+								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit Subscription</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteSubscription" >Delete Subscription</span>
 								    	@if(s.getStatus == SubscriptionStatus.PENDING){
@@ -193,7 +195,7 @@
 						
 						    <div class="col-sm-8">
 						    	<select class="form-input form-control user-cards" id="user" 
-						    		name="user" data-url="@routes.AdminController.getUserCreditCards()">
+						    		name="user" data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									<option value="">Select User</option>
 									@for((u, i) <- allUsers.zipWithIndex){
@@ -251,7 +253,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <button id="confirmAddSubscription" class="btn btn-success btn-ok" 
-		                	data-url="@routes.AdminController.addSubscription()" >Add Subscription</button>
+		                	data-url="@admin.routes.SubscriptionController.addSubscription()" >Add Subscription</button>
 		            </div>
 		        </div>
 		    </div>
@@ -275,7 +277,7 @@
 						
 						    <div class="col-sm-8">
 						    	<select class="form-input form-control user-cards" id="userSubscriptionEdit" name="user" 
-						    	data-url="@routes.AdminController.getUserCreditCards()">
+						    	data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									@for((u, i) <- allUsers.zipWithIndex){
 										<option value="@u.getId">@u.getId. @u.getFirstName @u.getLastName</option>
@@ -351,7 +353,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <button id="confirmEditSubscription" class="btn btn-success btn-ok" 
-		                	data-url="@routes.AdminController.editSubscription()" >Edit Subscription</button>
+		                	data-url="@admin.routes.SubscriptionController.editSubscription()" >Edit Subscription</button>
 		            </div>
 		        </div>
 		    </div>
@@ -372,7 +374,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmDeleteSubscription" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.deleteSubscription()" >Delete</a>
+		                	data-url="@admin.routes.SubscriptionController.deleteSubscription()" >Delete</a>
 		            </div>
 		        </div>
 		    </div>
@@ -390,7 +392,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
 		                <a id="confirmCancelSubscriptionAdmin" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.cancelSubscription()" >Yes</a>
+		                	data-url="@admin.routes.SubscriptionController.cancelSubscription()" >Yes</a>
 		            </div>
 		        </div>
 		    </div>

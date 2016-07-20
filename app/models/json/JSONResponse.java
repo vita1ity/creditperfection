@@ -15,6 +15,11 @@ public abstract class JSONResponse {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	@Override
+	public String toString() {
+		return "JSONResponse [status=" + status + "]";
+	}
 	
 	
 	

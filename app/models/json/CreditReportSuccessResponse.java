@@ -17,6 +17,12 @@ public class CreditReportSuccessResponse extends JSONResponse {
 	public void setReportUrl(String reportUrl) {
 		this.reportUrl = reportUrl;
 	}
+
+	@Override
+	public String toString() {
+		return "CreditReportSuccessResponse [reportUrl=" + reportUrl + ", getStatus()=" + getStatus() + "]";
+	}
 	
 
+	
 }

@@ -15,23 +15,88 @@ import models.enums.CardType;
 
 public class CreditCardForm extends Model {
 	
-		public String id;
+		private String id;
 	    
-	    public String name;
-	    
-	    public String cardType;
-	    
-	    public String digits;
-	    
-	    public String month;
-	    
-	    public String year;
+	    private String name;
 	   
-	    public String cvv;
+	    private String cardType;
 	    
-	    public String ownerId;
+	    private String digits;
 	    
-	    public List<ValidationError> validate() {
+	    private String month;
+	    
+	    private String year;
+	   
+	    private String cvv;
+	    
+	    private String ownerId;
+	    
+	    
+	    public String getId() {
+			return id;
+		}
+	    
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getCardType() {
+			return cardType;
+		}
+
+		public void setCardType(String cardType) {
+			this.cardType = cardType;
+		}
+
+		public String getDigits() {
+			return digits;
+		}
+
+		public void setDigits(String digits) {
+			this.digits = digits;
+		}
+
+		public String getMonth() {
+			return month;
+		}
+
+		public void setMonth(String month) {
+			this.month = month;
+		}
+
+		public String getYear() {
+			return year;
+		}
+
+		public void setYear(String year) {
+			this.year = year;
+		}
+
+		public String getCvv() {
+			return cvv;
+		}
+
+		public void setCvv(String cvv) {
+			this.cvv = cvv;
+		}
+
+		public String getOwnerId() {
+			return ownerId;
+		}
+
+		public void setOwnerId(String ownerId) {
+			this.ownerId = ownerId;
+		}
+
+		public List<ValidationError> validate() {
 			
 	    	List<ValidationError> errors = new ArrayList<ValidationError>();
 

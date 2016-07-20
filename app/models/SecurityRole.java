@@ -17,6 +17,12 @@ public class SecurityRole extends Model implements Role {
 	@Required
 	private String name;
 	
+	public SecurityRole(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
 	public int getId() {
 		return id;
 	}

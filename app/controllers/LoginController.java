@@ -45,6 +45,14 @@ public class LoginController extends Controller {
             	
             	return badRequest(Json.toJson(new ErrorResponse("ERROR", "301", "Invalid Password")));
             }
+           //check if admin user
+            SecurityRole adminRole = roleService.findByName("admin");
+            if (user.getRoles().contains(adminRole)) {
+            	session("email", email);
+                session("name", user.getFirstName());
+            	session("admin", "admin");
+            	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin", true)));
+            }
             else if (user.getActive() == false && user.getSubscription() != null && 
             		user.getSubscription().getStatus().equals(SubscriptionStatus.CANCELLED)) {
             	
@@ -64,34 +72,21 @@ public class LoginController extends Controller {
             		return badRequest(Json.toJson(response));
             	}*/
             	
-                
-                //check if admin user
-                SecurityRole adminRole = roleService.findByName("admin");
-                if (user.getRoles().contains(adminRole)) {
-                	session("email", email);
+            	//store memberId in session
+            	/*AuthenticationSuccessResponse authResponse = (AuthenticationSuccessResponse)response;
+            	String memberId = authResponse.getMemberId();
+            	session("memberId", memberId);*/
+            	
+            	if (user.getKbaQuestions() == null) {
+                	return badRequest(Json.toJson(new ErrorResponse("ERROR", "304", "You haven't completed registration process. "
+                			+ "Please contact support for help: support@creditperfection.org ")));
+                }
+            	else {
+            		session("email", email);
                     session("name", user.getFirstName());
-                	session("admin", "admin");
-                	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "admin", true)));
-                }
-                else {
-                	//store memberId in session
-                	/*AuthenticationSuccessResponse authResponse = (AuthenticationSuccessResponse)response;
-                	String memberId = authResponse.getMemberId();
-                	session("memberId", memberId);*/
-                	
-                	if (user.getKbaQuestions() == null) {
-                    	return badRequest(Json.toJson(new ErrorResponse("ERROR", "304", "You haven't completed registration process. "
-                    			+ "Please contact support for help: support@creditperfection.org ")));
-                    }
-                	else {
-                		session("email", email);
-                        session("name", user.getFirstName());
-                        
-                        return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", true)));
-                	}
-                	
-                	
-                }
+                    
+                    return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", true)));
+            	}
             }
         } else {
             

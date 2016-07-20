@@ -138,7 +138,7 @@ public class SignUpFlowController extends Controller {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
 	    } else {
 	    	
-	    	List<ValidationError> errors = registerForm.validate(false);
+	    	List<ValidationError> errors = registerForm.validate();
 	    	
 	    	if (errors != null) {
 	    		return badRequest(Json.toJson(errors));

@@ -14,4 +14,6 @@ public interface AuthNetAccountRepository {
 
 	List<AuthNetAccount> getAll();
 
+	void update(AuthNetAccount account);
+
 }

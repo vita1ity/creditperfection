@@ -19,7 +19,7 @@ import models.enums.SubscriptionStatus;
 public class Subscription extends Model {
 	
 	@Id
-	public long id;
+	private long id;
 	
 	@OneToOne
 	@JoinColumn(nullable = false)
@@ -111,6 +111,21 @@ public class Subscription extends Model {
 		this.status = status;
 		this.subscriptionDate = subscriptionDate;
 		this.lastChargeDate = lastChargeDate;
+	}
+
+	public Subscription(long id, SubscriptionStatus status, LocalDateTime subscriptionDate,
+			LocalDateTime lastChargeDate) {
+		super();
+		this.id = id;
+		this.status = status;
+		this.subscriptionDate = subscriptionDate;
+		this.lastChargeDate = lastChargeDate;
+	}
+
+	@Override
+	public String toString() {
+		return "Subscription [id=" + id + ", status=" + status + ", subscriptionDate=" + subscriptionDate
+				+ ", lastChargeDate=" + lastChargeDate + "]";
 	}
 	
 	

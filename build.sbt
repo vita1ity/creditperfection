@@ -16,7 +16,10 @@ libraryDependencies ++= Seq(
   "org.mindrot" % "jbcrypt" % "0.3m",
   "javax.mail" % "mail" % "1.5.0-b01",
   "net.authorize" % "anet-java-sdk" % "1.8.8",
-  "be.objectify" %% "deadbolt-java" % "2.5.0"
+  "be.objectify" %% "deadbolt-java" % "2.5.0",
+  "org.mockito" % "mockito-core" % "1.9.5" % "test",
+  "com.typesafe.play" %% "play-test" % "2.5.0",
+  "org.hamcrest" % "hamcrest-library" % "1.3"
 )
 
 // Java project. Don't expect Scala IDE

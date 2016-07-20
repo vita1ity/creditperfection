@@ -12,20 +12,77 @@ import models.enums.TransactionStatus;
 
 public class TransactionForm extends Model {
 
-	public String id;
+	private String id;
 	
-	public String userId;
+	private String userId;
 	
-	public String cardId;
+	private String cardId;
 	
-	public String productId;
+	private String productId;
 	
-	public String amount;
+	private String amount;
 	
-	public String transactionId;
+	private String transactionId;
 	
-	public TransactionStatus status;
+	private TransactionStatus status;
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getCardId() {
+		return cardId;
+	}
+
+	public void setCardId(String cardId) {
+		this.cardId = cardId;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+	
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public TransactionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TransactionStatus status) {
+		this.status = status;
+	}
+	
+
 	public List<ValidationError> validate() {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();

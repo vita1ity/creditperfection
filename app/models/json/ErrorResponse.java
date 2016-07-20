@@ -28,5 +28,13 @@ public class ErrorResponse extends JSONResponse {
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
+
+	@Override
+	public String toString() {
+		return "ErrorResponse [errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", getStatus()="
+				+ getStatus() + "]";
+	}
+	
+	
 	
 }

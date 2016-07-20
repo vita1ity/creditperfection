@@ -30,15 +30,15 @@ public class TransactionService {
 	
 	public Transaction createTransaction(TransactionForm transactionForm) {
 		
-		User user = userService.getById(Long.parseLong(transactionForm.userId));
-		CreditCard creditCard = creditCardService.getById(Long.parseLong(transactionForm.cardId));
-		Product product = productService.getById(Long.parseLong(transactionForm.productId));
-		double amount = Double.parseDouble(transactionForm.amount);
-		String transactionId = transactionForm.transactionId;
+		User user = userService.getById(Long.parseLong(transactionForm.getUserId()));
+		CreditCard creditCard = creditCardService.getById(Long.parseLong(transactionForm.getCardId()));
+		Product product = productService.getById(Long.parseLong(transactionForm.getProductId()));
+		double amount = Double.parseDouble(transactionForm.getAmount());
+		String transactionId = transactionForm.getTransactionId();
 		
 		TransactionStatus status = null;
-		if (transactionForm.status != null) {
-			status = transactionForm.status;
+		if (transactionForm.getStatus() != null) {
+			status = transactionForm.getStatus();
 		}
 		else {
 			status = TransactionStatus.SUCCESSFUL;
@@ -46,8 +46,8 @@ public class TransactionService {
 		
 		Transaction transaction = new Transaction(user, creditCard, product, amount, transactionId, status);
 		
-		if (transactionForm.id != null){
-			transaction.setId(Long.parseLong(transactionForm.id));
+		if (transactionForm.getId() != null){
+			transaction.setId(Long.parseLong(transactionForm.getId()));
 		}
 		return transaction;
 	}

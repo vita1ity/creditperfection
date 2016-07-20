@@ -95,6 +95,10 @@ public class Transaction extends Model {
 		this.status = status;
 	}
 
+	public Transaction() {
+		
+	}
+	
 	public Transaction(User user, CreditCard creditCard, Product product, double amount, 
 			String transactionId, TransactionStatus status) {
 		super();

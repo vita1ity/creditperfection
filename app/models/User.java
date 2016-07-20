@@ -58,7 +58,7 @@ public class User extends Model implements Subject {
     
     private boolean active;
     
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role")
     private List<SecurityRole> roles;
     
@@ -208,14 +208,14 @@ public class User extends Model implements Subject {
     
     public User(RegisterForm registerForm) {
     	
-		this.firstName = registerForm.firstName;
-		this.lastName = registerForm.lastName;
-		this.address = registerForm.address;
-		this.email = registerForm.email;
-		this.city = registerForm.city;
-		this.password = registerForm.password;
-		this.state = registerForm.state;
-		this.zip = registerForm.zip;
+		this.firstName = registerForm.getFirstName();
+		this.lastName = registerForm.getLastName();
+		this.address = registerForm.getAddress();
+		this.email = registerForm.getEmail();
+		this.city = registerForm.getCity();
+		this.password = registerForm.getPassword();
+		this.state = registerForm.getState();
+		this.zip = registerForm.getZip();
 		
 	}
 

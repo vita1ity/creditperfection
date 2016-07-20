@@ -24,12 +24,12 @@
 	      <ul class="nav navbar-nav">
 	      	<li ><a href="@routes.SignUpFlowController.index(false)">Home</a></li>
 	      	@if(session.get("admin")!=null){
-	      		<li ><a href="@routes.AdminController.users">Users</a></li>
-	      		<li ><a href="@routes.AdminController.subscriptions">Subscriptions</a></li>
-	      		<li ><a href="@routes.AdminController.products">Products</a></li>
-	      		<li ><a href="@routes.AdminController.creditCards">Credit Cards</a></li>
-	      		<li ><a href="@routes.AdminController.transactions">Transactions</a></li>
-	      		<li ><a href="@routes.AdminController.authNetAccounts">Merchant Accounts</a></li>
+	      		<li ><a href="@admin.routes.UserController.users">Users</a></li>
+	      		<li ><a href="@admin.routes.SubscriptionController.subscriptions">Subscriptions</a></li>
+	      		<li ><a href="@admin.routes.ProductController.products">Products</a></li>
+	      		<li ><a href="@admin.routes.CreditCardController.creditCards">Credit Cards</a></li>
+	      		<li ><a href="@admin.routes.TransactionController.transactions">Transactions</a></li>
+	      		<li ><a href="@admin.routes.AuthNetAccountController.authNetAccounts">Merchant Accounts</a></li>
 	      	}else{
 	      		<li ><a href="@routes.CreditReportController.reportPage">Report</a></li>
 	      		@if(session.get("email")!=null){
@@ -165,7 +165,7 @@
 			                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 			                <button id="sendLogin" class="btn btn-success btn-ok" 
 			                	data-url="@routes.LoginController.login()" 
-			                	data-admin-url="@routes.AdminController.users()" 
+			                	data-admin-url="@admin.routes.UserController.users()" 
 			                	data-user-url="@routes.CreditReportController.reportPage()"
 			                	data-payment-url="@routes.PaymentController.paymentPage()">Login</button>
 			            </div>

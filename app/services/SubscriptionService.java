@@ -31,13 +31,13 @@ public class SubscriptionService {
 	
 	public Subscription createSubscription(SubscriptionForm subscriptionForm) {
 
-		User user = userService.getById(Long.parseLong(subscriptionForm.userId));
-		CreditCard creditCard = creditCardService.getById(Long.parseLong(subscriptionForm.cardId));
-		Product product = productService.getById(Long.parseLong(subscriptionForm.productId));
+		User user = userService.getById(Long.parseLong(subscriptionForm.getUserId()));
+		CreditCard creditCard = creditCardService.getById(Long.parseLong(subscriptionForm.getCardId()));
+		Product product = productService.getById(Long.parseLong(subscriptionForm.getProductId()));
 		
 		SubscriptionStatus status = null;
-		if (subscriptionForm.status != null) {
-			status = subscriptionForm.status;
+		if (subscriptionForm.getStatus() != null) {
+			status = subscriptionForm.getStatus();
 		}
 		else {
 			status = SubscriptionStatus.TRIAL;
@@ -45,9 +45,9 @@ public class SubscriptionService {
 		
 		Subscription subscription = new Subscription(user, creditCard, product, status, LocalDateTime.now(), LocalDateTime.now());
 		
-		if (subscriptionForm.id != null){
-			subscription.id = Long.parseLong(subscriptionForm.id);
-			Subscription subFromDB = findById(subscription.id);
+		if (subscriptionForm.getId() != null){
+			subscription.setId(Long.parseLong(subscriptionForm.getId()));
+			Subscription subFromDB = findById(subscription.getId());
 			subscription.setSubscriptionDate(subFromDB.getSubscriptionDate());
 			subscription.setLastChargeDate(subFromDB.getLastChargeDate());
 		}

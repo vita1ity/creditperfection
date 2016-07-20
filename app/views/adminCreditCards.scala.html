@@ -4,7 +4,8 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 <html>
 <head>
 	@head.render
-	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/adminCommon.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/creditCardActions.js" type="text/javascript"></script>
 </head>
 	<body>
 	
@@ -45,7 +46,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editCreditCard"
-								    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+								    		data-url="@admin.routes.CreditCardController.editCreditCard()" >Edit Credit Card</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteCreditCard">Delete Credit Card</span>
 									</div>
@@ -73,7 +74,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 					            </div>
 					            <div class="modal-footer">
 					                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					                <button id="confirmAddCreditCard" class="btn btn-success btn-ok" data-url="@routes.AdminController.addCreditCard()" >Add Credit Card</button>
+					                <button id="confirmAddCreditCard" class="btn btn-success btn-ok" data-url="@admin.routes.CreditCardController.addCreditCard()" >Add Credit Card</button>
 					            </div>
 					        </div>
 					    </div>
@@ -105,7 +106,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editCreditCard"
-								    		data-url="@routes.AdminController.editCreditCard()" >Edit Credit Card</button>
+								    		data-url="@admin.routes.CreditCardController.editCreditCard()" >Edit Credit Card</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteCreditCard">Delete Credit Card</span>
 									</div>
@@ -135,7 +136,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmDeleteCreditCard" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.deleteCreditCard()" >Delete</a>
+		                	data-url="@admin.routes.CreditCardController.deleteCreditCard()" >Delete</a>
 		            </div>
 		        </div>
 		    </div>

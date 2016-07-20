@@ -12,6 +12,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
+import security.Secured;
 import services.CreditReportService;
 
 @Singleton

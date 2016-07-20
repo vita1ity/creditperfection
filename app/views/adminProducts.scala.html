@@ -3,7 +3,8 @@
 <html>
 <head>
 	@head.render
-	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/adminCommon.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/productActions.js" type="text/javascript"></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -42,7 +43,7 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editProduct" 
-								    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
+								    		data-url="@admin.routes.ProductController.editProduct()" type="submit">Edit Product</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteProduct" >Delete Product</span>
 									</div>
@@ -79,7 +80,7 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editProduct" 
-								    		data-url="@routes.AdminController.editProduct()" type="submit">Edit Product</button>
+								    		data-url="@admin.routes.ProductController.editProduct()" type="submit">Edit Product</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
 								    		data-target="#deleteProduct" >Delete Product</span>
 									</div>
@@ -109,7 +110,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <button id="confirmAddProduct" class="btn btn-success btn-ok" 
-		                	data-url="@routes.AdminController.addProduct()" >Add Product</button>
+		                	data-url="@admin.routes.ProductController.addProduct()" >Add Product</button>
 		            </div>
 		        </div>
 		    </div>
@@ -129,7 +130,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmDeleteProduct" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.deleteProduct()" >Delete</a>
+		                	data-url="@admin.routes.ProductController.deleteProduct()" >Delete</a>
 		            </div>
 		        </div>
 		    </div>

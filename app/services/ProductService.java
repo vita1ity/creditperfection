@@ -17,12 +17,12 @@ public class ProductService {
 	
 	public Product createProduct(ProductForm productForm) {
 		Product product = new Product();
-		if (productForm.id != null) {
-			product.setId(Long.parseLong(productForm.id));
+		if (productForm.getId() != null) {
+			product.setId(Long.parseLong(productForm.getId()));
 		}
-		product.setName(productForm.name);
-		product.setPrice(Double.parseDouble(productForm.price));
-		product.setSalePrice(Double.parseDouble(productForm.salePrice));
+		product.setName(productForm.getName());
+		product.setPrice(Double.parseDouble(productForm.getPrice()));
+		product.setSalePrice(Double.parseDouble(productForm.getSalePrice()));
 		
 		return product;
 	}

@@ -32,6 +32,7 @@ import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import play.Configuration;
+import play.Logger;
 
 @Singleton
 public class CreditReportService {
@@ -49,12 +50,14 @@ public class CreditReportService {
             // Send SOAP Message to SOAP Server
             String url = conf.getString("idcs.enroll.url");
             
+            Logger.info(url);
+            
             SOAPMessage soapResponse = soapConnection.call(createKBASOAPRequest(user), url);
             
             JSONResponse response = parseKBASOAPResponse(soapResponse);
             
             //TODO log it or delete - Print the SOAP Response
-            printSOAPResponse(soapResponse);
+            //printSOAPResponse(soapResponse);
 
             soapConnection.close();
             
@@ -145,8 +148,8 @@ public class CreditReportService {
 
         soapMessage.saveChanges();
 
-        soapMessage.writeTo(System.out);
-        System.out.println();
+        /*soapMessage.writeTo(System.out);
+        System.out.println();*/
 
         return soapMessage;
 	}
@@ -163,7 +166,6 @@ public class CreditReportService {
     	    
     	    if (node.getNodeType() == Node.ELEMENT_NODE) {
     	        Element ele = (Element)node;
-    	        System.out.println(ele.getNodeName() + " = " + ele.getTextContent());
     	        if (ele.getNodeName().equals("IDSEnrollmentStringResponse")) {
     	        	
     	        	String responseStr = ele.getTextContent();
@@ -174,16 +176,15 @@ public class CreditReportService {
     	    	        	String url = responseStr.substring(responseStr.indexOf("<CreditReportUrl>") + "<CreditReportUrl>".length(), 
     	    	        			responseStr.indexOf("</CreditReportUrl>"));
     	    	        	url = url.replaceAll("&amp;", "&");
-    	    	        	System.out.println(url);
+    	    	        	
     	    	        	
     	    	        	response = new CreditReportSuccessResponse("SUCCESS", url); 
     	    	        	return response;
     	    	        }
     	    	        
     	    	        else {
-    	    	        	System.out.println("No credit report link");
     	    	        	
-    	    	        	response = new ErrorResponse("ERROR", "101", "User with such is already registered"); 
+    	    	        	response = new ErrorResponse("ERROR", "101", "We are unable to allow your registration at this time"); 
     	    	        	return response;
     	    	        }
     	    	        
@@ -196,14 +197,11 @@ public class CreditReportService {
     	        			String errorMessage = responseStr.substring(responseStr.indexOf("<ErrorMessage>") + "<ErrorMessage>".length(), 
     	    	        			responseStr.indexOf("</ErrorMessage>"));
     	        			
-    	        			System.out.println(errorCode);
-    	        			System.out.println(errorMessage);
-    	        			
     	        			response = new ErrorResponse("ERROR", errorCode, errorMessage); 
     	    	        	return response;
     	        		}
     	        		else {
-    	        			System.out.println("Unknown error");
+    	        			
     	        			
     	        			response = new ErrorResponse("ERROR", "102", "Unknown error"); 
     	    	        	return response;
@@ -254,7 +252,7 @@ public class CreditReportService {
             JSONResponse response = parseAuthenticationResponse(soapResponse);
             
             //TODO log it or delete - Print the SOAP Response
-            printSOAPResponse(soapResponse);
+            //printSOAPResponse(soapResponse);
 
             soapConnection.close();
             
@@ -310,8 +308,8 @@ public class CreditReportService {
 
         soapMessage.saveChanges();
 
-        soapMessage.writeTo(System.out);
-        System.out.println();
+        /*soapMessage.writeTo(System.out);
+        System.out.println();*/
 
         return soapMessage;
 	}
@@ -327,18 +325,17 @@ public class CreditReportService {
     	    
     	    if (node.getNodeType() == Node.ELEMENT_NODE) {
     	        Element ele = (Element)node;
-    	        System.out.println(ele.getNodeName() + " = " + ele.getTextContent());
+    	        
     	        if (ele.getNodeName().equals("AuthenticateResponse")) {
     	        	
     	        	String responseStr = ele.getTextContent();
     	        	//handle success
     	        	if (responseStr.contains("TRUE")) {
     	        		
-    	    	        
-	    	        	String memberId = responseStr.substring(responseStr.indexOf("TRUE,") + "TRUE,".length(), 
-	    	        			responseStr.indexOf("</AuthenticateResult>"));
+	    	        	/*String memberId = responseStr.substring(responseStr.indexOf("TRUE,") + "TRUE,".length(), 
+	    	        			responseStr.indexOf("</AuthenticateResult>"));*/
+	    	        	String memberId = responseStr.substring(responseStr.indexOf("TRUE,") + "TRUE,".length());
 	    	        	
-	    	        	System.out.println("MemberId: " + memberId);
 	    	        	
 	    	        	response = new AuthenticationSuccessResponse("SUCCESS", memberId); 
 	    	        	return response;
@@ -384,7 +381,7 @@ public class CreditReportService {
               JSONResponse response = parseGetReportResponse(soapResponse);
               
               //TODO log it or delete - Print the SOAP Response
-              printSOAPResponse(soapResponse);
+              //printSOAPResponse(soapResponse);
 
               soapConnection.close();
               
@@ -454,8 +451,8 @@ public class CreditReportService {
 
         soapMessage.saveChanges();
 
-        soapMessage.writeTo(System.out);
-        System.out.println();
+        /*soapMessage.writeTo(System.out);
+        System.out.println();*/
 
         return soapMessage;
   		
@@ -472,7 +469,6 @@ public class CreditReportService {
     	    
     	    if (node.getNodeType() == Node.ELEMENT_NODE) {
     	        Element ele = (Element)node;
-    	        System.out.println(ele.getNodeName() + " = " + ele.getTextContent());
     	        if (ele.getNodeName().equals("GetIDSDataMonitoringReportStringResponse")) {
     	        	
     	        	String responseStr = ele.getTextContent();
@@ -484,7 +480,6 @@ public class CreditReportService {
     	    	        	String report = responseStr.substring(responseStr.indexOf("<Report>") + "<Report>".length(), 
     	    	        			responseStr.indexOf("</Report>"));
     	    	        	report = report.replaceAll("&amp;", "&");
-    	    	        	System.out.println(report);
     	    	        	
     	    	        	response = new CreditReportSuccessResponse("SUCCESS", report); 
     	    	        	return response;
@@ -498,14 +493,11 @@ public class CreditReportService {
     	        			String errorMessage = responseStr.substring(responseStr.indexOf("<ErrorMessage>") + "<ErrorMessage>".length(), 
     	    	        			responseStr.indexOf("</ErrorMessage>"));
     	        			
-    	        			System.out.println(errorCode);
-    	        			System.out.println(errorMessage);
     	        			
     	        			response = new ErrorResponse("ERROR", errorCode, errorMessage); 
     	    	        	return response;
     	        		}
     	        		else {
-    	        			System.out.println("Unknown error");
     	        			
     	        			response = new ErrorResponse("ERROR", "102", "Unknown error"); 
     	    	        	return response;

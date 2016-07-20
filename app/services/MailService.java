@@ -19,8 +19,6 @@ import play.Logger;
 @Singleton
 public class MailService {
 	
-	/*@Inject
-    private DefaultApplication app;*/
 	
 	@Inject
 	private Configuration conf;
@@ -72,9 +70,7 @@ public class MailService {
     	props.put("mail.smtp.host", host);
     	props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", port);
-        /*props.put("mail.smtp.socketFactory.port", port);
-        props.put("mail.smtp.socketFactory.class",
-                "javax.net.ssl.SSLSocketFactory");*/
+       
         
         Session session = Session.getInstance(props,
             new javax.mail.Authenticator() {

@@ -24,16 +24,64 @@ public class SubscriptionForm extends Model {
 	@Inject
 	private SubscriptionService subscriptionService;
 	
-	public String id;
+	private String id;
 	
-	public String userId;
+	private String userId;
 	
-	public String cardId;
+	private String cardId;
 	
-	public String productId;
+	private String productId;
 	
-	public SubscriptionStatus status;
+	private SubscriptionStatus status;
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getUserId() {
+		return userId;
+	}
+	
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	public String getCardId() {
+		return cardId;
+	}
+	
+	public void setCardId(String cardId) {
+		this.cardId = cardId;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public SubscriptionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(SubscriptionStatus status) {
+		this.status = status;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setSubscriptionService(SubscriptionService subscriptionService) {
+		this.subscriptionService = subscriptionService;
+	}
+
 	public List<ValidationError> validate() {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();

@@ -11,13 +11,44 @@ import errors.ValidationError;
 
 public class ProductForm extends Model {
 
-	public String id;
-    public String name;
-    
-    public String price;
-    public String salePrice;
+	private String id;
+    private String name;
+    private String price;
+    private String salePrice;
 	
-    public List<ValidationError> validate() {
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+	public String getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(String salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public List<ValidationError> validate() {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		

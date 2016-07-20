@@ -5,7 +5,9 @@
 <html>
 <head>
 	@head.render
-	<script src="/assets/js/adminActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/adminCommon.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/creditCardActions.js" type="text/javascript"></script>
+	<script src="/assets/js/admin/transactionActions.js" type="text/javascript"></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -171,7 +173,7 @@
 						
 						    <div class="col-sm-8">
 						    	<select class="form-input form-control user-cards" id="user" name="user" class="width5 expiry-field gray-text"
-						    		data-url="@routes.AdminController.getUserCreditCards()">
+						    		data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									<option value="">Select User</option>
 									@for((u, i) <- allUsers.zipWithIndex){
@@ -260,7 +262,7 @@
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <button id="confirmAddTransaction" class="btn btn-success btn-ok" data-url="@routes.AdminController.addTransaction()" >
+		                <button id="confirmAddTransaction" class="btn btn-success btn-ok" data-url="@admin.routes.TransactionController.addTransaction()" >
 		                	Add Transaction</button>
 		            </div>
 		        </div>
@@ -285,7 +287,7 @@
 						
 						    <div class="col-sm-8">
 						    	<select class="form-input form-control user-cards" id="userTransactionEdit" name="user" class="width5 expiry-field gray-text"
-						    		data-url="@routes.AdminController.getUserCreditCards()">
+						    		data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									@for((u, i) <- allUsers.zipWithIndex){
 										<option value="@u.getId">@u.getId. @u.getFirstName @u.getLastName</option>
@@ -387,7 +389,7 @@
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		                <button id="confirmEditTransaction" class="btn btn-success btn-ok" data-url="@routes.AdminController.editTransaction()" >
+		                <button id="confirmEditTransaction" class="btn btn-success btn-ok" data-url="@admin.routes.TransactionController.editTransaction()" >
 		                	Edit Transaction</button>
 		            </div>
 		        </div>
@@ -408,7 +410,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmDeleteTransaction" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.deleteTransaction()" >Delete</a>
+		                	data-url="@admin.routes.TransactionController.deleteTransaction()" >Delete</a>
 		            </div>
 		        </div>
 		    </div>
@@ -428,7 +430,7 @@
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 		                <a id="confirmRefundTransaction" class="btn btn-danger btn-ok" 
-		                	data-url="@routes.AdminController.refundTransaction()" >Refund</a>
+		                	data-url="@admin.routes.TransactionController.refundTransaction()" >Refund</a>
 		            </div>
 		        </div>
 		    </div>

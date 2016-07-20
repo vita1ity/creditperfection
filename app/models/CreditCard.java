@@ -140,7 +140,7 @@ public class CreditCard extends Model {
 				+ ", expDate=" + expDate + ", cvv=" + cvv + "]";
 	}
 
-	public List<ValidationError> validate() {
+	/*public List<ValidationError> validate() {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 
@@ -173,7 +173,7 @@ public class CreditCard extends Model {
 		}
 		
 		return null;
-	}
+	}*/
 
 	public void updateCreditCardInfo(CreditCard creditCard) {
 		
