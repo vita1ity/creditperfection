@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import be.objectify.deadbolt.java.actions.Group;
@@ -16,6 +17,7 @@ import models.User;
 import models.enums.State;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -28,7 +30,7 @@ import services.UserService;
 import utils.Tokener;
 
 @Singleton
-@Restrict(@Group("admin"))
+@Restrict(@Group("admin")) 
 public class UserController extends Controller {
 	
 	@Inject
@@ -57,31 +59,32 @@ public class UserController extends Controller {
 	
 	@BodyParser.Of(BodyParser.Json.class)
 	public Result editUser() {
-
-		JsonNode json = request().body().asJson();
-   	 
-    	User user = Json.fromJson(json, User.class);
-	    if(user == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
-	    }
-	    else {
-	    	
-	    	List<ValidationError> errors = userService.validate(user, true);
-	    	if (errors != null) {
-	    		
-	    		return badRequest(Json.toJson(errors));
-	    	}
-	    	
-	    	User userDB = userService.getById(user.getId());
-	    	if (userDB == null) {
-	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id" + user.getId() + "is not found")));
-	    	}
-	    	userDB.updateUserInfo(user);
-	    	userDB.save();
-	    	
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was edited successfully")));
-	    }
 		
+		JsonNode json = request().body().asJson();
+		User user = null;
+		try {
+			user = Json.fromJson(json, User.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to user.");
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
+		}
+	    	    	
+	    List<ValidationError> errors = userService.validate(user, true);
+	    if (errors != null) {
+	    	Logger.error(errors.toString());
+	    	return badRequest(Json.toJson(errors));
+	    }
+	    
+	    User userDB = userService.getById(user.getId());
+	    if (userDB == null) {
+	    	Logger.error("User with id " + user.getId() + " is not found");
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id " + user.getId() + " is not found")));
+	    }
+	    userService.update(userDB);
+	    
+	    return ok(Json.toJson(new MessageResponse("SUCCESS", "User was edited successfully")));
+	    		
 	}
 	
 	public Result deleteUser() {
@@ -91,7 +94,7 @@ public class UserController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		User user = userService.getById(id);
 		
-		boolean deleted = user.delete();
+		boolean deleted = userService.delete(user);
 		
 		if (deleted) {
 			return ok(Json.toJson(new MessageResponse("SUCCESS", "User was deleted successfully")));
@@ -106,30 +109,33 @@ public class UserController extends Controller {
 	public Result addUser() {
 		
 		JsonNode json = request().body().asJson();
-	   	 
-    	User user = Json.fromJson(json, User.class);
-	    if (user == null) {
+	   	
+		User user = null;
+		try {
+			user = Json.fromJson(json, User.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to user");
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
+		}
+			    	
+	    List<ValidationError> errors = userService.validate(user, false);
+	    if (errors != null) {
+	    	Logger.error(errors.toString());
+	    	return badRequest(Json.toJson(errors));
 	    }
-	    else {
-	    	
-	    	List<ValidationError> errors = userService.validate(user, false);
-	    	if (errors != null) {
-	    		
-	    		return badRequest(Json.toJson(errors));
-	    	}
-	    	
-	    	user.setToken(Tokener.randomString(48));
-	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
-	    	SecurityRole userRole = roleService.findByName("user");
-	    	roles.add(userRole);
-	    	user.setRoles(roles);
-        	user.save();
-        	
-        	mailService.sendEmailToken(user.getEmail(), user.getToken());
-        	
-	        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
-	    }
-		
+	    
+	    SecurityRole userRole = roleService.findByName("user");
+	    List<SecurityRole> roles = new ArrayList<SecurityRole>();
+	    roles.add(userRole);
+	    user.setRoles(roles);
+	    user.setToken(Tokener.randomString(48));
+	    	    	
+	    userService.save(user);
+        
+        mailService.sendEmailToken(user.getEmail(), user.getToken());
+        
+	    return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
+
 	}
 }

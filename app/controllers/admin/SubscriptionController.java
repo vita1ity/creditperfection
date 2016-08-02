@@ -61,13 +61,13 @@ public class SubscriptionController extends Controller {
 		
 		List<ValidationError> errors = subscriptionForm.validate();
     	if (errors != null) {
-    		
+    		Logger.error(errors.toString());
     		return badRequest(Json.toJson(errors));
     	}
 		
     	Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
     	
-		subscription.save();
+		subscriptionService.save(subscription);
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was added successfully", subscription)));
 			
@@ -79,11 +79,11 @@ public class SubscriptionController extends Controller {
 		
 		List<ValidationError> errors = subscriptionForm.validate();
     	if (errors != null) {
-    		
+    		Logger.error(errors.toString());
     		return badRequest(Json.toJson(errors));
     	}
 		Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
-		subscription.update();
+		subscriptionService.update(subscription);
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was edited successfully", subscription)));
 		
@@ -95,8 +95,11 @@ public class SubscriptionController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		
 		Subscription subscription = subscriptionService.findById(id);
-		subscription.delete();
-		
+		if (subscription == null) {
+			Logger.error("Subscription not found");
+    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Subscription not found")));
+		}
+		subscriptionService.delete(subscription);		
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription was deleted successfully")));
 		
@@ -108,10 +111,13 @@ public class SubscriptionController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		
 		Subscription subscription = subscriptionService.findById(id);
+		if (subscription == null) {
+			Logger.error("Subscription not found");
+    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Subscription not found")));
+		}
 		
 		subscription.setStatus(SubscriptionStatus.CANCELLED);
-		subscription.update();
-		
+		subscriptionService.update(subscription);		
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription was canceled successfully")));
 		
@@ -121,7 +127,7 @@ public class SubscriptionController extends Controller {
 		
 		DynamicForm form = formFactory.form().bindFromRequest();
 		String status = form.get("status");
-		
+				
 		Logger.info("Subscription Filter: " + status);
 		
 		List<Subscription> subscriptions = null;
@@ -131,8 +137,7 @@ public class SubscriptionController extends Controller {
 		else {
 			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
 			subscriptions = subscriptionService.findByStatus(subscriptionStatus);
-		}
-		
+		}		
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscriptions Filtered", subscriptions)));
 		

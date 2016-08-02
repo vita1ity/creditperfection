@@ -76,4 +76,18 @@ public class SubscriptionService {
 		return subscriptionRepository.findAll();
 	}
 	
+	public void save(Subscription subscription) {
+		subscriptionRepository.save(subscription);
+	}
+
+	public void update(Subscription subscription) {
+		subscriptionRepository.update(subscription);
+		
+	}
+
+	public void delete(Subscription subscription) {
+		subscriptionRepository.delete(subscription);
+		
+	}
+	
 }

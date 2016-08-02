@@ -9,7 +9,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import errors.ValidationError;
+import models.SecurityRole;
 import models.User;
+import play.Logger;
 import repository.UserRepository;
 import utils.EmailValidator;
 
@@ -29,6 +31,18 @@ public class UserService {
 	
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+	
+	public void save(User user) {
+		userRepository.save(user);
+	}
+
+	public void update(User user) {
+		userRepository.update(user);		
+	}
+	
+	public boolean delete(User user) {
+		return userRepository.delete(user);
 	}
 	
 	public List<ValidationError> validate(User user, boolean isEdit) {
@@ -82,7 +96,7 @@ public class UserService {
 		}
 		
 		if (errors.size() != 0) {
-			return errors;
+			return errors;			
 		}
 		return null;
 	    

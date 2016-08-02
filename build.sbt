@@ -4,8 +4,6 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
-version := "2.5.0"
-
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
@@ -22,6 +20,8 @@ libraryDependencies ++= Seq(
   "org.hamcrest" % "hamcrest-library" % "1.3"
 )
 
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+
 // Java project. Don't expect Scala IDE
  EclipseKeys.projectFlavor := EclipseProjectFlavor.Java           
  // Use .class files instead of generated .scala files for views and routes
@@ -29,3 +29,6 @@ libraryDependencies ++= Seq(
  // Compile the project before generating Eclipse files, so that .class files for views and routes are present   
  EclipseKeys.preTasks := Seq(compile in Compile)                  
 
+
+
+fork in run := true

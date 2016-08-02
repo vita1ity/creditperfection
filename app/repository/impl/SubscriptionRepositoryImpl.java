@@ -45,5 +45,23 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 		List<Subscription> allSubscriptions = find.all();
 		return allSubscriptions;
 	}
+
+	@Override
+	public void save(Subscription subscription) {
+		subscription.save();
+		
+	}
+
+	@Override
+	public void update(Subscription subscription) {
+		subscription.update();
+		
+	}
+
+	@Override
+	public void delete(Subscription subscription) {
+		subscription.delete();
+		
+	}
 	
 }

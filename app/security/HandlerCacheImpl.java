@@ -15,13 +15,13 @@ import services.UserService;
 @Singleton
 public class HandlerCacheImpl implements HandlerCache {
 	
-    private final DeadboltHandler defaultHandler;
+	private final DeadboltHandler defaultHandler;
     private final Map<String, DeadboltHandler> handlers = new HashMap<>();
     
     @Inject
-    public HandlerCacheImpl(final ExecutionContextProvider ecProvider, UserService userService) {
-        defaultHandler = new DeadboltHandlerImpl(ecProvider, userService);
-        
+    public HandlerCacheImpl(final DeadboltHandler handler) {
+    	defaultHandler = handler;
+    	
         handlers.put(ConfigKeys.DEFAULT_HANDLER_KEY, defaultHandler);
     }
     

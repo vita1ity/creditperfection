@@ -64,7 +64,7 @@ POST   /admin/subscriptions/edit         			controllers.admin.SubscriptionContro
 POST   /admin/subscriptions/delete			        controllers.admin.SubscriptionController.deleteSubscription
 POST   /admin/subscriptions/add			            controllers.admin.SubscriptionController.addSubscription
 POST   /admin/subscriptions/cancel			        controllers.admin.SubscriptionController.cancelSubscription
-GET    /admin/subscriptions/filter					controllers.admin.SubscriptionController.filterSubscriptions
+POST   /admin/subscriptions/filter					controllers.admin.SubscriptionController.filterSubscriptions
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

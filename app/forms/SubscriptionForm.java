@@ -97,7 +97,7 @@ public class SubscriptionForm extends Model {
 				errors.add(entry.getKey());
 			}
 		}
-		if (!userId.equals("") && userId != null && id == null) {
+		if (userId != null && !userId.equals("") && id == null) {
 			User user = userService.getById(Long.parseLong(userId));
 			
 			Subscription subFromDb = subscriptionService.findByUser(user);

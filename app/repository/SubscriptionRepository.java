@@ -21,6 +21,11 @@ public interface SubscriptionRepository {
 	Subscription findById(long id);
 
 	List<Subscription> findAll();
+	
+	void save(Subscription subscription);
 
+	void update(Subscription subscription);
+
+	void delete(Subscription subscription);
 	
 }
