@@ -6,7 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import be.objectify.deadbolt.java.actions.Group;
@@ -93,6 +92,10 @@ public class UserController extends Controller {
 		
 		long id = Long.parseLong(form.get("id"));
 		User user = userService.getById(id);
+		if (user == null) {
+	    	Logger.error("User with id " + id + " is not found");
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id " + id + " is not found")));
+	    }
 		
 		boolean deleted = userService.delete(user);
 		

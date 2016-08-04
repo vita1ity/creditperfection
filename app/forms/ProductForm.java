@@ -64,7 +64,7 @@ public class ProductForm extends Model {
 			}
 		}
 		
-		if (name.length() < 5) {
+		if (name != null && name.length() < 5) {
 			ValidationError error = new ValidationError("name", "Product Name should contain at least 5 characers");
 			errors.add(error);
 		}

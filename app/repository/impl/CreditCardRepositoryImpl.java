@@ -25,6 +25,24 @@ public class CreditCardRepositoryImpl implements CreditCardRepository {
 		CreditCard creditCard = find.byId(id);
 		return creditCard;
 	}
+
+	@Override
+	public void save(CreditCard creditCard) {
+		creditCard.save();
+		
+	}
+
+	@Override
+	public void update(CreditCard creditCardDB) {
+		creditCardDB.updateCreditCardInfo(creditCardDB);
+    	creditCardDB.save();
+		
+	}
+
+	@Override
+	public boolean delete(CreditCard creditCard) {
+		return creditCard.delete();
+	}
 	
 	
 	

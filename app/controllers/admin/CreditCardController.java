@@ -55,61 +55,65 @@ public class CreditCardController extends Controller {
 	public Result addCreditCard() {
 		
 		JsonNode json = request().body().asJson();
+		
+		CreditCardForm creditCardForm = null;
+		try {
+			creditCardForm = Json.fromJson(json, CreditCardForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to CreditCardForm.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
+		}  
 	   	 
-    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
-    	
-	    if(creditCardForm == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
-	    } else {
+    	List<ValidationError> errors = creditCardForm.validate();
+	    if (errors != null) {
 	    	
-	    	List<ValidationError> errors = creditCardForm.validate();
-	    	if (errors != null) {
-	    		
-	    		return badRequest(Json.toJson(errors));
-	    	}
-	    	
-	    	long ownerId = json.findPath("ownerId").asLong();
-	    	User owner = userService.getById(ownerId);
-	    	
-	    	CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
-	    	
-	    	creditCard.setUser(owner);
-	    	creditCard.save();
-	    	
-	    	return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Credit Card was created successfully",
-	    			creditCard.getId())));
+	    	return badRequest(Json.toJson(errors));
 	    }
+	    	
+	    long ownerId = json.findPath("ownerId").asLong();
+	    User owner = userService.getById(ownerId);
+	    	
+	    CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
+	    	
+	    creditCard.setUser(owner);
+	    creditCardService.save(creditCard);
+	    	
+	    return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Credit Card was created successfully",
+	    			creditCard.getId())));
+	    
 	}
 	
 	@BodyParser.Of(BodyParser.Json.class)
 	public Result editCreditCard() {
 		JsonNode json = request().body().asJson();
 	   	 
-    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
-    	
-	    if(creditCardForm == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
-	    } else {
+		CreditCardForm creditCardForm = null;
+		try {
+			creditCardForm = Json.fromJson(json, CreditCardForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to CreditCardForm.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
+		}
 	    	
-	    	List<ValidationError> errors = creditCardForm.validate();
-	    	if (errors != null) {
-	    		
-	    		return badRequest(Json.toJson(errors));
-	    	}
+	    List<ValidationError> errors = creditCardForm.validate();
+	    if (errors != null) {
 	    	
-	    	CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
-	    	
-	    	CreditCard creditCardDB = creditCardService.getById(creditCard.getId());
-	    	if (creditCardDB == null) {
-	    		return badRequest(Json.toJson(new MessageResponse("ERROR", "Credit Card with id" + 
-	    				creditCard.getId() + "is not found")));
-	    	}
-	    	creditCardDB.updateCreditCardInfo(creditCard);
-	    	creditCardDB.save();
-	    	
-	    	
-	    	return ok(Json.toJson(new MessageResponse("SUCCESS", "Credit Card was edited successfully")));
+	    	return badRequest(Json.toJson(errors));
 	    }
+	    
+	    CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
+	    
+	    CreditCard creditCardDB = creditCardService.getById(creditCard.getId());
+	    if (creditCardDB == null) {
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "Credit Card with id " + 
+	    			creditCard.getId() + " is not found")));
+	    }
+	    
+	    creditCardService.update(creditCardDB);
+	        	
+	    return ok(Json.toJson(new MessageResponse("SUCCESS", "Credit Card was edited successfully")));
 	}
 	
 	public Result deleteCreditCard() {
@@ -118,7 +122,12 @@ public class CreditCardController extends Controller {
 		
 		long id = Long.parseLong(form.get("id"));
 		CreditCard creditCard = creditCardService.getById(id);
-		boolean deleted = creditCard.delete();
+		
+		if (creditCard == null) {
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "Credit Card with id " + 
+	    			id + " is not found")));
+	    }
+		boolean deleted = creditCardService.delete(creditCard);
 		
 		if (deleted) {
 			return ok(Json.toJson(new MessageResponse("SUCCESS", "Credit Card was deleted successfully")));
@@ -136,6 +145,9 @@ public class CreditCardController extends Controller {
 		long id = Long.parseLong(form.get("userId"));
 		
 		User user = userService.getById(id);
+		if (user == null) {
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id " + id + " is not found")));
+	    }
 		List<CreditCard> userCreditCards = user.getCreditCards();
 		
 		for (CreditCard creditCard: userCreditCards) {

@@ -1,7 +1,6 @@
 package org.crama.creditperfection.test.builders;
 
 import forms.ProductForm;
-import models.Product;
 
 public class ProductFormBuilder {
 

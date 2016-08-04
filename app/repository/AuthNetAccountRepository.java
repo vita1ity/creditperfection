@@ -16,4 +16,8 @@ public interface AuthNetAccountRepository {
 
 	void update(AuthNetAccount account);
 
+	void save(AuthNetAccount account);
+
+	boolean delete(AuthNetAccount account);
+
 }

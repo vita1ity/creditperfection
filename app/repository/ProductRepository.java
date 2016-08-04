@@ -16,4 +16,10 @@ public interface ProductRepository {
 
 	boolean checkIsEmpty();
 
+	void save(Product product);
+
+	void update(Product product);
+
+	boolean delete(Product product);
+
 }

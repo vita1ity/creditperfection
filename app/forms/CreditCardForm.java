@@ -114,17 +114,20 @@ public class CreditCardForm extends Model {
 					errors.add(entry.getKey());
 				}
 			}
-			digits = digits.replaceAll("\\s+", "");
-			if (digits.length() != 16 && digits.length() != 15) {
-				errors.add(new ValidationError("digits", "Card Number should contain 15 or 16 digits"));
+			
+			if (digits != null)
+			{
+				digits = digits.replaceAll("\\s+", "");
+				if (digits.length() != 16 && digits.length() != 15) {
+					errors.add(new ValidationError("digits", "Card Number should contain 15 or 16 digits"));
+				}
+				
+				else if (!digits.matches("[0-9]+")) {
+					errors.add(new ValidationError("digits", "Card Number should be numeric value"));
+				}
 			}
 			
-			else if (!digits.matches("[0-9]+")) {
-				errors.add(new ValidationError("digits", "Card Number should be numeric value"));
-			}
-			
-			
-			if (cvv.length() != 3 && cvv.length() != 4) {
+			if (cvv != null && cvv.length() != 3 && cvv.length() != 4) {
 				errors.add(new ValidationError("cvv", "Invalid CVV number"));
 			}
 			
@@ -135,7 +138,7 @@ public class CreditCardForm extends Model {
 				errors.add(new ValidationError("cvv", "CVV should contain only digits"));
 			}
 			
-			if (month.length() == 1) {
+			if (month != null && month.length() == 1) {
 	    		month = "0" + month;
 	    	}
 	    	String expDateStr = month + "/" + year;

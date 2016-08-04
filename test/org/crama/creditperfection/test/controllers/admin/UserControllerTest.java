@@ -1,102 +1,44 @@
 package org.crama.creditperfection.test.controllers.admin;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import static play.inject.Bindings.bind;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static play.mvc.Http.Status.OK;
+import static play.inject.Bindings.bind;
 import static play.mvc.Http.Status.BAD_REQUEST;
+import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
-import static play.test.Helpers.start;
-import static play.test.Helpers.stop;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
-import javax.inject.Inject;
-
-import org.crama.creditperfection.test.base.UnitTestBase;
+import org.crama.creditperfection.test.base.ControllerTestBase;
 import org.crama.creditperfection.test.builders.UserBuilder;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.avaje.ebean.EbeanServer;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Module;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-import be.objectify.deadbolt.java.AbstractDeadboltHandler;
-import be.objectify.deadbolt.java.DeadboltHandler;
-import be.objectify.deadbolt.java.DefaultDeadboltExecutionContextProvider;
-import be.objectify.deadbolt.java.ExecutionContextProvider;
-import be.objectify.deadbolt.java.cache.HandlerCache;
-import be.objectify.deadbolt.java.cache.SubjectCache;
-import controllers.StartupController;
 import controllers.admin.UserController;
 import errors.ValidationError;
 import models.SecurityRole;
 import models.User;
-import models.json.MessageResponse;
-import models.json.ObjectCreatedResponse;
-import play.Application;
-import play.ApplicationLoader;
-import play.Environment;
-import play.Logger;
-import play.Mode;
-import play.api.mvc.RequestHeader;
-import play.db.ebean.EbeanDynamicEvolutions;
-import play.inject.guice.GuiceApplicationLoader;
-import play.http.HttpEntity;
-import play.inject.Injector;
 import play.inject.guice.GuiceApplicationBuilder;
-import play.inject.guice.GuiceInjectorBuilder;
 import play.libs.Json;
-import play.mvc.Http;
 import play.mvc.Http.RequestBuilder;
-import play.mvc.Http.Response;
-import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.test.Helpers;
-import play.test.WithApplication;
-import repository.UserRepository;
-import repository.impl.UserRepositoryImpl;
-import security.DeadboltHandlerImpl;
 import services.MailService;
-import services.ProductService;
 import services.RoleService;
 import services.UserService;
 
-public class UserControllerTest extends UnitTestBase {
+public class UserControllerTest extends ControllerTestBase {
 	
 	private static final String TEST_EMAIL = "test@gmail.com";
 	private static User testUser;
@@ -341,6 +283,25 @@ public class UserControllerTest extends UnitTestBase {
 		
 		Result result = route(request);
 	    assertEquals(OK, result.status());
+	}
+	
+	@Test 
+	public void testDeleteUser_Failure_UserNotFound() {
+		long id = 456;
+		when(userServiceMock.getById(id)).thenReturn(null);
+		
+		RequestBuilder request = Helpers.fakeRequest()
+				.method("POST")
+				.bodyForm(ImmutableMap.of("id", String.valueOf(id)))
+				.uri(controllers.admin.routes.UserController.deleteUser().url());
+		
+		Result result = route(request);
+	    assertEquals(BAD_REQUEST, result.status());
+	    
+	    JsonNode responseNode = Json.parse(contentAsString(result));
+	    
+	    assertEquals(responseNode.get("status").asText(), "ERROR");	
+	    assertEquals(responseNode.get("message").asText(), "User with id " + id + " is not found");
 	}
 	
 	@Test 

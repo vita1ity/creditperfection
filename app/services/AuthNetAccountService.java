@@ -52,5 +52,14 @@ public class AuthNetAccountService {
 		
 		return null;
 	}
+
+	public void save(AuthNetAccount account) {
+		authRepository.save(account);
+		
+	}
+
+	public boolean delete(AuthNetAccount account) {
+		return authRepository.delete(account);		
+	}
 	
 }

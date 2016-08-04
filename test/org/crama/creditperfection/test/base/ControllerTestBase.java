@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import be.objectify.deadbolt.java.DeadboltHandler;
+import be.objectify.deadbolt.java.cache.HandlerCache;
 import controllers.StartupController;
 import models.SecurityRole;
 import models.User;
@@ -21,14 +23,15 @@ import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.test.WithApplication;
 import security.DeadboltHandlerImpl;
+import security.HandlerCacheImpl;
 
 
-public abstract class UnitTestBase extends WithApplication {
+public abstract class ControllerTestBase extends WithApplication {
 		
 	@Mock
 	private StartupController startupControllerMock;
 		
-	public UnitTestBase()
+	public ControllerTestBase()
 	{
 		MockitoAnnotations.initMocks(this);
 	}

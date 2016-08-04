@@ -11,7 +11,6 @@ import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
 import forms.TransactionForm;
-import models.CreditCard;
 import models.Product;
 import models.Transaction;
 import models.User;
@@ -67,8 +66,16 @@ public class TransactionController extends Controller {
 	public Result addTransaction() {
 		
 		JsonNode json = request().body().asJson();
-		TransactionForm transactionForm = Json.fromJson(json, TransactionForm.class);
 		
+		TransactionForm transactionForm = null;
+		try {
+			transactionForm = Json.fromJson(json, TransactionForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to TransactionForm.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to TransactionForm")));
+		} 
+				
 		List<ValidationError> errors = transactionForm.validate();
     	if (errors != null) {
     		
@@ -77,7 +84,7 @@ public class TransactionController extends Controller {
 		
     	Transaction transaction = transactionService.createTransaction(transactionForm);
     	
-		transaction.save();
+    	transactionService.save(transaction);
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Transaction was added successfully", transaction)));
 		
@@ -86,7 +93,14 @@ public class TransactionController extends Controller {
 	public Result editTransaction() {
 		
 		JsonNode json = request().body().asJson();
-		TransactionForm transactionForm = Json.fromJson(json, TransactionForm.class);
+		TransactionForm transactionForm = null;
+		try {
+			transactionForm = Json.fromJson(json, TransactionForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to TransactionForm.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to TransactionForm")));
+		} 
 		
 		List<ValidationError> errors = transactionForm.validate();
     	if (errors != null) {
@@ -94,7 +108,7 @@ public class TransactionController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		Transaction transaction = transactionService.createTransaction(transactionForm);
-		transaction.update();
+		transactionService.update(transaction);
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Transaction was edited successfully", transaction)));
 		
@@ -106,10 +120,18 @@ public class TransactionController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		
 		Transaction transaction = transactionService.findById(id);
-		transaction.delete();
+		if (transaction == null) {
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "Transaction with id " + id + " is not found")));
+	    }
 		
-		return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
+		boolean deleted = transactionService.delete(transaction);
 		
+		if (deleted) {
+			return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction was deleted successfully")));
+		}
+		else {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Transaction was not deleted")));
+		}		
 	}
 	
 	public Result refundTransaction() {
@@ -118,18 +140,20 @@ public class TransactionController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		
 		Transaction transaction = transactionService.findById(id);
+		if (transaction == null) {
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "Transaction with id " + id + " is not found")));
+	    }
 		
     	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.refundTransaction(transaction);
 		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	if (transactionResponse instanceof MessageResponse) {
     		
     		transaction.setStatus(TransactionStatus.REFUNDED);
-    		transaction.update();
+    		transactionService.update(transaction);
     		return ok(Json.toJson(transactionResponse)); 
     		
     	}
-    	else {
-    		
+    	else {    		
     		return badRequest(Json.toJson(transactionResponse));
     	}
 		

@@ -25,5 +25,21 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 		Transaction transaction = find.byId(id);
 		return transaction;
 	}
+
+	@Override
+	public void save(Transaction transaction) {
+		transaction.save();		
+	}
+
+	@Override
+	public void update(Transaction transaction) {
+		transaction.update();		
+	}
+
+	@Override
+	public boolean delete(Transaction transaction) {
+		return transaction.delete();
+		
+	}
 	
 }

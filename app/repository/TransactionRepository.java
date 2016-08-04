@@ -14,4 +14,10 @@ public interface TransactionRepository {
 
 	Transaction findById(long id);
 
+	void save(Transaction transaction);
+
+	void update(Transaction transaction);
+
+	boolean delete(Transaction transaction);
+
 }

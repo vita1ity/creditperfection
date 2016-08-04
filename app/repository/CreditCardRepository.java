@@ -14,4 +14,10 @@ public interface CreditCardRepository {
 
 	CreditCard getById(long id);
 
+	void save(CreditCard creditCard);
+
+	void update(CreditCard creditCardDB);
+
+	boolean delete(CreditCard creditCard);
+
 }

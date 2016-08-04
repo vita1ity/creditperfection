@@ -4,23 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static play.inject.Bindings.bind;
-import static play.mvc.Http.Status.OK;
 import static play.mvc.Http.Status.BAD_REQUEST;
+import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
 
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.crama.creditperfection.test.base.UnitTestBase;
+import org.crama.creditperfection.test.base.ControllerTestBase;
 import org.crama.creditperfection.test.builders.SubscriptionBuilder;
 import org.crama.creditperfection.test.builders.SubscriptionFormBuilder;
-import org.crama.creditperfection.test.builders.UserBuilder;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -30,22 +26,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import controllers.admin.SubscriptionController;
-import errors.ValidationError;
-import controllers.admin.ProductController;
 import forms.SubscriptionForm;
 import models.Subscription;
-import models.User;
 import models.enums.SubscriptionStatus;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.Json;
-import play.mvc.Result;
 import play.mvc.Http.RequestBuilder;
+import play.mvc.Result;
 import play.test.Helpers;
 import services.ProductService;
 import services.SubscriptionService;
 import services.UserService;
 
-public class SubscriptionControllerTest extends UnitTestBase {
+public class SubscriptionControllerTest extends ControllerTestBase {
 	private static Subscription testSubscription;
 	private static SubscriptionForm testSubscriptionForm;
 	
@@ -152,6 +145,26 @@ public class SubscriptionControllerTest extends UnitTestBase {
 	}
 	
 	@Test
+	public void testAddSubscription_Failure_ParsingError() {
+			
+		JsonNode subscriptionFormJson = Json.toJson("{ \"someOther\": \"json\" }");
+										
+		RequestBuilder request = Helpers.fakeRequest()
+									.method("POST")
+									.bodyJson(subscriptionFormJson)
+									.uri(controllers.admin.routes.SubscriptionController.addSubscription().url());
+		
+	    Result result = route(request);
+	    assertEquals(BAD_REQUEST, result.status());
+	    
+	    JsonNode responseNode = Json.parse(contentAsString(result));
+	    
+	    assertEquals(responseNode.get("status").asText(), "ERROR");	
+	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Subscription");
+	    
+	}
+	
+	@Test
 	public void testEditSubscription_Success() {
 		testSubscriptionForm.setUserId("20");
 		JsonNode subscriptionFormJson = Json.toJson(testSubscriptionForm);
@@ -190,6 +203,26 @@ public class SubscriptionControllerTest extends UnitTestBase {
 	    
 	    assertEquals(responseArrayNode.get(0).get("field").asText(), "user");	
 	    assertEquals(responseArrayNode.get(0).get("error").asText(), "Please choose User");
+	}
+	
+	@Test
+	public void testEditSubscription_Failure_ParsingError() {
+			
+		JsonNode subscriptionFormJson = Json.toJson("{ \"someOther\": \"json\" }");
+										
+		RequestBuilder request = Helpers.fakeRequest()
+									.method("POST")
+									.bodyJson(subscriptionFormJson)
+									.uri(controllers.admin.routes.SubscriptionController.editSubscription().url());
+		
+	    Result result = route(request);
+	    assertEquals(BAD_REQUEST, result.status());
+	    
+	    JsonNode responseNode = Json.parse(contentAsString(result));
+	  	    
+	    assertEquals(responseNode.get("status").asText(), "ERROR");	
+	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Subscription");
+	    
 	}
 	
 	@Test

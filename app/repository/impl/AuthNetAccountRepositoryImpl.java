@@ -33,6 +33,17 @@ public class AuthNetAccountRepositoryImpl implements AuthNetAccountRepository {
 		
 	}
 
+	@Override
+	public void save(AuthNetAccount account) {
+		account.save();
+		
+	}
+
+	@Override
+	public boolean delete(AuthNetAccount account) {
+		return account.delete();		
+	}
+
 	
 	
 }

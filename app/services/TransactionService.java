@@ -59,4 +59,18 @@ public class TransactionService {
 	public Transaction findById(long id) {
 		return transactionRepository.findById(id);
 	}
+
+	public void save(Transaction transaction) {
+		transactionRepository.save(transaction);
+		
+	}
+
+	public void update(Transaction transaction) {
+		transactionRepository.update(transaction);		
+	}
+
+	public boolean delete(Transaction transaction) {
+		return transactionRepository.delete(transaction);
+		
+	}
 }

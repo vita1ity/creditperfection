@@ -38,5 +38,17 @@ public class ProductService {
 	public boolean checkIsEmpty() {
 		return productRepository.checkIsEmpty();
 	}
+
+	public void save(Product product) {
+		productRepository.save(product);		
+	}
+
+	public void update(Product product) {
+		productRepository.update(product);		
+	}
+
+	public boolean delete(Product product) {
+		return productRepository.delete(product);
+	}
 	
 }

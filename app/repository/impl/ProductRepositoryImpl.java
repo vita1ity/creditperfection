@@ -28,6 +28,24 @@ public class ProductRepositoryImpl implements ProductRepository {
 		
 		return find.findRowCount() == 0;
 	}
+
+	@Override
+	public void save(Product product) {
+		product.save();
+		
+	}
+
+	@Override
+	public void update(Product product) {
+		product.updateProductInfo(product);
+		product.save();
+		
+	}
+
+	@Override
+	public boolean delete(Product product) {
+		return product.delete();
+	}
 	
 	
 	

@@ -293,5 +293,19 @@ public class CreditCardService {
         
     }
 
+	public void save(CreditCard creditCard) {
+		creditCardRepository.save(creditCard);
+		
+	}
+
+	public void update(CreditCard creditCardDB) {
+		creditCardRepository.update(creditCardDB);
+		
+	}
+
+	public boolean delete(CreditCard creditCard) {
+		return creditCardRepository.delete(creditCard);
+	}
+
 	
 }

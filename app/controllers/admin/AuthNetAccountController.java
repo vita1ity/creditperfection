@@ -51,7 +51,7 @@ public class AuthNetAccountController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		
-		account.save();
+    	authNetAccountService.save(account);
 		
 		return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "Merchant Account was added successfully", 
 				account.getId())));
@@ -69,7 +69,7 @@ public class AuthNetAccountController extends Controller {
     		return badRequest(Json.toJson(errors));
     	}
 		
-		account.update();
+    	authNetAccountService.update(account);
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was edited successfully")));
 	}
@@ -79,7 +79,7 @@ public class AuthNetAccountController extends Controller {
 		long id = Long.parseLong(form.get("id"));
 		
 		AuthNetAccount account = authNetAccountService.getById(id);
-		account.delete();
+		authNetAccountService.delete(account);
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was deleted successfully")));
 		

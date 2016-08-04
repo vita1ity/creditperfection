@@ -57,8 +57,16 @@ public class SubscriptionController extends Controller {
 	public Result addSubscription() {
 		
 		JsonNode json = request().body().asJson();
-		SubscriptionForm subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
 		
+		SubscriptionForm subscriptionForm = null;
+		try {
+			subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to Subscription.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to Subscription")));
+		}
+				
 		List<ValidationError> errors = subscriptionForm.validate();
     	if (errors != null) {
     		Logger.error(errors.toString());
@@ -75,7 +83,14 @@ public class SubscriptionController extends Controller {
 	public Result editSubscription() {
 
 		JsonNode json = request().body().asJson();
-		SubscriptionForm subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
+		SubscriptionForm subscriptionForm = null;
+		try {
+			subscriptionForm = Json.fromJson(json, SubscriptionForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to Subscription.");
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to Subscription")));
+		}
 		
 		List<ValidationError> errors = subscriptionForm.validate();
     	if (errors != null) {
