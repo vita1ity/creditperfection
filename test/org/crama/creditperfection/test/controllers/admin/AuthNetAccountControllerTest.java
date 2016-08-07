@@ -26,7 +26,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.ImmutableMap;
 
 import controllers.admin.AuthNetAccountController;
+import errors.ValidationError;
 import models.AuthNetAccount;
+import play.Logger;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.Json;
 import play.mvc.Result;
@@ -60,8 +62,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 				testAuthNetAccount); 
 		
 		when(authNetAccountServiceMock.getAll()).thenReturn(allAuthNetAccounts);
-		when(authNetAccountServiceMock.getById(testAuthNetAccount.getId())).thenReturn(testAuthNetAccount);
-		
+		when(authNetAccountServiceMock.getById(testAuthNetAccount.getId())).thenReturn(testAuthNetAccount);				
 	}
 	
 	@Override
@@ -71,14 +72,14 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
         return builder.overrides(bind(AuthNetAccountService.class).toInstance(authNetAccountServiceMock));        						         						 
     }
 	
-	/*@Test
+	@Test
 	public void testAuthNetAccounts()	{
 		Result result = authNetAccountController.authNetAccounts();
 		assertEquals(OK, result.status());
 		assertEquals("utf-8", result.charset().get());
 		assertEquals("text/html", result.contentType().get());
 		
-		assertTrue(contentAsString(result).contains("Add AuthNetAccount"));
+		assertTrue(contentAsString(result).contains("Add Merchant Account"));
 		assertTrue(contentAsString(result).contains(testAuthNetAccount.getName()));
 		assertTrue(contentAsString(result).contains(authNetAccountServiceMock.getAll().get(0).getName()));
 		assertTrue(contentAsString(result).contains(authNetAccountServiceMock.getAll().get(1).getName()));
@@ -87,6 +88,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	@Test
 	public void testAddAuthNetAccounts_Success() {
 		JsonNode authNetAccountJson = Json.toJson(testAuthNetAccount);
+		when(authNetAccountServiceMock.validate(testAuthNetAccount)).thenReturn(null);
 		
 		RequestBuilder request = Helpers.fakeRequest()
 									.method("POST")
@@ -99,12 +101,14 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "SUCCESS");	
-	    assertEquals(responseNode.get("message").asText(), "AuthNetAccount was created successfully");
+	    assertEquals(responseNode.get("message").asText(), "Merchant Account was added successfully");
 	}
 	
 	@Test
 	public void testAddAuthNetAccount_Failure_ValidationErrors() {
-		testAuthNetAccount.setName("Name");
+		
+		when(authNetAccountServiceMock.validate(testAuthNetAccount)).thenReturn(
+				Arrays.asList(new ValidationError("loginId", "Please enter Login ID")));
 		JsonNode authNetAccountJson = Json.toJson(testAuthNetAccount);
 										
 		RequestBuilder request = Helpers.fakeRequest()
@@ -120,8 +124,8 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    assertTrue(responseNode.isArray());
 	    ArrayNode responseArrayNode = (ArrayNode) responseNode;
 	    
-	    assertEquals(responseArrayNode.get(0).get("field").asText(), "name");	
-	    assertEquals(responseArrayNode.get(0).get("error").asText(), "AuthNetAccount Name should contain at least 5 characers");
+	    assertEquals(responseArrayNode.get(0).get("field").asText(), "loginId");	
+	    assertEquals(responseArrayNode.get(0).get("error").asText(), "Please enter Login ID");
 	}
 	
 	@Test
@@ -140,12 +144,13 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));	    
 	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to AuthNetAccount");
+	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Merchant Account");
 	}
 	
 	@Test
 	public void testEditAuthNetAccounts_Success() {
 		JsonNode authNetAccountJson = Json.toJson(testAuthNetAccount);
+		when(authNetAccountServiceMock.validate(testAuthNetAccount)).thenReturn(null);
 		
 		RequestBuilder request = Helpers.fakeRequest()
 									.method("POST")
@@ -158,14 +163,16 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "SUCCESS");	
-	    assertEquals(responseNode.get("message").asText(), "AuthNetAccount was edited successfully");
+	    assertEquals(responseNode.get("message").asText(), "Merchant Account was edited successfully");
 	}
 	
 	@Test
 	public void testEditAuthNetAccount_Failure_ValidationErrors() {
-		testAuthNetAccount.setName("Name");
+		
+		when(authNetAccountServiceMock.validate(testAuthNetAccount)).thenReturn(
+				Arrays.asList(new ValidationError("loginId", "Please enter Login ID")));
 		JsonNode authNetAccountJson = Json.toJson(testAuthNetAccount);
-										
+		
 		RequestBuilder request = Helpers.fakeRequest()
 									.method("POST")
 									.bodyJson(authNetAccountJson)
@@ -179,8 +186,10 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    assertTrue(responseNode.isArray());
 	    ArrayNode responseArrayNode = (ArrayNode) responseNode;
 	    
-	    assertEquals(responseArrayNode.get(0).get("field").asText(), "name");	
-	    assertEquals(responseArrayNode.get(0).get("error").asText(), "AuthNetAccount Name should contain at least 5 characers");
+	    Logger.error(contentAsString(result));
+	    
+	    assertEquals(responseArrayNode.get(0).get("field").asText(), "loginId");	
+	    assertEquals(responseArrayNode.get(0).get("error").asText(), "Please enter Login ID");
 	}
 	
 	@Test
@@ -199,7 +208,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));	    
 	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to AuthNetAccount");
+	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Merchant Account");
 	}
 	
 	@Test
@@ -207,6 +216,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 		       
 		JsonNode testAuthNetAccountJson = Json.toJson(testAuthNetAccount);
 		
+		when(authNetAccountServiceMock.validate(testAuthNetAccount)).thenReturn(null);
 		when(authNetAccountServiceMock.getById(testAuthNetAccount.getId())).thenReturn(null);
 		
 		RequestBuilder request = Helpers.fakeRequest()
@@ -217,10 +227,10 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 		Result result = route(request);
 	    assertEquals(BAD_REQUEST, result.status());
 	    	    
-	    JsonNode responseNode = Json.parse(contentAsString(result));	    
-	    
+	    JsonNode responseNode = Json.parse(contentAsString(result));	
+	    	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "AuthNetAccount with id 55 is not found");
+	    assertEquals(responseNode.get("message").asText(), "Merchant Account with id 55 is not found");
 	}
 	
 	@Test 
@@ -238,7 +248,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "SUCCESS");	
-	    assertEquals(responseNode.get("message").asText(), "AuthNetAccount was deleted successfully");
+	    assertEquals(responseNode.get("message").asText(), "Merchant Account was deleted successfully");
 	}
 	
 	@Test 
@@ -257,7 +267,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "AuthNetAccount with id " + id + " is not found");
+	    assertEquals(responseNode.get("message").asText(), "Merchant Account with id " + id + " is not found");
 	}
 	
 	@Test 
@@ -275,6 +285,6 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "Error occured while deleting the AuthNetAccount");
-	}*/
+	    assertEquals(responseNode.get("message").asText(), "Error occured while deleting the Merchant Account");
+	}
 }

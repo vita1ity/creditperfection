@@ -73,6 +73,8 @@ public class CreditCardControllerTest extends ControllerTestBase {
 				.build(),
 				testCreditCard); 
 		
+		testUser.setCreditCards(allCreditCards);
+		
 		when(creditCardServiceMock.getAll()).thenReturn(allCreditCards);
 		when(creditCardServiceMock.getById(testCreditCard.getId())).thenReturn(testCreditCard);
 		when(creditCardServiceMock.createCreditCard(Matchers.any())).thenReturn(testCreditCard);
