@@ -14,6 +14,7 @@ import models.enums.TransactionStatus;
 import models.json.JSONResponse;
 import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
+import play.Configuration;
 import play.Logger;
 import services.CreditCardService;
 import services.SubscriptionService;
@@ -36,7 +37,7 @@ public class CreditCardChargeJob implements Runnable {
         	
         	Logger.info("subscription: " + s);
         	
-        	if (checkExpired(s.getLastChargeDate())) {
+            if (subscriptionService.checkExpired(s)) {
         		//subscription expired. charge credit card
         		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(s.getProduct().getPrice(), 
         				s.getCreditCard());
@@ -46,8 +47,7 @@ public class CreditCardChargeJob implements Runnable {
 	        		s.setLastChargeDate(LocalDateTime.now());
 	        				
 	        		if (s.getStatus().equals(SubscriptionStatus.TRIAL)) {
-	        			s.setStatus(SubscriptionStatus.ACTIVE);
-	        			
+	        			s.setStatus(SubscriptionStatus.ACTIVE);	        			
 	        		}
 	        		s.update();
 	        		
@@ -77,23 +77,6 @@ public class CreditCardChargeJob implements Runnable {
         
     }
     
-    private boolean checkExpired(LocalDateTime date) {
-    	
-    	LocalDateTime today = LocalDateTime.now();
-    	
-    	long daysBetween = ChronoUnit.DAYS.between(date, today);
-    	
-    	//get number of days in this month
-    	int daysInMonth = date.getMonth().length(true);
-    	
-    	Logger.info("daysBetween: " + daysBetween + "days in current month: " + daysInMonth);
-    	
-    	if (daysBetween >= daysInMonth) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
-    }
+        
     
 }

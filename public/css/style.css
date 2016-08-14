@@ -1,31 +1,50 @@
-
 html, body {
-    height: 100%;
+	height: 100%;
 }
+
 .container-full {
 	margin: 0 auto;
-  	width: 100%;
+	width: 100%;
 }
+
+.container {
+	width: 1036px;
+	padding: 0;
+	margin-bottom: 20px;
+}
+
 .header {
 	
 }
 
 .navbar-fixed-bottom {
-  	display: inline-block;
-  	float: none;
-  	vertical-align: top;
+	display: inline-block;
+	float: none;
+	vertical-align: top;
 }
 
 .wrapper {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    margin: 0 auto -100px;
+	width: 60%;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -100px;
 }
-.footer, .push {
+
+.footer {
 	margin-top: 50px;
-    height: 50px;
+	height: 50px;
 }
+
+.push {
+	margin-top: 0px;
+	height: 50px;
+}
+
+.footer .container-full {
+	width: 60%;
+}
+
 .footer-text {
 	text-align: center;
 	padding-top: 1%;
@@ -34,118 +53,129 @@ html, body {
 .footer-link {
 	color: #455375
 }
+
 .without-margin {
 	margin: 0;
 }
+
 .hidden {
 	display: none;
 }
+
 .error {
 	color: red;
 }
+
 .register-flow-form {
-	width: 60%;
-	margin: 60px auto 0 auto; 
+	width: 100%;
+	margin: 0px auto 0 auto;
 }
 
 .form-title {
 	color: #73B140;
 	margin-bottom: 35px;
 }
+
 .form-label {
 	margin-bottom: 5px;
 }
+
 .title {
 	color: #73B140;
 }
+
 .btn-center {
 	margin: 25px auto 0 auto;
 	width: 150px;
 }
+
 .add-btn-center {
 	margin: 25px 0 25px 44%;
 	width: 150px;
 }
+
 .left-button {
 	margin-right: 20px;
 }
-#login .modal-dialog  {
-	width:25%;
+
+#login .modal-dialog {
+	width: 25%;
 }
 
 .flipper.rotate .login-form {
-    -moz-transform: perspective(800px) rotateY(-180deg);
-    -ms-transform: perspective(800px) rotateY(-180deg);
-    -webkit-transform: perspective(800px) rotateY(-180deg);
-    transform: perspective(800px) rotateY(-180deg)
+	-moz-transform: perspective(800px) rotateY(-180deg);
+	-ms-transform: perspective(800px) rotateY(-180deg);
+	-webkit-transform: perspective(800px) rotateY(-180deg);
+	transform: perspective(800px) rotateY(-180deg)
 }
 
 .flipper.rotate .login-form.forgot-pass {
-    -moz-transform: perspective(800px) rotateY(0deg);
-    -ms-transform: perspective(800px) rotateY(0deg);
-    -webkit-transform: perspective(800px) rotateY(0deg);
-    transform: perspective(800px) rotateY(0deg)
+	-moz-transform: perspective(800px) rotateY(0deg);
+	-ms-transform: perspective(800px) rotateY(0deg);
+	-webkit-transform: perspective(800px) rotateY(0deg);
+	transform: perspective(800px) rotateY(0deg)
 }
 
 .flipper .login-form {
-    
-    width:100%;
-    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5); 
-    box-shadow: 0 5px 15px rgba(0,0,0,.5); 
-    border-radius: 5px; 
-    background-color: #fff;
-     backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-style: preserve-3d;
-    -moz-transition: -moz-transform .6s;
-    -o-transition: -o-transform .6s;
-    -webkit-transition: -webkit-transform .6s;
-    transition: transform .6s;
-    -moz-transform: perspective(800px) rotateY(0deg);
-    -ms-transform: perspective(800px) rotateY(0deg);
-    -webkit-transform: perspective(800px) rotateY(0deg);
-    transform: perspective(800px) rotateY(0deg)
+	width: 100%;
+	-webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+	border-radius: 5px;
+	background-color: #fff;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-style: preserve-3d;
+	-moz-transition: -moz-transform .6s;
+	-o-transition: -o-transform .6s;
+	-webkit-transition: -webkit-transform .6s;
+	transition: transform .6s;
+	-moz-transform: perspective(800px) rotateY(0deg);
+	-ms-transform: perspective(800px) rotateY(0deg);
+	-webkit-transform: perspective(800px) rotateY(0deg);
+	transform: perspective(800px) rotateY(0deg)
 }
 
 .flipper .login-form.forgot-pass {
-    background-color: #fff;
-    display: block;
-    -moz-transform: perspective(800px) rotateY(180deg);
-    -ms-transform: perspective(800px) rotateY(180deg);
-    -webkit-transform: perspective(800px) rotateY(180deg);
-    transform: perspective(800px) rotateY(180deg)
+	background-color: #fff;
+	display: block;
+	-moz-transform: perspective(800px) rotateY(180deg);
+	-ms-transform: perspective(800px) rotateY(180deg);
+	-webkit-transform: perspective(800px) rotateY(180deg);
+	transform: perspective(800px) rotateY(180deg)
 }
 
 .alert-small {
 	padding: 5px;
-    margin: 5px 15px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+	margin: 5px 15px;
+	border: 1px solid transparent;
+	border-radius: 4px;
 }
 
 .navbar-brand {
-	margin-right: 40px;	
+	margin-right: 40px;
 	float: left;
-    padding: 0px 25px;
-    font-size: 18px;
-    line-height: 20px;
+	padding: 0px 25px;
+	font-size: 18px;
+	line-height: 20px;
 }
+
 .panel {
 	width: 80%;
 	margin: 0 auto;
 }
+
 .edit-form {
 	width: 80%;
-	margin: 20px auto 0 auto; 
+	margin: 20px auto 0 auto;
 }
 
 .nav .welcome {
-    display: block;
-    padding: 15px 15px;
+	display: block;
+	padding: 15px 15px;
 }
 
 .success-message {
@@ -156,7 +186,6 @@ html, body {
 .current-product, .update-subscription-form {
 	width: 50%;
 	margin: 20px auto 0 auto;
-	
 }
 
 .current-product h4 {
@@ -164,19 +193,114 @@ html, body {
 	margin-bottom: 60px;
 }
 
-
 .product {
 	font-weight: bold;
 }
 
 .double-separator {
 	width: 80%;
-	margin: 50px auto 50px  auto;
+	margin: 50px auto 50px auto;
 }
 
 .standart-margin {
 	width: 80%;
-    margin: 0 auto 40px auto;
-    
+	margin: 0 auto 40px auto;
 }
- 
+
+.trial-block {
+	width: 80%;
+	margin: 15px auto 0 auto;
+}
+
+h1 {
+	color: #73B140;
+	font-size: 26px;
+	font-weight: 600;
+	margin: 20px 0 0;
+}
+
+.leftSide {
+	background-color: #fff;
+	-webkit-box-shadow: 2px 2px 3px rgba(0, 0, 0, .2), -2px 2px 3px
+		rgba(0, 0, 0, .2), 2px -2px 3px rgba(0, 0, 0, .2), -2px -2px 3px
+		rgba(0, 0, 0, .2);
+	-moz-box-shadow: 2px 2px 3px rgba(0, 0, 0, .2), -2px 2px 3px
+		rgba(0, 0, 0, .2), 2px -2px 3px rgba(0, 0, 0, .2), -2px -2px 3px
+		rgba(0, 0, 0, .2);
+	box-shadow: 2px 2px 3px rgba(0, 0, 0, .2), -2px 2px 3px
+		rgba(0, 0, 0, .2), 2px -2px 3px rgba(0, 0, 0, .2), -2px -2px 3px
+		rgba(0, 0, 0, .2);
+	padding-bottom: 20px;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	margin-bottom: 20px;
+}
+
+.border-right {
+	border-right: 1px solid black;
+}
+
+.privacyProtected p {
+	color: #73B140;
+	font-weight: 600;
+	font-size: 16px;
+	background-image: url(../images/lock.png);
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 60px;
+	padding-top: 5px;
+	min-height: 60px;
+}
+
+.privacyProtected p span {
+	color: #000;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.heading {
+	color: #73B140;
+	font-size: 18px;
+	font-weight: 600;
+	margin-top: 0
+}
+
+.rightSide {
+	margin-right: -15px;
+	margin-left: 10px;
+}
+
+.safeSecure {
+	height: 60px;
+}
+
+.safeSecure p {
+	
+	background: #f1ffef; /* Old browsers */
+	background: -moz-linear-gradient(top, #f1ffef 0%, #bbff96 100%, #bbff96 100%,
+		#bbff96 100%, #ecffe2 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #f1ffef 0%, #bbff96 100%, #bbff96 100%,
+		#bbff96 100%, #ecffe2 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #f1ffef 0%, #bbff96 100%, #bbff96 100%,
+		#bbff96 100%, #ecffe2 100%);
+	/* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f1ffef',
+		endColorstr='#ecffe2', GradientType=0); /* IE6-9 */
+	border: 1px solid #6dce60;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	color: #73B140;
+	text-align: center;
+	font-weight: bolder;
+	font-size: 16px;
+	padding: 10px 20% 10px 5%
+}
+
+.youShould {
+	color: #73B140;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	font-size: 13px;
+	line-height: auto
+}

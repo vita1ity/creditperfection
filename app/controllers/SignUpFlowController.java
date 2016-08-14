@@ -51,7 +51,7 @@ import views.html.index;
 
 @Singleton
 public class SignUpFlowController extends Controller {
-
+	
     @Inject
     private FormFactory formFactory;
     
@@ -79,7 +79,7 @@ public class SignUpFlowController extends Controller {
     public Result index(Boolean login){
     	
     	//session().clear();
-    	
+     	
     	List<Product> productList = productService.getAll();
     	CardType[] allTypes = CardType.values();
     	State[] states = State.values();
@@ -234,12 +234,12 @@ public class SignUpFlowController extends Controller {
     			CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
     			
     	    	//charge amount for the product from credit card
-    	    	long productId = Long.parseLong(session().get("productId"));
-    	    	Product product = productService.getById(productId);
+    	    	long trialProductId = conf.getLong("creditperfection.trial.productId");
+    	    	Product trialProduct = productService.getById(trialProductId);
     	    	
-    	    	Logger.info("Product to be purchased: " + product);
+    	    	Logger.info("Trial product to be purchased: " + trialProduct);
     	    	
-    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
+    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(trialProduct.getSalePrice(), creditCard);
     	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
     	    		
@@ -249,7 +249,7 @@ public class SignUpFlowController extends Controller {
         	    	
         	    	String transactionId = creditCardService.getTransactionId(response);
     	    		//save transaction
-    	    		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
+    	    		Transaction transaction = new Transaction(user, creditCard, trialProduct, trialProduct.getSalePrice(), 
     	    				transactionId, TransactionStatus.SUCCESSFUL);
     	    		transaction.save();
     	    		
@@ -258,6 +258,12 @@ public class SignUpFlowController extends Controller {
         			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
         			user.setKbaQuestions(kbaQuestions);
         			user.update();
+        			
+        			//assign default product to subscription
+        			long productId = conf.getLong("creditperfection.default.productId");
+        	    	Product product = productService.getById(productId);
+        	    	
+        	    	Logger.info("Product to be purchased after end of the Trial period: " + product);
         			
         			//subscribe user
         			Subscription subscription = new Subscription(user, creditCard, product, 
@@ -282,16 +288,8 @@ public class SignUpFlowController extends Controller {
     	    	else {
     	    		
     	    		return badRequest(Json.toJson(transactionResponse));
-    	    	}
-    			
-    		}
-	    	
-	    	
-	    }
-	    
-	    
+    	    	}    			
+    		}	    	
+	    }	    
     }
-    
-
-
 }

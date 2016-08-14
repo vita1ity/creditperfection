@@ -1,6 +1,6 @@
-@(product: models.Product, allTypes: Array[models.enums.CardType], months: Array[models.enums.Month], years: Array[models.enums.Year])
+@(user: models.User, allTypes: Array[models.enums.CardType], months: Array[models.enums.Month], years: Array[models.enums.Year])
 
-@if(product.getId == 0){
+@if(user.getEmail == null){
 	<form class="payment-form horizontal-form register-flow-form hidden"
 	 	role="form" data-url="@routes.SignUpFlowController.processPaymentAndGetReport()"
 	 	data-report-page-url="@routes.CreditReportController.processUrl()">

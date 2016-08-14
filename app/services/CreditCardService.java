@@ -168,8 +168,8 @@ public class CreditCardService {
 	        CreateTransactionController controller = new CreateTransactionController(apiRequest);
 	        controller.execute();
 	
-	
 	        CreateTransactionResponse response = controller.getApiResponse();
+	        Logger.error(response.getMessages().getMessage().get(0).getCode());
 	            
 			return response;
 		}

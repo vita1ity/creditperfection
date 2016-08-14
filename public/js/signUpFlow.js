@@ -36,7 +36,8 @@ $(document).ready(function() {
 	    	
 	    	console.log(data);
 	    	$('#register').addClass('hidden');
-	    	$('.choose-product-form').removeClass('hidden');
+	    	$('.trial-block').removeClass('hidden');
+	    	$('.payment-form').removeClass('hidden');
 	    	
 	    	var alertHtml = "";
 	    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";

@@ -2,18 +2,25 @@ package repository.impl;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.avaje.ebean.Model.Finder;
 
 import models.Product;
+import play.Configuration;
 import repository.ProductRepository;
 
 public class ProductRepositoryImpl implements ProductRepository {
+	
+	@Inject
+	private Configuration conf;
 
 	private Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
 	
 	@Override
 	public List<Product> getAll() {
-		List<Product> allProducts = find.all();
+		long trialProductId = conf.getLong("creditperfection.trial.productId");		
+		List<Product> allProducts = find.where().ne("id", trialProductId).findList();
     	return allProducts;
 	}
 

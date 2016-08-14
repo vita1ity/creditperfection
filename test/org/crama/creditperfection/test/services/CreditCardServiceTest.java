@@ -2,9 +2,7 @@ package org.crama.creditperfection.test.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -33,7 +31,12 @@ import forms.CreditCardForm;
 import models.AuthNetAccount;
 import models.CreditCard;
 import models.enums.CardType;
+import models.json.JSONResponse;
+import net.authorize.api.contract.v1.CreateTransactionResponse;
+import net.authorize.api.contract.v1.MessageTypeEnum;
+import net.authorize.api.contract.v1.TransactionResponse;
 import play.Configuration;
+import play.Logger;
 import repository.CreditCardRepository;
 import services.AuthNetAccountService;
 import services.CreditCardService;
@@ -379,7 +382,7 @@ public class CreditCardServiceTest {
 		
 	}
 	
-	/*
+	
 	@Before
 	public void setUpCharge_DefaultAccountSuccess() throws Exception {
 		
@@ -455,7 +458,7 @@ public class CreditCardServiceTest {
     
 		verify(confMock, times(2)).getString(anyString());
 		
-	}*/
+	}
 	
 	//TODO test other methods
 	

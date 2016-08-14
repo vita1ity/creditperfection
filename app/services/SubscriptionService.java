@@ -1,6 +1,7 @@
 package services;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,6 +13,8 @@ import models.Product;
 import models.Subscription;
 import models.User;
 import models.enums.SubscriptionStatus;
+import play.Configuration;
+import play.Logger;
 import repository.SubscriptionRepository;
 
 @Singleton
@@ -25,6 +28,9 @@ public class SubscriptionService {
 	
 	@Inject 
 	private CreditCardService creditCardService;
+	
+	@Inject
+	private Configuration conf;
 	
 	@Inject 
 	private ProductService productService;
@@ -86,8 +92,44 @@ public class SubscriptionService {
 	}
 
 	public void delete(Subscription subscription) {
-		subscriptionRepository.delete(subscription);
-		
+		subscriptionRepository.delete(subscription);		
 	}
+	
+	public boolean checkExpired(Subscription s) {
+    	LocalDateTime lastChargeDate = s.getLastChargeDate();
+    	LocalDateTime subscriptionDate = s.getSubscriptionDate();    	
+    	LocalDateTime today = LocalDateTime.now();
+    	
+    	if (s.getStatus().equals(SubscriptionStatus.TRIAL)) {
+    		
+        	long daysBetween = ChronoUnit.DAYS.between(subscriptionDate, today);
+        	
+        	Logger.info("daysBetween: " + daysBetween);
+        	int daysInTrial = conf.getInt("creditperfection.trial.days");
+        	
+        	if (daysBetween >= daysInTrial) {
+        		return true;
+        	}
+        	else {
+        		return false;
+        	}
+    	}
+    	else {    	
+    	
+	    	long daysBetween = ChronoUnit.DAYS.between(lastChargeDate, today);
+	    	
+	    	//get number of days in this month
+	    	int daysInMonth = lastChargeDate.getMonth().length(true);
+	    	
+	    	Logger.info("daysBetween: " + daysBetween + "days in current month: " + daysInMonth);
+	    	
+	    	if (daysBetween >= daysInMonth) {
+	    		return true;
+	    	}
+	    	else {
+	    		return false;
+	    	}
+    	}
+    }
 	
 }

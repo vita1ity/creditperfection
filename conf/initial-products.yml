@@ -1,3 +1,9 @@
+- &trial !!models.Product
+id: 0
+name: FREE Credit Score and $1 Report + Credit Monitoring
+price: 1
+salePrice: 1
+
 - &bureauReport1 !!models.Product
  id: 1 
  name: 1 Bureau Report with 1 Bureau Monitoring + Identity Protection
