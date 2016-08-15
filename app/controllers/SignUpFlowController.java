@@ -227,6 +227,7 @@ public class SignUpFlowController extends Controller {
 	    	//get kba questions
 	    	JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
     		if (kbaUrlResponse instanceof ErrorResponse) {
+    			Logger.error(((ErrorResponse) kbaUrlResponse).getErrorMessage());
     			return badRequest(Json.toJson(kbaUrlResponse));
     		}
     		else {
@@ -234,12 +235,12 @@ public class SignUpFlowController extends Controller {
     			CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
     			
     	    	//charge amount for the product from credit card
-    	    	long trialProductId = conf.getLong("creditperfection.trial.productId");
-    	    	Product trialProduct = productService.getById(trialProductId);
+    			long productId = conf.getLong("creditperfection.default.productId");
+    	    	Product product = productService.getById(productId);
     	    	
-    	    	Logger.info("Trial product to be purchased: " + trialProduct);
+    	    	Logger.info("Product to be purchased: " + product);
     	    	
-    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(trialProduct.getSalePrice(), creditCard);
+    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
     	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	    	if (transactionResponse instanceof MessageResponse) {
     	    		
@@ -249,7 +250,7 @@ public class SignUpFlowController extends Controller {
         	    	
         	    	String transactionId = creditCardService.getTransactionId(response);
     	    		//save transaction
-    	    		Transaction transaction = new Transaction(user, creditCard, trialProduct, trialProduct.getSalePrice(), 
+    	    		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
     	    				transactionId, TransactionStatus.SUCCESSFUL);
     	    		transaction.save();
     	    		
@@ -259,10 +260,7 @@ public class SignUpFlowController extends Controller {
         			user.setKbaQuestions(kbaQuestions);
         			user.update();
         			
-        			//assign default product to subscription
-        			long productId = conf.getLong("creditperfection.default.productId");
-        	    	Product product = productService.getById(productId);
-        	    	
+        			//assign default product to subscription        	    	
         	    	Logger.info("Product to be purchased after end of the Trial period: " + product);
         			
         			//subscribe user

@@ -12,15 +12,11 @@ import repository.ProductRepository;
 
 public class ProductRepositoryImpl implements ProductRepository {
 	
-	@Inject
-	private Configuration conf;
-
 	private Finder<Long, Product> find = new Finder<Long, Product>(Product.class);
 	
 	@Override
 	public List<Product> getAll() {
-		long trialProductId = conf.getLong("creditperfection.trial.productId");		
-		List<Product> allProducts = find.where().ne("id", trialProductId).findList();
+		List<Product> allProducts = find.all();
     	return allProducts;
 	}
 

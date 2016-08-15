@@ -31,6 +31,7 @@ import forms.CreditCardForm;
 import models.AuthNetAccount;
 import models.CreditCard;
 import models.enums.CardType;
+import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
 import net.authorize.api.contract.v1.MessageTypeEnum;
@@ -403,7 +404,7 @@ public class CreditCardServiceTest {
 				.build();
 		
 		when(confMock.getString("authorise.net.login.id")).thenReturn("9yTxLt29j7Xb");
-		when(confMock.getString("authorise.net.transaction.key")).thenReturn("9GJJcp75mXY93f54");
+		when(confMock.getString("authorise.net.transaction.key")).thenReturn("33h923f5FYL4j3bE");
 		
 		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard);
 		
@@ -442,19 +443,18 @@ public class CreditCardServiceTest {
 				.build();
 		
 		when(confMock.getString("authorise.net.login.id")).thenReturn("9yTxLt29j7Xb");
-		when(confMock.getString("authorise.net.transaction.key")).thenReturn("9GJJcp75mXY93f54");
+		when(confMock.getString("authorise.net.transaction.key")).thenReturn("33h923f5FYL4j3bE");
 		
 		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard);
 		
 		Logger.info("Response: " + response);
 		
-		JSONResponse jsonResponse = creditCardService.checkTransaction(response);
-		Logger.info("JSON Response: " + jsonResponse);
+		ErrorResponse errorResponse = (ErrorResponse)creditCardService.checkTransaction(response);
+		Logger.info("JSON Response: " + errorResponse);
 		
-		assertNotNull(response);
-		assertTrue(response.getMessages().getResultCode() == MessageTypeEnum.OK);
-		TransactionResponse result = response.getTransactionResponse();
-		assertTrue(result.getResponseCode().equals("1"));
+		assertNotNull(errorResponse);
+		assertTrue(errorResponse.getStatus().equals("ERROR"));
+		assertTrue(errorResponse.getErrorCode().equals("201"));
     
 		verify(confMock, times(2)).getString(anyString());
 		
