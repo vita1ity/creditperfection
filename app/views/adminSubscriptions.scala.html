@@ -10,16 +10,19 @@
 	<script src="/assets/js/admin/subscriptionActions.js" type="text/javascript"></script>
 </head>
 <body>
+	@header.render(false)
 	<div class="wrapper">
-		@header.render(false)
-		<div class="container">
+		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
 			</div>
 			
-			
-			<span class="btn btn-success add-btn-center" data-toggle="modal" 
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="btn btn-success center-block add-btn" data-toggle="modal" 
 				data-target="#add-subscription" >Add Subscription</span>
+				</div>
+			</div> 
 			
 			<div class="subscription-filter standart-margin">
 				
@@ -29,8 +32,7 @@
 		    		class="width5 expiry-field gray-text" data-url="@admin.routes.SubscriptionController.filterSubscriptions()">
 					<option value="ALL">ALL</option>
 					@for((s, i) <- allStatuses.zipWithIndex){
-						<option value="@s">@s</option>
-						
+						<option value="@s">@s</option>						
 					}
 					
 				</select>	
@@ -89,11 +91,11 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editSubscription" 
-								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit Subscription</button>
+								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteSubscription" >Delete Subscription</span>
+								    		data-target="#deleteSubscription" >Delete</span>
 								    	<span class="btn btn-danger cancel-btn hidden cancel-subscription" data-toggle="modal" 
-								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
+								    			data-target="#cancelSubscriptionAdmin">Cancel</span>
 									</div>
 								</div>
 							</form>
@@ -154,15 +156,15 @@
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
 								    	<button class="btn btn-success left-button" id="editSubscription" 
-								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit Subscription</button>
+								    		data-url="@admin.routes.SubscriptionController.editSubscription()" type="submit">Edit</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteSubscription" >Delete Subscription</span>
+								    		data-target="#deleteSubscription" >Delete</span>
 								    	@if(s.getStatus == SubscriptionStatus.PENDING){
 								    		<span class="btn btn-danger cancel-btn cancel-subscription" data-toggle="modal" 
-								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
+								    			data-target="#cancelSubscriptionAdmin">Cancel</span>
 								    	}else{
 								    		<span class="btn btn-danger cancel-btn cancel-subscription hidden" data-toggle="modal" 
-								    			data-target="#cancelSubscriptionAdmin">Cancel Subscription</span>
+								    			data-target="#cancelSubscriptionAdmin">Cancel</span>
 								    	}
 								    	
 									</div>

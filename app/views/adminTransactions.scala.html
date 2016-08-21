@@ -10,16 +10,20 @@
 	<script src="/assets/js/admin/transactionActions.js" type="text/javascript"></script>
 </head>
 <body>
+	@header.render(false)
 	<div class="wrapper">
-		@header.render(false)
-		<div class="container">
+		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
 			</div>
 			
 			<!-- DEFAULT TEMPLATE -->
-			<span class="btn btn-success add-btn-center" data-toggle="modal" data-target="#add-transaction" >Add Transaction</span>
-			
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="btn btn-success center-block add-btn" data-toggle="modal" data-target="#add-transaction" >Add Transaction</span>
+				</div>
+			</div> 
+		
 				<div class="panel-group" id="accordion">
 				
 					<div class="panel panel-default hidden">
@@ -71,12 +75,12 @@
 							    <hr class="separator">
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
-								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
+								    	<button class="btn btn-success left-button" id="editTransaction" >Edit</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteTransaction">Delete Transaction</span>
+								    		data-target="#deleteTransaction">Delete</span>
 								    	
 							    		<span class="btn btn-danger refund-btn" data-toggle="modal" 
-							    			data-target="#refundTransaction">Refund Transaction</span>	
+							    			data-target="#refundTransaction">Refund</span>	
 									</div>
 								</div>
 							</form>
@@ -136,12 +140,12 @@
 							    <hr class="separator">
 							    <div class="row form-group">  
 								    <div class="col-sm-12 text-center">
-								    	<button class="btn btn-success left-button" id="editTransaction" >Edit Transaction</button>
+								    	<button class="btn btn-success left-button" id="editTransaction" >Edit</button>
 								    	<span class="btn btn-danger" data-toggle="modal" 
-								    		data-target="#deleteTransaction">Delete Transaction</span>
+								    		data-target="#deleteTransaction">Delete</span>
 								    	@if(t.getStatus != TransactionStatus.REFUNDED){
 								    		<span class="btn btn-danger refund-btn" data-toggle="modal" 
-								    			data-target="#refundTransaction">Refund Transaction</span>
+								    			data-target="#refundTransaction">Refund</span>
 								    	}
 								    		
 									</div>

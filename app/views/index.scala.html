@@ -8,62 +8,83 @@ prePopulateOnly: java.lang.Boolean)
 <head>@head.render
 </head>
 <body>
+	
 	<div class="wrapper">
-		@header.render(login)
-		<div class="container">
-			<div id="alert-box"></div>
+	@header.render(login)
+		<div class="container-fluid">
+			<div class="row">
+				<div id="alert-box"></div>
+			</div>
 
 			@if(flash.get("message")!=null){
-			<div class="alert alert-success">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				<span id="alert-message">@flash.get("message")</span>
+			<div class="row">
+				<div class="alert alert-success">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<span id="alert-message">@flash.get("message")</span>
+				</div>
 			</div>
 			} @if(user.getEmail != null && !prePopulateOnly){
-			<div class="alert alert-info">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-				<span id="alert-message">You have unfinished registration
-					process. Please proceed from where you left.</span>
+			<div class="row">
+				<div class="alert alert-info">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<span id="alert-message">You have unfinished registration
+						process. Please proceed from where you left.</span>
+				</div>
 			</div>
 			}
-
-			<div class="col-sm-8 leftSide">
-				<div class="row">
-					<div class="col-xs-12 privacyProtected">
-						<p>
-							Privacy &amp; Security<br> <span>Protected</span>
-						</p>
+			
+			<div class="row">
+				<div class="col-sm-7 leftSide">
+					<div class="row">
+						<div class="col-xs-12 privacyProtected">
+							<p>
+								Privacy &amp; Security<br> <span>Protected</span>
+							</p>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-12 heading">
-						<h1>Start Here</h1>
-						<p>To see your Free Credit Score</p>
+					<div class="row">
+						<div class="col-xs-12 heading">
+							<h1>Start Here</h1>
+							<p>To see your Free Credit Score</p>
+						</div>
 					</div>
+					@register.render(user, states, prePopulateOnly)
+	
+					<!-- @chooseProduct.render(user, product, productList, prePopulateOnly) -->
+	
+					@trialBlock.render(user, prePopulateOnly) 
+					@paymentDetails(user, allTypes, months, years)
 				</div>
-				@register.render(user, states, prePopulateOnly)
-
-				<!-- @chooseProduct.render(user, product, productList, prePopulateOnly) -->
-
-				@trialBlock.render(user, prePopulateOnly) 
-				@paymentDetails(user, allTypes, months, years)
+			
+				<div class="col-sm-4 col-md-4 rightSide">
+					<div class="row">
+						<div class="col-xs-12 safeSecure">
+							<p>
+								100% Safe <br> and Secure
+							</p>
+						</div>
+					</div>
+					<div class="row youShould">
+						<div class="col-xs-12">
+							<p>You should always track your Credit Score because a good
+								credit score can often help you get competitive interest rates
+								for mortgages, cars, credit card offers and more.</p>
+						</div>
+					</div>
+										
+				</div>
 			</div>
-			<div class="col-sm-4 col-md-4 rightSide">
-				<div class="row">
-					<div class="col-xs-12 safeSecure">
-						<p>
-							100% Safe <br> and Secure
-						</p>
-					</div>
+			
+			<div class="row">
+				<div class="col-sm-7">
+					<div class="logos">
+						<img src="/assets/images/AgenciesLogos.png" alt="Logos" class="img-responsive">
+					</div>															
 				</div>
-				<div class="row youShould">
-					<div class="col-xs-12">
-						<p>You should always track your Credit Score because a good
-							credit score can often help you get competitive interest rates
-							for mortgages, cars, credit card offers and more.</p>
-					</div>
-				</div>
+				<div class="col-sm-4"></div>
 				
 			</div>
+			
 
 		</div>
 		<div class="push"></div>

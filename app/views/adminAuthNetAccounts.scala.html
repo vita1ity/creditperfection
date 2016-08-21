@@ -29,13 +29,17 @@
 		</div>
 	
 		@header.render(false)
-		<div class="container">
+		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
 			</div>
 			
-			<span class="btn btn-success add-btn-center" data-toggle="modal" data-target="#addAuthNetAccount" >Add Account</span>
-			
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="btn btn-success center-block add-btn" data-toggle="modal"  data-target="#addAuthNetAccount" >Add Account</span>
+				</div>
+			</div>
+						
 	      		<!-- FORM TEMPLATE -->
 				<div class="panel-group" id="accordion">
 				

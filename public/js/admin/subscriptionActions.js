@@ -379,7 +379,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		
 		$.ajax({
 			
-			type: 'GET',
+			type: 'POST',
 			url: url,
 			data: {status: status},
 			dataType: 'json'

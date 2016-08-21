@@ -9,19 +9,24 @@
 </head>
 <body>
 
+	@header.render(false)
 	<div class="wrapper">
-		@header.render(false)
-		<div class="container">
+		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
 			</div>
 			
-			<span class="btn btn-success add-btn-center" data-toggle="modal" data-target="#add-user" >Add User</span>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="btn btn-success center-block add-btn" data-toggle="modal" data-target="#add-user" >Add User</span>
+				</div>
+			</div>			
 			
 				<div class="panel-group" id="accordion">
 				
 				@for((u, index) <- allUsers.zipWithIndex) {
 				
+				<div class="row">
 					<div class="panel panel-default">
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
@@ -36,7 +41,7 @@
 					      	
 							    <h3 class="text-center title">User Info:</h3>
 							    <div class="row form-group">
-							    	<div class="col-sm-12 ">
+							    	<div class="col-sm-12">
 							    		<h4>Id: <span class="userID">@u.getId</span></h4>
 							    	</div>
 							    </div>
@@ -44,8 +49,8 @@
 							    
 							    <div class="row form-group">
 							    
-							    	<div class="col-sm-2 ">
-							    		<label class="control-label" for="firstName">First Name:</label>
+							    	<div class="col-sm-2">
+							    		<label class="control-label" for="firstName">First&nbsp;Name:</label>
 							    	</div>
 							    	
 							    	<div class="col-sm-4">
@@ -53,8 +58,8 @@
 								    	<span class="error" id="firstname-error"></span>
 								    </div>
 								    
-								    <div class="col-sm-2 ">
-								    	<label class="control-label" for="lastName">Last Name:</label>
+								    <div class="col-sm-2">
+								    	<label class="control-label" for="lastName">Last&nbsp;Name:</label>
 								    </div>
 								    
 								    <div class="col-sm-4">
@@ -132,18 +137,17 @@
 								    </div>
 								    
 								    <div class="col-sm-2">
-										<label class="control-label" for="zip">Is Active:</label>
-									</div>
-									
-								    <div class="col-sm-4">
-								    	@if(u.getActive==true){
+										<label class="control-label" for="active">Is&nbsp;Active:</label>
+									</div>	
+									<div class="col-sm-4">
+										@if(u.getActive==true){
 								    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active" checked>	
 								    	}else{
 								    		<input class="form-input active" type="checkbox" name="active" placeholder="Is Active">
 								    	}
-								    	
-								    </div>
-							    	<input type="hidden" name="password" value="@u.getPassword">
+									</div>
+									
+								    <input type="hidden" name="password" value="@u.getPassword">
 							    </div>
 							    <hr class="separator">
 							    <div class="row form-group">  
@@ -161,7 +165,7 @@
 					</div>
 				
 					
-				
+				</div>
 				}
 			</div>    
 		</div>

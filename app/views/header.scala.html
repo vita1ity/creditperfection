@@ -1,7 +1,6 @@
 @(login: java.lang.Boolean)
-<div class="container-full">
-	<nav class="navbar navbar-default header">
-	  <div class="container-fluid">
+<nav class="navbar navbar-default header">
+	  
 	    <div class="navbar-header">
 	    
 	   	  <span id="isLogin" class="hidden">@login</span>
@@ -22,7 +21,6 @@
 	    </div>
 	    <div class="collapse navbar-collapse" id="myNavbar">
 	      <ul class="nav navbar-nav">
-	      	<li ><a href="@routes.SignUpFlowController.index(false)">Home</a></li>
 	      	@if(session.get("admin")!=null){
 	      		<li ><a href="@admin.routes.UserController.users">Users</a></li>
 	      		<li ><a href="@admin.routes.SubscriptionController.subscriptions">Subscriptions</a></li>
@@ -43,36 +41,28 @@
 				    </li>
 			    }
 	      	}
-	      	
-	        <!-- <li class="active"><a href="#">Home</a></li>
-	        <li><a href="#">Page 1</a></li>
-	        <li><a href="#">Page 2</a></li> 
-	        <li><a href="#">Page 3</a></li> --> 
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
 	        
 		    @if(session.get("email")!=null) {
 	        	@if(session.get("name")!=null) {
-	        
-	        		<li><span class="welcome">Welcome, @session.get("name")</span></li>
-	        	}
-	        	<li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-	        	
-	   		}else{
-	   		
-	   			
+	        		<li class="dropdown">
+				        <a class="dropdown-toggle welcome" data-toggle="dropdown" href="#">Welcome, @session.get("name")
+				        <span class="caret"></span></a>
+				        <ul class="dropdown-menu">
+				          <li><a href="@routes.LoginController.logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+				        </ul>
+				    </li>
+	        	}	        	
+	   		} else {
 	   			<li><a href="#" data-toggle="modal" data-target="#login">
 	   				<span class="glyphicon glyphicon-log-in"></span> Login</a></li> 
 		   	}
-	      
-	        
-	        
 	        
 	      </ul>
 	    </div>
-	  </div>
+	
 	</nav>
-</div>
 
 <div class="modal fade login-modal" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">

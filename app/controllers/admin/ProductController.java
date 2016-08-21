@@ -91,7 +91,11 @@ public class ProductController extends Controller {
 			return badRequest(Json.toJson(new MessageResponse("ERROR", "Product with id " + product.getId() + " is not found")));
 		}
 		
-		productService.update(product);
+		productDB.setName(product.getName());
+		productDB.setPrice(product.getPrice());
+		productDB.setSalePrice(product.getSalePrice());
+		
+		productService.update(productDB);
 			    
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Product was edited successfully")));
 		

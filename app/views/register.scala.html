@@ -1,6 +1,6 @@
 @(user: models.User, states: Array[models.enums.State], prePopulateOnly: java.lang.Boolean)
 
-<form class="form-horizontal register-form register-flow-form" data-url="@routes.SignUpFlowController.register()" role="form">
+<form id="register-form" class="form-horizontal register-form register-flow-form" data-url="@routes.SignUpFlowController.register()" role="form">
     <div class="row form-group">
     	<div class="col-xs-12 col-sm-6">
     		<label class="control-label" for="firstName">First Name:</label>
@@ -56,27 +56,32 @@
     <div class="row form-group">    
     	<div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="state">State:</label>
-	    	<select name="state" class="form-input form-control" >
-		    	@if(user.getState == null){
-		    		<option value=""></option>
-		    	}
-					
-				@for(state <- states) {
-					@if(state.getName == user.getState){
-						<option value="@state.getCode" selected>@state.getName</option>
-					}else{
-						<option value="@state.getCode">@state.getName</option>
-					}
-				}	    
-		       
-		    </select>
-		    <span class="error" id="state-error"></span>
+	    	<div id="state">
+		    	<select class="form-input form-control" name="state">
+			    	@if(user.getState == null){
+			    		<option value=""></option>
+			    	}
+						
+					@for(state <- states) {
+						@if(state.getName == user.getState){
+							<option value="@state.getCode" selected>@state.getName</option>
+						}else{
+							<option value="@state.getCode">@state.getName</option>
+						}
+					}	    
+			       
+			    </select>
+		    </div>
 	    </div>		
 		<div class="col-xs-12 col-sm-6">
 			<label class="control-label" for="zip">Zip:</label>
 			<input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" value="@user.getZip">
 		    <span class="error" id="zip-error"></span>
 		</div>
+    </div>
+    
+    <div class="row text-center error" id="required-error">    			  			
+    	
     </div>
     
     <div class="row" id="registerSuccess">

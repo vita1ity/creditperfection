@@ -3,7 +3,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 <div class="row form-group">
 	
 	<div class="col-sm-2">
-		<label class="control-label" for="name">Card Holder:</label>
+		<label class="control-label" for="name">Holder:</label>
 	</div>
 
 	<div class="col-sm-4">
@@ -12,7 +12,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 	
 	<div class="col-sm-2">
-		<label class="control-label" for="cardType">Card Type:</label>
+		<label class="control-label" for="cardType">Card&nbsp;Type:</label>
 	</div>
 	
 	<div class="col-sm-4">
@@ -37,7 +37,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    <div class="row form-group">
    	
    	<div class="col-sm-2">
-		<label class="control-label" for="digits">Card Num:</label>
+		<label class="control-label" for="digits">Card&nbsp;Num:</label>
 	</div>
    	
     <div class="col-sm-4">
@@ -45,11 +45,11 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    	 	<span class="error" id="digits-error"></span>
     </div>
     
-    <div class="col-sm-2">
-		<label class="control-label" for="cardType">CVV Number:</label>
+    <div class="col-sm-3">
+		<label class="control-label" for="cardType">CVV&nbsp;Number:</label>
 	</div>
     
-    <div class="col-sm-4">
+    <div class="col-sm-3">
 		<input class="form-input form-control cvv" type="text" name="cvv" placeholder="CVV Number" value="@c.getCvv" />
 		<span class="error cvv-error" ></span>
 	</div>
@@ -59,7 +59,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 <div class="row form-group">    
     
     <div class="col-sm-2">
-    	<label class="control-label" >Exp. Date:</label>
+    	<label class="control-label" >Exp.&nbsp;Date:</label>
     </div>
    	
    	<div class="col-sm-2">
@@ -101,7 +101,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 	@if(c.getName == null && allUsers != null){
 		<div class="col-sm-2">
-	    	<label class="control-label" >Card Owner:</label>
+	    	<label class="control-label" >Card&nbsp;Owner:</label>
 	    </div>
 	   	
 	   	<div class="col-sm-4">
@@ -120,4 +120,8 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		</div>
 	}
 
+</div>
+
+<div class="row text-center error" id="ccrequired-error">    			  			
+    	
 </div>

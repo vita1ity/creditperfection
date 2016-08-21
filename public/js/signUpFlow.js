@@ -1,57 +1,74 @@
 $(document).ready(function() {
 	
+	var requiredErrorText = '<span>Please, fill out all required fields<span>';
+	
+	function removeBorder() {
+		if ($(this).hasClass('error-border')) {
+			$( this ).removeClass('error-border');
+			$('#register-form #required-error').html("");
+			$('#payment-form #ccrequired-errot').html("");
+		}		
+	}
+	
+	$( "input" ).on( "input", removeBorder );
+	$( "select" ).on( "click", removeBorder );
+	
 	//register new user
 	$(document).on('submit', '.register-form', function (e) {
 		
 		e.preventDefault();
-		
 		clearErrors();
 		
-		var url = $(this).data("url");
-		var firstName = $(this).find('[name="firstName"]').val();
-		var lastName = $(this).find('[name="lastName"]').val();
-		var email = $(this).find('[name="email"]').val();
-		var password = $(this).find('[name="password"]').val();
-		var confirmEmail = $(this).find('[name="confirmEmail"]').val();
-		var confirmPassword = $(this).find('[name="confirmPassword"]').val();
-		var address = $(this).find('[name="address"]').val();
-		var city = $(this).find('[name="city"]').val();
-		var state = $(this).find('[name="state"]').val();
-		var zip = $(this).find('[name="zip"]').val();
+		var noErrors = validateRequired(e);
 		
-		var registerForm = $(this);
+		if (noErrors) {
+			var url = $(this).data("url");
+			var firstName = $(this).find('[name="firstName"]').val();
+			var lastName = $(this).find('[name="lastName"]').val();
+			var email = $(this).find('[name="email"]').val();
+			var password = $(this).find('[name="password"]').val();
+			var confirmEmail = $(this).find('[name="confirmEmail"]').val();
+			var confirmPassword = $(this).find('[name="confirmPassword"]').val();
+			var address = $(this).find('[name="address"]').val();
+			var city = $(this).find('[name="city"]').val();
+			var state = $(this).find('[name="state"]').val();
+			var zip = $(this).find('[name="zip"]').val();
+			
+			var registerForm = $(this);
+			
+			var userJSON =  {firstName: firstName, lastName: lastName, email: email, password: password, confirmEmail: confirmEmail,
+					confirmPassword: confirmPassword, address: address, city: city, state: state, zip: zip};
+			console.log(userJSON);
+			$.ajax({
+				
+		        type: 'POST',
+		        url: url, 
+		        contentType: 'application/json',
+		        data: JSON.stringify(userJSON),
+		        dataType: 'json'
+			
+		    }).done (function(data) {
+		    	
+		    	console.log(data);
+		    	$('#register').addClass('hidden');
+		    	$('.trial-block').removeClass('hidden');
+		    	$('.payment-form').removeClass('hidden');
+		    	
+		    	var alertHtml = "";
+		    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";
+		    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+		    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
+		    	
+		    	$('#registerSuccess').html(alertHtml);
+		    
+		    }).fail (function(err) {
+				
+		    	//console.error(err)
+				processErrors(err, registerForm);
+				
+		    });
+		}	
 		
-		var userJSON =  {firstName: firstName, lastName: lastName, email: email, password: password, confirmEmail: confirmEmail,
-				confirmPassword: confirmPassword, address: address, city: city, state: state, zip: zip};
-		console.log(userJSON);
-		$.ajax({
-			
-	        type: 'POST',
-	        url: url, 
-	        contentType: 'application/json',
-	        data: JSON.stringify(userJSON),
-	        dataType: 'json'
-		
-	    }).done (function(data) {
-	    	
-	    	console.log(data);
-	    	$('#register').addClass('hidden');
-	    	$('.trial-block').removeClass('hidden');
-	    	$('.payment-form').removeClass('hidden');
-	    	
-	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";
-	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-	    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-	    	
-	    	$('#registerSuccess').html(alertHtml);
-	    
-	    }).fail (function(err) {
-			
-	    	//console.error(err)
-			processErrors(err, registerForm);
-			
-	    });
 	});
 	
 	function processErrors(err, form) { 
@@ -63,6 +80,7 @@ $(document).ready(function() {
 			$(form).find('.form-input').each(function(i, obj) {
 				
 				if (field == $(obj).attr('name')) {
+					$(obj).addClass('error-border');
 					var errorsHtml = $(obj).parent().find('.error').html();
 					
 					errorsHtml += errorMessage + "</br>";
@@ -72,6 +90,40 @@ $(document).ready(function() {
 				}
 			});
 			
+		}
+	}
+	
+	// After Form Submitted Validation of required fields only
+	function validateRequired(e) {
+		var form_data = $("#register-form").serializeArray();
+		var error_free = true;
+		for (var input in form_data){
+			var field = form_data[input]['name'];
+			var elem = $("#register-form input[name=" + field + "]");
+			
+			if (field == "state") {
+				elem = $("#register-form select[name=" + field + "]");
+			}								
+			
+			var value = elem.val();
+			var valid = value ? true : false;
+			
+			if (!valid){
+				elem.addClass('error-border');				
+				error_free=false;
+			} else {
+				elem.removeClass('error-border');
+			}
+		}
+		if (error_free){
+			$('#register-form #required-error').html("");
+			return true;
+		}
+		else{	
+			var elem = $('#register-form #required-error');
+			elem.html(requiredErrorText);
+			
+			return false;
 		}
 	}
 	
@@ -198,11 +250,8 @@ $(document).ready(function() {
 			
 			var val = $(obj).val();
 			if (val == "") {
-				var errorsHtml = $(obj).parent().find('.error').html();
-				
-				errorsHtml += "Field is required" + "</br>";
-				
-				$(obj).parent().find('.error').html(errorsHtml);
+				$(obj).addClass('error-border');
+				$('#ccrequired-error').html(requiredErrorText);
 				validated = false;
 			}
 			
@@ -211,6 +260,8 @@ $(document).ready(function() {
 		var cvv = $(ref).parent().find('[name="cvv"]').val();
 		
 		if(!cvv.match(/^\d+$/)) {
+			var cvvField = $(ref).parent().find('[name="cvv"]');
+			cvvField.addClass('error-border');
 			var errorsHtml = $(ref).parent().find('.cvv-error').html();
 			errorsHtml += "CVV should contain only digits" + "</br>";
 			$(ref).parent().find('.cvv-error').html(errorsHtml);

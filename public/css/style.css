@@ -1,48 +1,23 @@
+* {
+  margin: 0;
+}
+
 html, body {
 	height: 100%;
 }
 
-.container-full {
-	margin: 0 auto;
-	width: 100%;
-}
-
-.container {
-	width: 1036px;
-	padding: 0;
-	margin-bottom: 20px;
-}
-
-.header {
-	
-}
-
-.navbar-fixed-bottom {
-	display: inline-block;
-	float: none;
-	vertical-align: top;
-}
-
 .wrapper {
-	width: 60%;
-	min-height: 100%;
-	height: auto !important;
-	height: 100%;
-	margin: 0 auto -100px;
+    min-height: 100%;
+	margin-bottom: -50px;	
 }
 
-.footer {
-	margin-top: 50px;
+.wrapper:after {
+	content: "";
+  	display: block;
+}
+
+.footer, .wrapper:after {
 	height: 50px;
-}
-
-.push {
-	margin-top: 0px;
-	height: 50px;
-}
-
-.footer .container-full {
-	width: 60%;
 }
 
 .footer-text {
@@ -64,6 +39,15 @@ html, body {
 
 .error {
 	color: red;
+}
+
+.error-border {
+	border: 1px solid red;
+}
+
+.col-sm-2 .year, .col-sm-2 .month {
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .register-flow-form {
@@ -89,17 +73,20 @@ html, body {
 	width: 150px;
 }
 
-.add-btn-center {
-	margin: 25px 0 25px 44%;
+.add-btn {
 	width: 150px;
+	margin-top: 25px;
+	margin-bottom: 25px;
 }
 
 .left-button {
-	margin-right: 20px;
+	margin-bottom: 10px;
+	width: 122px
 }
 
-#login .modal-dialog {
-	width: 25%;
+.btn-danger {
+	margin-bottom: 10px;
+	width: 122px
 }
 
 .flipper.rotate .login-form {
@@ -156,7 +143,6 @@ html, body {
 }
 
 .navbar-brand {
-	margin-right: 40px;
 	float: left;
 	padding: 0px 25px;
 	font-size: 18px;
@@ -184,7 +170,6 @@ html, body {
 }
 
 .current-product, .update-subscription-form {
-	width: 50%;
 	margin: 20px auto 0 auto;
 }
 
@@ -232,8 +217,8 @@ h1 {
 		rgba(0, 0, 0, .2);
 	padding-bottom: 20px;
 	margin-bottom: 20px;
-	padding-bottom: 20px;
-	margin-bottom: 20px;
+	margin-left: 15px;
+	margin-right: 15px;	
 }
 
 .border-right {
@@ -266,8 +251,7 @@ h1 {
 }
 
 .rightSide {
-	margin-right: -15px;
-	margin-left: 10px;
+	
 }
 
 .safeSecure {
@@ -294,7 +278,7 @@ h1 {
 	text-align: center;
 	font-weight: bolder;
 	font-size: 16px;
-	padding: 10px 20% 10px 5%
+	padding: 10px 10px;
 }
 
 .youShould {
@@ -303,4 +287,75 @@ h1 {
 	margin-bottom: 30px;
 	font-size: 13px;
 	line-height: auto
+}
+
+.logos {
+	margin-left: 15px;
+	margin-right: 15px;
+	margin-bottom: 20px;
+}
+
+.img-responsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+img {
+    vertical-align: middle;
+}
+
+@media (min-width: 1200px) {
+	#login .modal-dialog {
+		width: 25%;
+	}
+	.container-fluid {
+		width: 60%;
+	}
+	.current-product, .update-subscription-form {
+		width: 50%;		
+	}	
+}
+
+@media (max-width:767px) {
+	.current-product {
+		margin: 20px 15px 0 15px;		
+	}
+}
+
+@media (max-width: 1019px) {
+  .navbar-header {
+      float: none;
+  }
+  .navbar-left,.navbar-right {
+      float: none !important;
+  }
+  .navbar-toggle {
+      display: block;
+  }
+  .navbar-collapse {
+      border-top: 1px solid transparent;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .navbar-fixed-top {
+      top: 0;
+      border-width: 0 0 1px;
+  }
+  .navbar-collapse.collapse {
+      display: none!important;
+  }
+  .navbar-nav {
+      float: none!important;
+      margin-top: 7.5px;
+  }
+  .navbar-nav>li {
+      float: none;
+  }
+  .navbar-nav>li>a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+  }
+  .collapse.in{
+      display:block !important;
+  }
 }

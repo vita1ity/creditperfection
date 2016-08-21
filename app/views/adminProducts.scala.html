@@ -7,15 +7,19 @@
 	<script src="/assets/js/admin/productActions.js" type="text/javascript"></script>
 </head>
 <body>
+	@header.render(false)
 	<div class="wrapper">
-		@header.render(false)
-		<div class="container">
+		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
 			</div>
 			
-			<span class="btn btn-success add-btn-center" data-toggle="modal" data-target="#add-product" >Add Product</span>
-			
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<span class="btn btn-success center-block add-btn" data-toggle="modal" data-target="#add-product" >Add Product</span>
+				</div>
+			</div> 
+						
 				<div class="panel-group" id="accordion">
 				
 					<!-- DEFAULT TEMPLATE -->

@@ -109,25 +109,6 @@ public class RegisterForm extends Model {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();
 		
-		Map<ValidationError, String> fieldErrorMap = new HashMap<ValidationError, String>();
-		fieldErrorMap.put(new ValidationError("firstName", "Please enter First Name"), firstName);
-		fieldErrorMap.put(new ValidationError("lastName", "Please enter Last Name"), lastName);
-		fieldErrorMap.put(new ValidationError("email", "Please enter Email"), email);
-		fieldErrorMap.put(new ValidationError("confirmEmail", "Please enter Email Confirmation"), confirmEmail);
-		fieldErrorMap.put(new ValidationError("address", "Please enter your Address"), address);
-		fieldErrorMap.put(new ValidationError("city", "Please enter City"), city);
-		fieldErrorMap.put(new ValidationError("state", "Please select State"), state);
-		fieldErrorMap.put(new ValidationError("zip", "Please enter Zip code"), zip);
-		fieldErrorMap.put(new ValidationError("password", "Please enter Password"), password);
-		fieldErrorMap.put(new ValidationError("confirmPassword", "Please enter Password Confirmation"), confirmPassword);
-		
-		for (Map.Entry<ValidationError, String> entry: fieldErrorMap.entrySet()) {
-			String field = entry.getValue(); 
-			if (field == null || field.equals("")) {
-				errors.add(entry.getKey());
-			}
-		}
-		
 		EmailValidator emailValidator = new EmailValidator();
 	    if (!emailValidator.validate(email)) {
 	    	ValidationError error = new ValidationError("email", "Please enter a valid email address");
@@ -171,5 +152,37 @@ public class RegisterForm extends Model {
 		}
 		return null;
 	    
+	}
+
+	public List<ValidationError> validateRequired() {
+		List<ValidationError> errors = new ArrayList<ValidationError>();
+		
+		Map<ValidationError, String> fieldErrorMap = new HashMap<ValidationError, String>();
+		fieldErrorMap.put(new ValidationError("firstName", "Required"), firstName);
+		fieldErrorMap.put(new ValidationError("lastName", "Required"), lastName);
+		fieldErrorMap.put(new ValidationError("email", "Required"), email);
+		fieldErrorMap.put(new ValidationError("confirmEmail", "Required"), confirmEmail);
+		fieldErrorMap.put(new ValidationError("address", "Required"), address);
+		fieldErrorMap.put(new ValidationError("city", "Required"), city);
+		fieldErrorMap.put(new ValidationError("state", "Required"), state);
+		fieldErrorMap.put(new ValidationError("zip", "Required"), zip);
+		fieldErrorMap.put(new ValidationError("password", "Required"), password);
+		fieldErrorMap.put(new ValidationError("confirmPassword", "Required"), confirmPassword);
+		
+		for (Map.Entry<ValidationError, String> entry: fieldErrorMap.entrySet()) {
+			String field = entry.getValue(); 
+			if (field == null || field.equals("")) {
+				errors.add(entry.getKey());
+			}
+		}
+		
+		return errors;
+	}
+
+	@Override
+	public String toString() {
+		return "RegisterForm [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", password="
+				+ password + ", confirmEmail=" + confirmEmail + ", confirmPassword=" + confirmPassword + ", address="
+				+ address + ", city=" + city + ", state=" + state + ", zip=" + zip + "]";
 	}
 }
