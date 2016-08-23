@@ -39,9 +39,6 @@ public class UserController extends Controller {
 	private UserService userService;
 	
 	@Inject
-	private MailService mailService;
-	
-	@Inject
 	private RoleService roleService;
 
 	//users	
@@ -133,12 +130,11 @@ public class UserController extends Controller {
 	    roles.add(userRole);
 	    user.setRoles(roles);
 	    user.setToken(Tokener.randomString(48));
+	    user.setActive(true);
 	    	    	
 	    userService.save(user);
         
-        mailService.sendEmailToken(user.getEmail(), user.getToken());
-        
-	    return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
+        return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
 
 	}
 }

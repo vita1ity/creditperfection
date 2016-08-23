@@ -30,9 +30,6 @@ public class LoginController extends Controller {
     private MailService mailService;
 	
 	@Inject
-	private CreditReportService creditReportService;
-    
-	@Inject
 	private RoleService roleService;
 	
     public Result login(){

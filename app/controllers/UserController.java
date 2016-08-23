@@ -19,9 +19,4 @@ import services.CreditReportService;
 @Security.Authenticated(Secured.class)
 public class UserController extends Controller {
 	
-	@Inject
-	private CreditReportService creditReportService;
-	
-	
-	
 }

@@ -54,10 +54,7 @@ public class SignUpFlowController extends Controller {
 	
     @Inject
     private FormFactory formFactory;
-    
-    @Inject
-    private MailService mailService;
-    
+
     @Inject
     private CreditCardService creditCardService;
     
@@ -133,16 +130,9 @@ public class SignUpFlowController extends Controller {
     	JsonNode json = request().body().asJson();
     	 
     	RegisterForm registerForm = Json.fromJson(json, RegisterForm.class);
-    	//User user = Json.fromJson(json, User.class);
-	    if(registerForm == null) {
+    	if(registerForm == null) {
 	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
 	    } else {
-	    	
-	    	//List<ValidationError> requireds = registerForm.validateRequired();
-	    		    	
-	    	//if (!requireds.isEmpty()) {
-	    	//	return badRequest(Json.toJson(requireds));
-	    	//}
 	    	
 	    	Logger.info(registerForm.toString());
 	    	
@@ -177,13 +167,11 @@ public class SignUpFlowController extends Controller {
 	    	SecurityRole userRole = roleService.findByName("user");
 	    	roles.add(userRole);
 	    	user.setRoles(roles);
+	    	user.setActive(true);
         	user.save();
         	
-        	Logger.info("Sending email to : " + user.getEmail());
-        	mailService.sendEmailToken(user.getEmail(), user.getToken());
-        	
         	session("userEmail", user.getEmail());
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "Email verification sent")));
+	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was successfully registered")));
 	    }
     	
     }

@@ -54,12 +54,12 @@ $(document).ready(function() {
 		    	$('.trial-block').removeClass('hidden');
 		    	$('.payment-form').removeClass('hidden');
 		    	
-		    	var alertHtml = "";
-		    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";
-		    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
-		    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
-		    	
-		    	$('#registerSuccess').html(alertHtml);
+//		    	var alertHtml = "";
+//		    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";
+//		    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+//		    	alertHtml += "<span id=\"alert-message\">" + data.message + "</span>\n"	
+//		    	
+//		    	$('#registerSuccess').html(alertHtml);
 		    
 		    }).fail (function(err) {
 				

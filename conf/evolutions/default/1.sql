@@ -21,7 +21,7 @@ create table credit_card (
   exp_date                      date not null,
   cvv                           integer not null,
   user_id                       bigint not null,
-  constraint ck_credit_card_card_type check (card_type in (0,1,2,3)),
+  constraint ck_credit_card_card_type check (card_type in (0,1)),
   constraint pk_credit_card primary key (id)
 );
 
