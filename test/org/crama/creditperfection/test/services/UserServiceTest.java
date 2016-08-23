@@ -221,48 +221,6 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void testRegisterFormValidation_EmptyFieldsErrors() {
-		
-		RegisterForm blankForm = new RegisterFormBuilder()
-				.firstName("")
-				.lastName("")
-				.email("")
-				.confirmEmail("")
-				.address("")
-				.city("")
-				.state("")
-				.zip("")
-				.password("")
-				.confirmPassword("")
-				.build();
-		
-		
-		List<ValidationError> errors = blankForm.validate();
-		
-		/*Logger.info("num of errors: " + errors.size());
-		for (ValidationError error: errors) {
-			Logger.info("error: " + error);
-		}*/
-		assertTrue(errors.size() == 14);
-		assertThat(errors, containsInAnyOrder(
-				new ValidationError("firstName", "Please enter First Name"),
-				new ValidationError("lastName", "Please enter Last Name"), 
-				new ValidationError("email", "Please enter Email"), 
-				new ValidationError("address", "Please enter your Address"), 
-				new ValidationError("city", "Please enter City"), 
-				new ValidationError("state", "Please select State"), 
-				new ValidationError("zip", "Please enter Zip code"),
-				new ValidationError("password", "Please enter Password"),
-				new ValidationError("email", "Please enter a valid email address"),
-				new ValidationError("state", "Please enter a valid state"),
-				new ValidationError("zip", "Zip code should contain 5 digits"),
-				new ValidationError("password", "Password should contain at least 5 characers"),
-				new ValidationError("confirmPassword", "Please enter Password Confirmation"),
-				new ValidationError("confirmEmail", "Please enter Email Confirmation")));
-		
-	}
-	
-	@Test
 	public void testRegisterFormValidation_InvalidEmailStateZip() {
 		
 		RegisterForm testForm = new RegisterFormBuilder()

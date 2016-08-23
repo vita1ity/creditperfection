@@ -154,7 +154,7 @@ public class CreditCardServiceTest {
 		
 		List<CreditCard> allCreditCards = Arrays.asList(new CreditCardBuilder().build(),
 				new CreditCardBuilder().id(1).name("John Snow").build(),
-				new CreditCardBuilder().id(2).name("Nicolas Cage").cardType(CardType.AMERICAN_EXPRESS)
+				new CreditCardBuilder().id(2).name("Nicolas Cage").cardType(CardType.DISCOVER)
 					.digits("1234 5678 9012 3456").cvv(123).expDate(YearMonth.of(2019, 4)).build());
 		
 		when(creditCardRepositoryMock.getAll()).thenReturn(allCreditCards);
@@ -167,7 +167,7 @@ public class CreditCardServiceTest {
 		
 		assertTrue(allCreditCardsResult.get(1).getName().equals("John Snow"));
 		assertTrue(allCreditCardsResult.get(2).getName().equals("Nicolas Cage"));
-		assertTrue(allCreditCardsResult.get(2).getCardType().equals(CardType.AMERICAN_EXPRESS));
+		assertTrue(allCreditCardsResult.get(2).getCardType().equals(CardType.DISCOVER));
 		assertTrue(allCreditCardsResult.get(2).getDigits().equals("1234 5678 9012 3456"));
 		assertTrue(allCreditCardsResult.get(2).getCvv() == 123);
 		assertTrue(allCreditCardsResult.get(2).getExpDate().equals(YearMonth.of(2019, 4)));

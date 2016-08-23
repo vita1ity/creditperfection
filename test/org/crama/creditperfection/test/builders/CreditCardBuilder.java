@@ -12,7 +12,7 @@ public class CreditCardBuilder {
 	
 	private String name = "Card Owner";
 	
-	private CardType cardType = CardType.MASTER_CARD;
+	private CardType cardType = CardType.VISA;
 	
 	private String digits = "1111 1111 1111 1111";
 	
