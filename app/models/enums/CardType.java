@@ -2,10 +2,10 @@ package models.enums;
 
 public enum CardType {
 	
-	// MASTER_CARD("MasterCard"),	
-	// AMERICAN_EXPRESS("American Express"),
 	VISA("Visa"),
-	DISCOVER("Discover");
+	DISCOVER("Discover"),
+	MASTER_CARD("MasterCard"),	
+	AMERICAN_EXPRESS("American Express");
 	
 	public final String value;
 	
@@ -20,13 +20,18 @@ public enum CardType {
     	else if (value.equals("DISCOVER")) {
     		return CardType.DISCOVER;
     	}
-//    	else if (value.equals("MASTER_CARD")) {
-//    		return CardType.MASTER_CARD;
-//    	}
-//    	else if (value.equals("AMERICAN_EXPRESS")) {
-//    		return CardType.AMERICAN_EXPRESS;
-//    	}
+    	else if (value.equals("MASTER_CARD")) {
+    		return CardType.MASTER_CARD;
+    	}
+    	else if (value.equals("AMERICAN_EXPRESS")) {
+    		return CardType.AMERICAN_EXPRESS;
+    	}
     	else return null;
+    }
+    
+    public static CardType[] valuesVisaDiscover() {
+    	CardType[] result = new CardType[] { VISA, DISCOVER };
+    	return result;
     }
     
     

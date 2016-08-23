@@ -45,7 +45,7 @@ public class CreditCardController extends Controller {
 		
 		List<CreditCard> allCards = creditCardService.getAll();
 		List<User> allUsers = userService.getAll();
-		CardType[] allTypes = CardType.values();
+		CardType[] allTypes = CardType.valuesVisaDiscover();
 		Month[] months = Month.values();
     	Year[] years = Year.values();
 		return ok(views.html.adminCreditCards.render(allCards, allUsers, allTypes, months, years));

@@ -78,7 +78,7 @@ public class SignUpFlowController extends Controller {
     	//session().clear();
      	
     	List<Product> productList = productService.getAll();
-    	CardType[] allTypes = CardType.values();
+    	CardType[] allTypes = CardType.valuesVisaDiscover();
     	State[] states = State.values();
     	Month[] months = Month.values();
     	Year[] years = Year.values();
