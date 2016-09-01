@@ -16,7 +16,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		
 		var form = $(this).closest('.modal-content');
 		
-		var subscriptionJSON = {userId: userId, cardId: cardId, productId: productId}
+		var subscriptionJSON = {userId: userId, cardId: cardId, productId: productId};
 		
 		console.log(subscriptionJSON);
 		

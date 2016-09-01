@@ -4,5 +4,4 @@
  
 - &roleAdmin !!models.SecurityRole
  id: 2 
- name: admin
- 
+ name: admin 

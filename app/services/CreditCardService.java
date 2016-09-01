@@ -208,14 +208,14 @@ public class CreditCardService {
 					return jsonResponse;
 				}
 				else {
-					Logger.info("Failed Transaction with Response Code: " + result.getResponseCode());
+					Logger.error("Failed Transaction with Response Code: " + result.getResponseCode());
 
 					List<Error> errors = result.getErrors().getError();
 					String errorCode = null;
 					String errorMessage = null;
 					List<models.json.Error> errs = new ArrayList<models.json.Error>();
 					for (Error err: errors) {
-						Logger.info(err.getErrorCode() + ", " + err.getErrorText());
+						Logger.error(err.getErrorCode() + ", " + err.getErrorText());
 						errorCode = err.getErrorCode();
 						errorMessage = err.getErrorText();
 						errs.add(new models.json.Error(errorCode, errorMessage));
@@ -241,13 +241,16 @@ public class CreditCardService {
 				}
 				
 				TransactionResponse transactionResponse = response.getTransactionResponse();
-				List<Error> errors = transactionResponse.getErrors().getError();
-								
-				for (Error err: errors) {
-					String errorCode = "Error Code: " + err.getErrorCode();
-					String error = "Error Text: " + err.getErrorText();
-					
-					errorMessages.append(errorCode + " " + error + " ");
+				if (transactionResponse.getErrors() != null) {					
+				
+					List<Error> errors = transactionResponse.getErrors().getError();
+									
+					for (Error err: errors) {
+						String errorCode = "Error Code: " + err.getErrorCode();
+						String error = "Error Text: " + err.getErrorText();
+						
+						errorMessages.append(errorCode + " " + error + " ");
+					}
 				}
 
 				Logger.error(errorMessages.toString());

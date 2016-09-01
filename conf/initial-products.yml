@@ -3,9 +3,3 @@
  name: 1 Bureau Report with 1 Bureau Monitoring + Identity Protection
  price: 19.95
  salePrice: 1
-    
-- &bureauReport3 !!models.Product
- id: 2 
- name: 3 Bureau Report with 3 Bureau Monitoring + Identity Protection
- price: 29.95
- salePrice: 1

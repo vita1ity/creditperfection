@@ -31,7 +31,7 @@ public class CreditReportServiceTest {
 	private static final String IDCS_ENROLL_URL = "https://xml.idcreditservices.com/IDSWebServicesNG/IDSEnrollment.asmx";
 	private static final String IDCS_SERVER_URI = "http://tempuri.org/";
 	private static final String REQUEST_SOURCE = "CRDPRF";
-	private static final String PACKAGE_ID = "476";
+	private static final String PACKAGE_ID = "474";
 	private static final String PARTNER_PASSWORD = "kYmfR5@23";
 	
 	private static final String IDCS_AUTHENTICATE_URL = "https://xml.idcreditservices.com/SIDUpdateServices/MemberUpdate.asmx";

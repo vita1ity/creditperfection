@@ -316,31 +316,5 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Test
-	public void testValidation_AlreadySubscribedError() {
 		
-		SubscriptionForm subscriptionForm = new SubscriptionFormBuilder()
-				.id(null)
-				.build();
-		
-		subscriptionForm.setSubscriptionService(subscriptionService);
-		subscriptionForm.setUserService(userServiceMock);
-		
-		Subscription testSubscription = new SubscriptionBuilder().build();
-		User testUser = new UserBuilder().build();
-		
-		when(userServiceMock.getById(anyLong())).thenReturn(testUser);
-		when(subscriptionRepositoryMock.findByUser(any(User.class))).thenReturn(testSubscription);
-			
-		List<ValidationError> errors = subscriptionForm.validate();
-		
-		assertTrue(errors.size() == 1);
-		assertThat(errors, containsInAnyOrder(
-				new ValidationError("user", "User is already subscribed")));
-		
-		verify(userServiceMock, times(1)).getById(anyLong());
-		verify(subscriptionRepositoryMock, times(1)).findByUser(any(User.class));
-	}	
-	
-	
 }

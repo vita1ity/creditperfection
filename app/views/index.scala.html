@@ -1,5 +1,4 @@
-@(user: models.User, product: models.Product, productList:
-java.util.List[models.Product], allTypes: Array[models.enums.CardType],
+@(user: models.User, allTypes: Array[models.enums.CardType],
 states: Array[models.enums.State], months: Array[models.enums.Month],
 years: Array[models.enums.Year], login: java.lang.Boolean,
 prePopulateOnly: java.lang.Boolean)
@@ -49,9 +48,6 @@ prePopulateOnly: java.lang.Boolean)
 						</div>
 					</div>
 					@register.render(user, states, prePopulateOnly)
-	
-					<!-- @chooseProduct.render(user, product, productList, prePopulateOnly) -->
-	
 					@trialBlock.render(user, prePopulateOnly) 
 					@paymentDetails(user, allTypes, months, years)
 				</div>

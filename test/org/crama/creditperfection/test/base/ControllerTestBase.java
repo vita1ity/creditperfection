@@ -62,7 +62,7 @@ public abstract class ControllerTestBase extends WithApplication {
     public void startPlay()
     {
         super.startPlay();
-        Http.Context.current.set(new Http.Context(1L,
+        Http.Context.current.set(new Http.Context(2L,
                                                   Mockito.mock(RequestHeader.class),
                                                   Mockito.mock(Http.Request.class),
                                                   Collections.<String, String>emptyMap(),

@@ -160,7 +160,7 @@ public class SubscriptionControllerTest extends ControllerTestBase {
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
-	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Subscription");
+	    assertEquals(responseNode.get("message").asText(), "Cannot parse JSON to Subscription form");
 	    
 	}
 	

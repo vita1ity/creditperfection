@@ -13,16 +13,11 @@ import errors.ValidationError;
 import models.Subscription;
 import models.User;
 import models.enums.SubscriptionStatus;
+import play.Logger;
 import services.SubscriptionService;
 import services.UserService;
 
 public class SubscriptionForm extends Model {
-	
-	@Inject
-	private UserService userService;
-	
-	@Inject
-	private SubscriptionService subscriptionService;
 	
 	private String id;
 	
@@ -74,14 +69,6 @@ public class SubscriptionForm extends Model {
 		this.status = status;
 	}
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setSubscriptionService(SubscriptionService subscriptionService) {
-		this.subscriptionService = subscriptionService;
-	}
-
 	public List<ValidationError> validate() {
 		
 		List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -97,15 +84,7 @@ public class SubscriptionForm extends Model {
 				errors.add(entry.getKey());
 			}
 		}
-		if (userId != null && !userId.equals("") && id == null) {
-			User user = userService.getById(Long.parseLong(userId));
-			
-			Subscription subFromDb = subscriptionService.findByUser(user);
-	    	if (subFromDb != null) {
-	    		errors.add(new ValidationError("user", "User is already subscribed"));
-	    	}
-			
-		}
+		
 		if (errors.size() != 0) {
 			return errors;
 		}

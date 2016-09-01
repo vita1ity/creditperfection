@@ -45,6 +45,8 @@ import services.CreditReportService;
 import services.MailService;
 import services.ProductService;
 import services.RoleService;
+import services.SubscriptionService;
+import services.TransactionService;
 import services.UserService;
 import utils.Tokener;
 import views.html.index;
@@ -73,11 +75,16 @@ public class SignUpFlowController extends Controller {
     @Inject
     private RoleService roleService;
     
+    @Inject
+    private TransactionService transactionService;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
+    
     public Result index(Boolean login){
     	
     	//session().clear();
      	
-    	List<Product> productList = productService.getAll();
     	CardType[] allTypes = CardType.valuesVisaDiscover();
     	State[] states = State.values();
     	Month[] months = Month.values();
@@ -91,13 +98,8 @@ public class SignUpFlowController extends Controller {
     	if (userEmail != null) {
     		user = userService.findByEmail(userEmail);
     	}
-    	Product product = new Product();
-    	if (session().get("productId") != null) {
-    		long productId = Long.parseLong(session().get("productId"));
-			product = productService.getById(productId);
-		}
-    	
-        return ok(index.render(user, product, productList, allTypes, states, months, years, login, prePopulateOnly));
+        
+    	return ok(index.render(user, allTypes, states, months, years, login, prePopulateOnly));
     }
     
     
@@ -105,8 +107,7 @@ public class SignUpFlowController extends Controller {
     	
     	session().clear();
     	
-    	List<Product> productList = productService.getAll();
-    	CardType[] allTypes = CardType.values();
+    	CardType[] allTypes = CardType.valuesVisaDiscover();
     	State[] states = State.values();
     	Month[] months = Month.values();
     	Year[] years = Year.values();
@@ -118,10 +119,8 @@ public class SignUpFlowController extends Controller {
     	User user = userForm.bindFromRequest().get();
     	
     	Logger.info("User: " + user);
-    	
-    	Product product = new Product();
-    	
-        return ok(index.render(user, product, productList, allTypes, states, months, years, login, prePopulateOnly));
+    	    	
+        return ok(index.render(user, allTypes, states, months, years, login, prePopulateOnly));
     }	
     
     @BodyParser.Of(BodyParser.Json.class)
@@ -129,50 +128,53 @@ public class SignUpFlowController extends Controller {
     	
     	JsonNode json = request().body().asJson();
     	 
-    	RegisterForm registerForm = Json.fromJson(json, RegisterForm.class);
-    	if(registerForm == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to user")));
-	    } else {
-	    	
-	    	Logger.info(registerForm.toString());
-	    	
-	    	List<ValidationError> errors = registerForm.validate();
-	    	
-	    	if (errors != null) {
-	    		return badRequest(Json.toJson(errors));
-	    	}
-	    	
-	    	User user = new User(registerForm);
-	    	
-	    	User userByEmail = userService.findByEmail(user.getEmail());
-			if (userByEmail != null) {
-				//user is already registered
-				if (userByEmail.getKbaQuestions() == null) {
-					//registration process is not completed
-					session("userEmail", user.getEmail());
-					userByEmail.updateUserInfo(user);
-					userByEmail.update();
-					return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
-				}
-				else {
-					errors = new ArrayList<ValidationError>();
-					errors.add(new ValidationError("email", "User with such email is already registered"));
-					return badRequest(Json.toJson(errors));
-				}
-			}
-
-	    	
-	    	user.setToken(Tokener.randomString(48));
-	    	List<SecurityRole> roles = new ArrayList<SecurityRole>();
-	    	SecurityRole userRole = roleService.findByName("user");
-	    	roles.add(userRole);
-	    	user.setRoles(roles);
-	    	user.setActive(true);
-        	user.save();
-        	
-        	session("userEmail", user.getEmail());
-	        return ok(Json.toJson(new MessageResponse("SUCCESS", "User was successfully registered")));
+    	RegisterForm registerForm = null;
+    	try {
+    		registerForm = Json.fromJson(json, RegisterForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to register form.");
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to register form")));
+		}
+    	    	
+	    Logger.info(registerForm.toString());
+	    
+	    List<ValidationError> errors = registerForm.validate();
+	    
+	    if (errors != null) {
+	    	return badRequest(Json.toJson(errors));
 	    }
+	    
+	    User user = new User(registerForm);
+	    
+	    User userByEmail = userService.findByEmail(user.getEmail());
+		if (userByEmail != null) {
+			//user is already registered
+			if (userByEmail.getKbaQuestions() == null) {
+				//registration process is not completed
+				session("userEmail", user.getEmail());
+				userByEmail.updateUserInfo(user);
+				userService.update(userByEmail);
+				return ok(Json.toJson(new MessageResponse("SUCCESS", "You have unfinished registration process")));
+			}
+			else {
+				errors = new ArrayList<ValidationError>();
+				errors.add(new ValidationError("email", "User with such email is already registered"));
+				return badRequest(Json.toJson(errors));
+			}
+		}
+
+	    
+	    user.setToken(Tokener.randomString(48));
+	    List<SecurityRole> roles = new ArrayList<SecurityRole>();
+	    SecurityRole userRole = roleService.findByName("user");
+	    roles.add(userRole);
+	    user.setRoles(roles);
+	    user.setActive(true);
+        userService.save(user);
+        
+        session("userEmail", user.getEmail());
+	    return ok(Json.toJson(new MessageResponse("SUCCESS", "User was successfully registered")));    
     	
     }
     
@@ -180,7 +182,7 @@ public class SignUpFlowController extends Controller {
         User user = Ebean.find(User.class).where().eq("token", token).findUnique();
         if (user != null) {
             user.setActive(true);
-            user.update();
+            userService.update(user);
             flash("message", "Account verified, please login");
         } 
         else {
@@ -206,84 +208,92 @@ public class SignUpFlowController extends Controller {
     	
     	JsonNode json = request().body().asJson();
    	 
-    	CreditCardForm creditCardForm = Json.fromJson(json, CreditCardForm.class);
-    	
-	    if(creditCardForm == null) {
-	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to CreditCardForm")));
-	    } else {
+    	CreditCardForm creditCardForm = null;
+    	try {
+    		creditCardForm = Json.fromJson(json, CreditCardForm.class);
+    	}
+    	catch (RuntimeException e) {
+    		String message = "Cannot parse JSON to CreditCardForm";
+    		Logger.error(message);
+    		return badRequest(Json.toJson(new MessageResponse("ERROR", message)));
+    	}
+    		    	
+	    List<ValidationError> errors = creditCardForm.validate();
+	    if (errors != null) {
 	    	
-	    	List<ValidationError> errors = creditCardForm.validate();
-	    	if (errors != null) {
-	    		
-	    		return badRequest(Json.toJson(errors));
-	    	}
-	    	String userEmail = session().get("userEmail");
-	    	User user = userService.findByEmail(userEmail);
-	    	
-	    	//get kba questions
-	    	JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
-    		if (kbaUrlResponse instanceof ErrorResponse) {
-    			Logger.error(((ErrorResponse) kbaUrlResponse).getErrorMessage());
-    			return badRequest(Json.toJson(kbaUrlResponse));
-    		}
-    		else {
-    			
-    			CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
-    			
-    	    	//charge amount for the product from credit card
-    			long productId = conf.getLong("creditperfection.default.productId");
-    	    	Product product = productService.getById(productId);
-    	    	
-    	    	Logger.info("Product to be purchased: " + product);
-    	    	
-    	    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
-    	    	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
-    	    	if (transactionResponse instanceof MessageResponse) {
-    	    		
-    	    		//save credit card 
-        	    	creditCard.setUser(user);
-        	    	creditCard.save();
-        	    	
-        	    	String transactionId = creditCardService.getTransactionId(response);
-    	    		//save transaction
-    	    		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
-    	    				transactionId, TransactionStatus.SUCCESSFUL);
-    	    		transaction.save();
-    	    		
-    	    		//save kba questions url for user
-    	    		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
-        			KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
-        			user.setKbaQuestions(kbaQuestions);
-        			user.update();
-        			
-        			//assign default product to subscription        	    	
-        	    	Logger.info("Product to be purchased after end of the Trial period: " + product);
-        			
-        			//subscribe user
-        			Subscription subscription = new Subscription(user, creditCard, product, 
-        					SubscriptionStatus.TRIAL, LocalDateTime.now(), LocalDateTime.now());
-        			subscription.save();
-        			
-        			//TODO subscribe user 
-        			/*Akka.system().scheduler().schedule(
-        	                Duration.create(5, TimeUnit.SECONDS), //Initial delay 0 milliseconds
-        	                Duration.create(10, TimeUnit.SECONDS),     //Frequency 30 minutes
-        	                new CreditCardChargeJob(),
-        	                Akka.system().dispatcher()
-        	        );*/
-    	    		
-        			//clear session
-        			session().remove("userEmail");
-        			session().remove("productId");
-        			 
-    	    		return ok(Json.toJson(kbaUrlResponse));
-    	    		
-    	    	}
-    	    	else {
-    	    		
-    	    		return badRequest(Json.toJson(transactionResponse));
-    	    	}    			
-    		}	    	
-	    }	    
+	    	return badRequest(Json.toJson(errors));
+	    }
+	    String userEmail = session().get("userEmail");
+	    User user = userService.findByEmail(userEmail);
+	    
+	    //get kba questions
+	    JSONResponse kbaUrlResponse = creditReportService.getKBAQuestionsUrl(user);
+    	if (kbaUrlResponse instanceof ErrorResponse) {
+    		Logger.error(((ErrorResponse) kbaUrlResponse).getErrorMessage());
+    		return badRequest(Json.toJson(kbaUrlResponse));
+    	}
+    	else {
+    		
+    		CreditCard creditCard = creditCardService.createCreditCard(creditCardForm);
+    		
+    	   	//charge amount for the product from credit card
+    		long productId = conf.getLong("creditperfection.default.productId");
+    	   	Product product = productService.getById(productId);
+    	   	if (product == null) {
+    	   		String errorMessage = "Prodcut with id = " 	+ productId + " is missing";
+    	   		Logger.error(errorMessage);
+    	   		return badRequest(Json.toJson(new MessageResponse("ERROR", errorMessage)));
+    	   	}
+    	   	
+    	   	Logger.info("Product to be purchased: " + product);
+    	   	
+    	   	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
+    	   	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+    	   	if (transactionResponse instanceof MessageResponse) {
+    	   		
+    	   		//save credit card 
+            	creditCard.setUser(user);
+            	creditCardService.save(creditCard);
+            	
+            	String transactionId = creditCardService.getTransactionId(response);
+    	   		//save transaction
+    	   		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
+    	   				transactionId, TransactionStatus.SUCCESSFUL);
+    	   		transactionService.save(transaction);
+    	   		
+    	   		//save kba questions url for user
+    	   		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
+        		KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
+        		user.setKbaQuestions(kbaQuestions);
+        		userService.update(user);
+        		
+        		//assign default product to subscription        	    	
+            	Logger.info("Product to be purchased after end of the Trial period: " + product);
+        		
+        		//subscribe user
+        		Subscription subscription = new Subscription(user, creditCard, product, 
+        				SubscriptionStatus.TRIAL, LocalDateTime.now(), LocalDateTime.now());
+        		subscriptionService.save(subscription);
+        		        			
+        		//TODO subscribe user 
+        		/*Akka.system().scheduler().schedule(
+                        Duration.create(5, TimeUnit.SECONDS), //Initial delay 0 milliseconds
+                        Duration.create(10, TimeUnit.SECONDS),     //Frequency 30 minutes
+                        new CreditCardChargeJob(),
+                        Akka.system().dispatcher()
+                );*/
+    	   		
+        		//clear session
+        		session().remove("userEmail");
+        		session().remove("productId");
+        		 
+    	   		return ok(Json.toJson(kbaUrlResponse));
+    	   		
+    	   	}
+    	   	else {
+    	   		
+    	   		return badRequest(Json.toJson(transactionResponse));
+    	   	}    			
+    	}	    	    
     }
 }

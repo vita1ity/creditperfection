@@ -19,6 +19,7 @@ import play.mvc.Result;
 import services.CreditReportService;
 import services.MailService;
 import services.RoleService;
+import services.UserService;
 
 @Singleton
 public class LoginController extends Controller {
@@ -29,13 +30,16 @@ public class LoginController extends Controller {
 	@Inject
     private MailService mailService;
 	
+	@Inject 
+	private UserService userService;
+	
 	@Inject
 	private RoleService roleService;
 	
     public Result login(){
         DynamicForm form = formFactory.form().bindFromRequest();
         String email = form.get("email");
-        User user = Ebean.find(User.class).where().eq("email", email).findUnique();
+        User user = userService.findByEmail(email);
         
         if (user != null){
             if (!user.getPassword().equals(form.get("password"))) {
@@ -101,7 +105,7 @@ public class LoginController extends Controller {
     public Result forgotPassword(){
         DynamicForm form = formFactory.form().bindFromRequest();
         String email = form.get("email");
-        User user = Ebean.find(User.class).where().eq("email", email).findUnique();
+        User user = userService.findByEmail(email);
         if (user != null) {
             mailService.sendEmailPassword(user.getEmail(), user.getPassword());
             return ok(Json.toJson(new MessageResponse("SUCCESS", "Password sent to email")));

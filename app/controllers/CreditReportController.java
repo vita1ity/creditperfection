@@ -4,9 +4,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import models.User;
+import models.json.MessageResponse;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -36,6 +38,11 @@ public class CreditReportController extends Controller {
 		
 		String email = session().get("email");
 		User user = userService.findByEmail(email);
+		
+		if (user == null) {
+			Logger.error("User with email " + email + " is not found");
+	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User with email " + email + " is not found")));
+		}
 		
     	//TODO get user report
 		/*String memberId = session().get("memberId");

@@ -10,6 +10,7 @@ import models.User;
 import models.enums.SubscriptionStatus;
 import models.json.ErrorResponse;
 import models.json.MessageResponse;
+import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -19,6 +20,7 @@ import play.mvc.Security;
 import security.Secured;
 import services.MailService;
 import services.ProductService;
+import services.SubscriptionService;
 import services.UserService;
 
 @Security.Authenticated(Secured.class)
@@ -36,6 +38,9 @@ public class SubscriptionController extends Controller {
 	@Inject
 	private ProductService productService;
 	
+	@Inject
+	private SubscriptionService subscriptionService;
+	
 	public Result upgradeSubscriptionPage() {
 		
 		String email = session().get("email");
@@ -49,10 +54,11 @@ public class SubscriptionController extends Controller {
 		
 	}
 	
-	public Result upgradeSubscription() {
+	public Result  upgradeSubscription() {
 		
 		String email = session().get("email");
 		User user = userService.findByEmail(email);
+		
 		if (user == null) {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "501", "User not found")));
 		}
@@ -67,7 +73,7 @@ public class SubscriptionController extends Controller {
     	
     	Subscription subscription = user.getSubscription();
     	subscription.setProduct(product);
-    	subscription.update();
+    	subscriptionService.update(subscription);
     	
     	return ok(Json.toJson(new MessageResponse("SUCCESS", "Subscription updated successfully")));
 		
@@ -93,9 +99,8 @@ public class SubscriptionController extends Controller {
 			return badRequest(Json.toJson(new ErrorResponse("ERROR", "603", "Your subscription is already cancelled")));
 		}
 		subscription.setStatus(SubscriptionStatus.PENDING);
-		
-		subscription.update();
-		
+		subscriptionService.update(subscription);
+				
 		mailService.sendCancelSubscriptionNotification(user);
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Cancellation request has been submitted")));
