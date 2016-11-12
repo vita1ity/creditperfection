@@ -1,16 +1,14 @@
 package repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Singleton;
 
 import com.avaje.ebean.Model.Finder;
+import com.avaje.ebean.PagedList;
 
-import models.SecurityRole;
 import models.User;
 import repository.UserRepository;
-import utils.Tokener;
 
 @Singleton
 public class UserRepositoryImpl implements UserRepository {
@@ -54,6 +52,18 @@ public class UserRepositoryImpl implements UserRepository {
 		
 	}
 
+	@Override
+	public PagedList<User> getUsersPage(int page, int pageSize) {
+		
+		PagedList<User> pagedList = find.findPagedList(page, pageSize);
+		
+		
+		
+		return pagedList;
+	}
+
+	
+	
 	
 	
 }

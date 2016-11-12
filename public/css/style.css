@@ -76,7 +76,7 @@ html, body {
 .add-btn {
 	width: 150px;
 	margin-top: 25px;
-	margin-bottom: 25px;
+	margin-bottom: 25px !important;
 }
 
 .left-button {
@@ -144,7 +144,7 @@ html, body {
 
 .navbar-brand {
 	float: left;
-	padding: 0px 25px;
+	padding: 0px 25px !important;
 	font-size: 18px;
 	line-height: 20px;
 }
@@ -359,3 +359,18 @@ img {
       display:block !important;
   }
 }
+
+.pagination>.active>a {
+	color: #fff !important;
+	background-color: #5cb85c !important;
+    border-color: #4cae4c !important;
+}
+
+.pagination>li>a {
+	color: #4cae4c !important;
+}
+.pagination>li:hover {
+	cursor: pointer;
+}
+
+

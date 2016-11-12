@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.avaje.ebean.PagedList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import be.objectify.deadbolt.java.actions.Group;
@@ -16,6 +17,7 @@ import models.User;
 import models.enums.State;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
+import play.Configuration;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -23,7 +25,6 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import services.MailService;
 import services.RoleService;
 import services.UserService;
 import utils.Tokener;
@@ -40,6 +41,9 @@ public class UserController extends Controller {
 	
 	@Inject
 	private RoleService roleService;
+	
+	@Inject
+	private Configuration conf;
 
 	//users	
 	public Result users() {
@@ -47,10 +51,48 @@ public class UserController extends Controller {
 		String email = session().get("email");
 		User user = userService.findByEmail(email);
 		
-		List<User> allUsers = userService.getAll();
+		int pageSize = conf.getInt("page.size");
+		PagedList<User> usersPage = userService.getUsersPage(0, pageSize);
 		State[] states = State.values();
 		
-		return ok(views.html.adminUsers.render(user, allUsers, states));
+		int numberOfPages = usersPage.getTotalPageCount();
+		
+		Logger.info("Number of pages for users: " + Integer.toString(numberOfPages));
+		
+		int[] displayedPages = new int[1];
+		if (numberOfPages > 10 ) {
+			displayedPages = new int[10];
+			for (int i = 0; i < 10; i++) {
+				displayedPages[i] = (i + 1);
+			}
+		}
+		else {
+			displayedPages = new int[numberOfPages];
+			for (int i = 0; i < numberOfPages; i++) {
+				displayedPages[i] = (i + 1);
+			}
+		}
+		
+		
+		int currentPage = 1;
+		
+		List<User> users = usersPage.getList();
+		
+		return ok(views.html.adminUsers.render(user, users, states, numberOfPages, displayedPages, currentPage));
+	}
+	
+	public Result getUsers(int page) {
+		
+		if (page < 1) {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Invalid page value")));
+		}
+		
+		int pageSize = conf.getInt("page.size");
+		PagedList<User> usersPage = userService.getUsersPage(page - 1, pageSize);
+		
+		List<User> users = usersPage.getList();
+		
+		return ok(Json.toJson(users));
 	}
 	
 	@BodyParser.Of(BodyParser.Json.class)

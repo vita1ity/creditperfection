@@ -8,12 +8,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.avaje.ebean.PagedList;
+
 import errors.ValidationError;
-import models.SecurityRole;
 import models.User;
-import play.Logger;
 import repository.UserRepository;
 import utils.EmailValidator;
+import utils.Tokener;
 
 @Singleton
 public class UserService {
@@ -27,6 +28,10 @@ public class UserService {
 	
 	public List<User> getAll() {
 		return userRepository.getAll();
+	}
+	
+	public PagedList<User> getUsersPage(int page, int pageSize) {
+		return userRepository.getUsersPage(page, pageSize);
 	}
 	
 	public User findByEmail(String email) {
@@ -100,6 +105,31 @@ public class UserService {
 		}
 		return null;
 	    
+	}
+	
+	
+	//FOR TESTTING
+	
+	public void generateUsers(int numberOfUsers) {
+		
+		for (int i = 0; i < numberOfUsers; i++) {
+			
+			User user = new User();
+			user.setFirstName("First Name " + i);
+			user.setLastName("Last Name " + i);
+			user.setActive(true);
+			user.setAddress("Address " + i);
+			user.setCity("CIty " + i);
+			user.setEmail("Email " + i);
+			user.setPassword("Password" + i);
+			user.setState("AK");
+			user.setZip("22222");
+			user.setToken(Tokener.randomString(48));
+			userRepository.save(user);
+			
+			
+		}
+		
 	}
 	
 }

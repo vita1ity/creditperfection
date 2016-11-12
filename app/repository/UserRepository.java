@@ -2,6 +2,7 @@ package repository;
 
 import java.util.List;
 
+import com.avaje.ebean.PagedList;
 import com.google.inject.ImplementedBy;
 
 import models.SecurityRole;
@@ -22,5 +23,7 @@ public interface UserRepository {
 	void update(User user);
 
 	boolean delete(User user);
+
+	PagedList<User> getUsersPage(int page, int pageSize);
 
 }

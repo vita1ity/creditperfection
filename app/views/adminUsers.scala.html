@@ -1,4 +1,5 @@
-@(user: models.User, allUsers: java.util.List[models.User], states: Array[models.enums.State])
+@(user: models.User, users: java.util.List[models.User], states: Array[models.enums.State], numberOfPages: java.lang.Integer,
+displayedPages: Array[Int], currentPage: java.lang.Integer)
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +10,9 @@
 </head>
 <body>
 
-	@header.render(false)
+	
 	<div class="wrapper">
+		@header.render(false)
 		<div class="container-fluid">
 			
 			<div class="row" id="alert-box">
@@ -24,14 +26,14 @@
 			
 				<div class="panel-group" id="accordion">
 				
-				@for((u, index) <- allUsers.zipWithIndex) {
+				@for((u, index) <- users.zipWithIndex) {
 				
 				<div class="row">
 					<div class="panel panel-default">
 					    <div class="panel-heading">
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
-					        <span class="index"> @(index + 1)</span>. @u.getFirstName @u.getLastName</a>
+					        <span class="index"> @(index + 1)</span>. <span class="name">@u.getFirstName @u.getLastName</span></a>
 					      </h4>
 					    </div>
 					    <div id="collapse@index" class="panel-collapse collapse">
@@ -167,7 +169,51 @@
 					
 				</div>
 				}
-			</div>    
+			</div>   
+			
+			<!-- PAGINATION -->
+
+			<input id="numOfPages" type="hidden" name="pages" value="@numberOfPages">
+			<input id="currentPage" type="hidden" name="currentPage" value="@currentPage">
+			<input id="startDisplayPage" type="hidden" name="startDisplayPage" value="${displayedPages[0]}">
+			<input id="pageUrl" type="hidden" name="pageUrl" value="@admin.routes.UserController.getUsers(currentPage)">			
+			
+			<div class="text-center">
+			    <ul id="pagination" class="pagination">
+			    
+			    	@if(numberOfPages > 10 && currentPage > 10){
+			    		<li class="prev pager_nav pager_item" data-page="@admin.routes.UserController.getUsers(currentPage - currentPage % 10 - 9)"><a>Prev 10</a></li>
+			    	}
+			    	
+			    	@if(currentPage != 1){
+			    		<c:url value="/scheduler/get-schedule?page=${currentPage - 1}" var="page"/>
+			    		<li class="prev pager_nav pager_item" data-page="@admin.routes.UserController.getUsers(currentPage - 1)"><a>Prev</a></li>
+			    	}
+			    	
+			    	
+			    	@for(i <- displayedPages) {
+			    	
+			    		@if(currentPage == i) {
+			    			<li class="active"><a>@i</a></li>
+			    		} else {
+			    			<li class="pager_item" data-page="@admin.routes.UserController.getUsers(i)"><a>@i</a></li>
+			    		}
+			    	
+			    	}
+			    	 
+					
+					
+					@if(currentPage < numberOfPages) {
+						
+						<li class="next pager_nav pager_item" data-page="@admin.routes.UserController.getUsers(currentPage + 1)"><a>Next</a></li>
+					}
+					
+					@if((currentPage / 10) < (numberOfPages / 10)) {
+						<li class="next pager_nav pager_item" data-page="@admin.routes.UserController.getUsers(currentPage + 1 + (10 - currentPage % 10))"><a>Next 10</a></li>
+					}
+					
+				</ul>
+			 </div>
 		</div>
 		
 		

@@ -35,6 +35,7 @@ GET    /admin/users                       controllers.admin.UserController.users
 POST   /admin/users/edit	              controllers.admin.UserController.editUser
 POST   /admin/users/delete	              controllers.admin.UserController.deleteUser
 POST   /admin/users/add		              controllers.admin.UserController.addUser
+GET	   /admin/users/get-page			  controllers.admin.UserController.getUsers(page: java.lang.Integer)
 
 GET    /admin/products                    controllers.admin.ProductController.products
 POST   /admin/products/edit		          controllers.admin.ProductController.editProduct
