@@ -76,7 +76,7 @@ html, body {
 .add-btn {
 	width: 150px;
 	margin-top: 25px;
-	margin-bottom: 25px !important;
+	margin-bottom: 25px;
 }
 
 .left-button {
@@ -144,7 +144,7 @@ html, body {
 
 .navbar-brand {
 	float: left;
-	padding: 0px 25px !important;
+	padding: 0px 25px;
 	font-size: 18px;
 	line-height: 20px;
 }
@@ -350,7 +350,7 @@ img {
   }
   .navbar-nav>li {
       float: none;
-  }
+  } 
   .navbar-nav>li>a {
       padding-top: 10px;
       padding-bottom: 10px;
@@ -360,15 +360,20 @@ img {
   }
 }
 
-.pagination>.active>a {
+.pagination>.active>a, .pagination>.active:hover {
 	color: #fff !important;
 	background-color: #5cb85c !important;
     border-color: #4cae4c !important;
 }
 
 .pagination>li>a {
-	color: #4cae4c !important;
+	color: #4cae4c;
 }
+
+.pagination>li>a:hover {
+	color: #398439;
+}
+
 .pagination>li:hover {
 	cursor: pointer;
 }

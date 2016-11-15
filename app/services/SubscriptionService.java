@@ -7,6 +7,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.avaje.ebean.PagedList;
+
 import forms.SubscriptionForm;
 import models.CreditCard;
 import models.Product;
@@ -16,6 +18,7 @@ import models.enums.SubscriptionStatus;
 import play.Configuration;
 import play.Logger;
 import repository.SubscriptionRepository;
+import utils.Tokener;
 
 @Singleton
 public class SubscriptionService {
@@ -69,8 +72,8 @@ public class SubscriptionService {
 		return subscriptionRepository.findByUser(user);
 	}
 	
-	public List<Subscription> findByStatus(SubscriptionStatus status) {
-		return subscriptionRepository.findByStatus(status);
+	public PagedList<Subscription> findByStatus(SubscriptionStatus status, int page, int pageSize) {
+		return subscriptionRepository.findByStatus(status, page, pageSize);
 	}
 	
 	public List<Subscription> findExcludingStatus(SubscriptionStatus status) {
@@ -131,5 +134,35 @@ public class SubscriptionService {
 	    	}
     	}
     }
+
+	public PagedList<Subscription> getSubscriptionsPage(int page, int pageSize) {
+		return subscriptionRepository.getSubscriptionsPage(page, pageSize);
+	}
+	
+	//FOR TESTTING
+	
+	public void generateSubscriptions(int numberOfSubscriptions) {
+		
+		for (int i = 0; i < numberOfSubscriptions; i++) {
+			
+			CreditCard creditCard = creditCardService.getById(1);
+			Product product = productService.getById(1);
+			User user = userService.getById(i + 305);
+			
+			Subscription subscription = new Subscription();
+			subscription.setCreditCard(creditCard);
+			subscription.setProduct(product);
+			subscription.setUser(user);
+			subscription.setLastChargeDate(LocalDateTime.now());
+			subscription.setStatus(SubscriptionStatus.ACTIVE);
+			subscription.setSubscriptionDate(LocalDateTime.now());
+			
+			subscriptionRepository.save(subscription);
+			
+			
+		}
+		
+	}
+	
 	
 }

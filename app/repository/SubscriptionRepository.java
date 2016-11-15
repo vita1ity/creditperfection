@@ -2,6 +2,7 @@ package repository;
 
 import java.util.List;
 
+import com.avaje.ebean.PagedList;
 import com.google.inject.ImplementedBy;
 
 import models.Subscription;
@@ -14,8 +15,6 @@ public interface SubscriptionRepository {
 
 	Subscription findByUser(User user);
 
-	List<Subscription> findByStatus(SubscriptionStatus status);
-
 	List<Subscription> findExcludingStatus(SubscriptionStatus status);
 
 	Subscription findById(long id);
@@ -27,5 +26,9 @@ public interface SubscriptionRepository {
 	void update(Subscription subscription);
 
 	void delete(Subscription subscription);
+
+	PagedList<Subscription> getSubscriptionsPage(int page, int pageSize);
+
+	PagedList<Subscription> findByStatus(SubscriptionStatus status, int page, int pageSize);
 	
 }

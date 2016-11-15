@@ -72,7 +72,7 @@ public class SubscriptionControllerTest extends ControllerTestBase {
 				testSubscription); 
 		
 		when(subscriptionServiceMock.findAll()).thenReturn(allSubscriptions);
-		when(subscriptionServiceMock.findByStatus(SubscriptionStatus.TRIAL)).thenReturn(
+		when(subscriptionServiceMock.findByStatus(SubscriptionStatus.TRIAL, 1, 10).getList()).thenReturn(
 					ImmutableList.of(allSubscriptions.get(0), allSubscriptions.get(1)));
 		when(subscriptionServiceMock.findById(testSubscription.getId())).thenReturn(testSubscription);
 		when(subscriptionServiceMock.createSubscription(testSubscriptionForm)).thenReturn(testSubscription);

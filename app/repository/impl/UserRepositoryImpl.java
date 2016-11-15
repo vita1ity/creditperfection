@@ -57,8 +57,6 @@ public class UserRepositoryImpl implements UserRepository {
 		
 		PagedList<User> pagedList = find.findPagedList(page, pageSize);
 		
-		
-		
 		return pagedList;
 	}
 

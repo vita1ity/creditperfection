@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import com.avaje.ebean.Model.Finder;
+import com.avaje.ebean.PagedList;
 
 import models.Subscription;
 import models.User;
@@ -23,8 +24,8 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 	}
 	
 	@Override
-	public List<Subscription> findByStatus(SubscriptionStatus status) {
-		List<Subscription> subscriptionList = find.where().eq("status", status).findList();
+	public PagedList<Subscription> findByStatus(SubscriptionStatus status, int page, int pageSize) {
+		PagedList<Subscription> subscriptionList = find.where().eq("status", status).findPagedList(page, pageSize);
 		return subscriptionList;
 	}
 	
@@ -62,6 +63,12 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 	public void delete(Subscription subscription) {
 		subscription.delete();
 		
+	}
+
+	@Override
+	public PagedList<Subscription> getSubscriptionsPage(int page, int pageSize) {	
+		PagedList<Subscription> pagedList = find.findPagedList(page, pageSize);
+		return pagedList;
 	}
 	
 }

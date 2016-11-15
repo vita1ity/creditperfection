@@ -389,6 +389,12 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 			console.log(data);
 			
 			var subscriptions = data.object;
+			
+			var totalPageCount = data.totalPageCount;
+			console.log(subscriptions);
+			console.log("totalPageCount: " + totalPageCount);
+			
+			
 			var subscriptionsHtml = $('.panel').html();
 			subscriptionsHtml = '<div class="panel panel-default hidden">\n' + subscriptionsHtml + "\n</div>";
 			
@@ -425,7 +431,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
 		    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
 		    	$('.panel-title-text:last').html("<span class=\"index\">" + 
-		    			index + "</span>. " + firstName + " " + lastName + " - " + productName);
+		    			index + "</span>. <span class=\"name\">" + firstName + " " + lastName + " - " + productName + "</span>");
 		    	$('.subscriptionID:last').text(id);
 		    	
 		    	$('.user-id:last').text(userId);
@@ -444,6 +450,15 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	$('.subscription-date:last').text(dateStr);
 			}
 			
+			//update pagination to the 1 page
+			var pageUrl = $('#pageUrl').val();
+			var res = pageUrl.split("=");
+			var urlBase = res[0] + "=";
+			var page = 1;
+			$('#pageUrl').val(urlBase + "1");
+			
+			updatePagination(urlBase, page, totalPageCount);
+			
 			
 		}).fail (function(err) {
 			
@@ -451,6 +466,124 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 			
 		});
 		
+		
+	});
+	
+	
+	$(document).on('click', '.pager_item', function (e) {
+		e.preventDefault();
+		var url = $(this).data("page");
+		
+		var res = url.split("=");
+		var urlBase = res[0] + "=";
+		var page = res[1];
+		
+		var status = $('#subscriptionFilterSelect').find(":selected").val();
+		
+		console.log("url: " + urlBase + ", page: " + page + ", status: " + status);
+		
+		$.ajax({
+	        url:url,
+	        type: 'POST',
+			data: {status: status},
+	        dataType: 'json'
+	        	
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			var counter = 0;
+			
+			//show subscriptions for the selected page
+			$('.panel').each(function(i, obj) {
+				
+				var subscription = data[counter];
+				
+				if ($(obj).hasClass('hidden')) {
+					
+					console.log('hidden panel');
+				}
+				else if (subscription == null) {
+					$(obj).hide();
+				}
+				else {
+					
+					$(obj).show();
+					
+					var id = subscription.id;
+					var status = subscription.status;
+					var subscriptionDate = subscription.subscriptionDate;
+					var lastPaymentDate = subscription.lastChargeDate;
+					
+					//user properties
+					var userId = subscription.user.id;
+					var firstName = subscription.user.firstName;
+					var lastName = subscription.user.lastName;
+					var userId = subscription.user.id;
+					var email = subscription.user.email;
+					
+					//credit card properties
+					var cardId = subscription.creditCard.id;
+					var cardName = subscription.creditCard.name;
+					var cardType = subscription.creditCard.cardType;
+					var cardNumber = subscription.creditCard.digits;
+					var expDate = subscription.creditCard.expDate;
+					var cvv = subscription.creditCard.cvv;
+					
+					//product properties
+					var productId = subscription.product.id;
+					var productName = subscription.product.name;
+					var productPrice = subscription.product.price;
+					var productSalePrice = subscription.product.salePrice;
+					
+					
+					$(obj).find('.name').text(firstName + ' ' + lastName + ' - ' + productName);
+					
+					$(obj).find('.subscriptionID').text(id);
+					
+					$(obj).find('.user-id').text(userId);
+					$(obj).find('.first-name').text(firstName);
+					$(obj).find('.last-name').text(lastName);
+					$(obj).find('.email').text(email);
+					
+					$(obj).find('.card-id').text(cardId);
+					$(obj).find('.card-name').text(cardName);
+					$(obj).find('.card-type').text(cardType);
+					$(obj).find('.card-number').text(cardNumber);
+					$(obj).find('.exp-date').text(expDate);
+					$(obj).find('.cvv').text(cvv);
+
+					$(obj).find('.product-id').text(productId);
+					$(obj).find('.product-name').text(productName);
+					$(obj).find('.product-price').text(productPrice);
+					$(obj).find('.sale-price').text(productSalePrice);
+					
+					$(obj).find('.status').text(status);
+					$(obj).find('.subscription-date').text(subscriptionDate);
+					$(obj).find('.last-payment-date').text(lastPaymentDate);
+					
+					if (status == 'PENDING') {
+						$(obj).find('.cancel-subscription').removeClass('hidden');
+					}
+					else {
+						$(obj).find('.cancel-subscription').addClass('hidden');
+					}
+					
+					++counter;
+				}
+		    	
+			});
+			
+			//update pagination
+			
+			var numberOfPages = $("#numOfPages").val();
+			updatePagination(urlBase, page, numberOfPages);
+			
+			
+		}).fail (function(err) {
+		    console.error(err);
+		       
+		});
 		
 	});
 	

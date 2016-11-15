@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.avaje.ebean.PagedList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import be.objectify.deadbolt.java.actions.Group;
@@ -17,6 +18,8 @@ import models.User;
 import models.enums.SubscriptionStatus;
 import models.json.MessageResponse;
 import models.json.ObjectResponse;
+import models.json.PagedObjectResponse;
+import play.Configuration;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -43,15 +46,67 @@ public class SubscriptionController extends Controller {
 	@Inject
 	private SubscriptionService subscriptionService;
 	
+	@Inject
+	private Configuration conf;
+	
 	public Result subscriptions() {
 		
 		List<User> allUsers = userService.getAll();
 		List<Product> allProducts = productService.getAll();
-		List<Subscription> allSubscriptions = subscriptionService.findAll();
+		
+		int pageSize = conf.getInt("page.size");
+		PagedList<Subscription> subscriptionsPage = subscriptionService.getSubscriptionsPage(0, pageSize);
+		List<Subscription> subscriptions = subscriptionsPage.getList();
+		int numberOfPages = subscriptionsPage.getTotalPageCount();
+		
+		Logger.info("Number of pages for subscriptions: " + Integer.toString(numberOfPages));
+		
+		int[] displayedPages = new int[1];
+		if (numberOfPages > 10 ) {
+			displayedPages = new int[10];
+			for (int i = 0; i < 10; i++) {
+				displayedPages[i] = (i + 1);
+			}
+		}
+		else {
+			displayedPages = new int[numberOfPages];
+			for (int i = 0; i < numberOfPages; i++) {
+				displayedPages[i] = (i + 1);
+			}
+		}
+		
+		int currentPage = 1;
+		
 		SubscriptionStatus[] allStatuses = SubscriptionStatus.values(); 
 		
-		return ok(views.html.adminSubscriptions.render(allSubscriptions, allUsers, allProducts, allStatuses));
+		return ok(views.html.adminSubscriptions.render(subscriptions, allUsers, allProducts, allStatuses, numberOfPages, displayedPages, currentPage));
 		
+	}
+	
+	public Result getSubscriptions(int page) {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		String status = form.get("status");
+		
+		if (page < 1) {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Invalid page value")));
+		}
+		
+		int pageSize = conf.getInt("page.size");
+		List<Subscription> subscriptions = null;
+		
+		if (status.equals("ALL")) { 
+			PagedList<Subscription> subscriptionsPage = subscriptionService.getSubscriptionsPage(page - 1, pageSize);
+			
+			subscriptions = subscriptionsPage.getList();
+		}
+		else {
+			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
+			PagedList<Subscription> subscriptionsPage = subscriptionService.findByStatus(subscriptionStatus, page - 1, pageSize);
+			subscriptions = subscriptionsPage.getList();
+		}
+		
+		return ok(Json.toJson(subscriptions));
 	}
 	
 	public Result addSubscription() {
@@ -152,16 +207,25 @@ public class SubscriptionController extends Controller {
 				
 		Logger.info("Subscription Filter: " + status);
 		
+		int pageSize = conf.getInt("page.size");
+		
 		List<Subscription> subscriptions = null;
+		PagedList<Subscription> subscriptionsPage = null;
 		if (status.equals("ALL")) {
-			subscriptions = subscriptionService.findAll();
+			
+			subscriptionsPage = subscriptionService.getSubscriptionsPage(0, pageSize);
+			
+			//subscriptions = subscriptionsPage.getList();
 		}
 		else {
 			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
-			subscriptions = subscriptionService.findByStatus(subscriptionStatus);
+			 subscriptionsPage = subscriptionService.findByStatus(subscriptionStatus, 0, pageSize);
+			 //int numberOfPages = subscriptionsPage.getTotalPageCount();
+			 //subscriptions = subscriptionsPage.getList();
+			 
 		}		
 		
-		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscriptions Filtered", subscriptions)));
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", subscriptionsPage.getList(), 1, subscriptionsPage.getTotalPageCount())));
 		
 	}
 	

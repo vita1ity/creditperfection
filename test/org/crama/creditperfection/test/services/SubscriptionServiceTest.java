@@ -204,9 +204,9 @@ public class SubscriptionServiceTest {
 				new SubscriptionBuilder().id(1l).build(),
 				new SubscriptionBuilder().id(2l).build());
 		
-		when(subscriptionRepositoryMock.findByStatus(SubscriptionStatus.ACTIVE)).thenReturn(testSubscriptions);
+		when(subscriptionRepositoryMock.findByStatus(SubscriptionStatus.ACTIVE, 1, 10).getList()).thenReturn(testSubscriptions);
 		
-		List<Subscription> activeSubscriptions = subscriptionService.findByStatus(SubscriptionStatus.ACTIVE);
+		List<Subscription> activeSubscriptions = subscriptionService.findByStatus(SubscriptionStatus.ACTIVE, 1, 10).getList();
 		
 		assertTrue(activeSubscriptions.size() == 3);
 		int i = 0;
@@ -215,7 +215,7 @@ public class SubscriptionServiceTest {
 			++i;
 		}
 		
-		verify(subscriptionRepositoryMock, times(1)).findByStatus(SubscriptionStatus.ACTIVE);
+		verify(subscriptionRepositoryMock, times(1)).findByStatus(SubscriptionStatus.ACTIVE, 1, 10);
 		
 	}
 	

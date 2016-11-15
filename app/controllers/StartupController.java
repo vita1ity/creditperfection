@@ -21,6 +21,7 @@ import scala.concurrent.duration.Duration;
 import scheduler.CreditCardChargeJob;
 import services.ProductService;
 import services.RoleService;
+import services.SubscriptionService;
 import services.UserService;
 
 @Singleton
@@ -33,6 +34,7 @@ public class StartupController {
 	private ProductService productService;
 	
 	private RoleService roleService;
+	
 	
 	
 	@Inject
