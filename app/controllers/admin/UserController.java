@@ -119,6 +119,7 @@ public class UserController extends Controller {
 	    	Logger.error("User with id " + user.getId() + " is not found");
 	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User with id " + user.getId() + " is not found")));
 	    }
+	    userService.updateInfo(userDB, user);
 	    userService.update(userDB);
 	    
 	    return ok(Json.toJson(new MessageResponse("SUCCESS", "User was edited successfully")));

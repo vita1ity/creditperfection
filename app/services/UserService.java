@@ -107,6 +107,16 @@ public class UserService {
 	    
 	}
 	
+	public void updateInfo(User userDB, User user) {
+		userDB.setActive(user.getActive());
+		userDB.setAddress(user.getAddress());
+		userDB.setCity(user.getCity());
+		userDB.setEmail(user.getEmail());
+		userDB.setFirstName(user.getFirstName());
+		userDB.setLastName(user.getLastName());
+		userDB.setState(user.getState());
+		userDB.setZip(user.getZip());
+	}
 	
 	//FOR TESTTING
 	
@@ -131,5 +141,7 @@ public class UserService {
 		}
 		
 	}
+
+	
 	
 }

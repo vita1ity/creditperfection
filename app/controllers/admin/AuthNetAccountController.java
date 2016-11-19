@@ -81,6 +81,8 @@ public class AuthNetAccountController extends Controller {
 			return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to Merchant Account")));
 		}
 		
+		Logger.info("account: " + account);
+		
 		List<ValidationError> errors = authNetAccountService.validate(account);
     	if (errors != null) {
     		
@@ -93,6 +95,7 @@ public class AuthNetAccountController extends Controller {
 	    			account.getId() + " is not found")));
 	    }
     	
+    	authNetAccountService.updateInfo(accountDB, account);
     	authNetAccountService.update(accountDB);
 		
 		return ok(Json.toJson(new MessageResponse("SUCCESS", "Merchant Account was edited successfully")));

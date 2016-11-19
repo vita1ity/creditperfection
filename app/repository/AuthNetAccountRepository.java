@@ -20,4 +20,6 @@ public interface AuthNetAccountRepository {
 
 	boolean delete(AuthNetAccount account);
 
+	List<AuthNetAccount> getEnabled();
+
 }

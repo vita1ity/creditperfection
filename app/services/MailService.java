@@ -48,7 +48,7 @@ public class MailService {
        
     }
     
-    public void sendCancelSubscriptionNotification(User user) {
+   public void sendCancelSubscriptionNotification(User user) {
     	final String to = conf.getString("email.support");
     	
         final String subject = "Subscription Cancellation Notification";

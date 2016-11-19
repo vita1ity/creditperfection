@@ -2,6 +2,9 @@ package org.crama.creditperfection.test.controllers.admin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static play.inject.Bindings.bind;
 import static play.mvc.Http.Status.BAD_REQUEST;
@@ -29,6 +32,7 @@ import controllers.admin.UserController;
 import errors.ValidationError;
 import models.SecurityRole;
 import models.User;
+import play.Configuration;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.Json;
 import play.mvc.Http.RequestBuilder;
@@ -52,6 +56,9 @@ public class UserControllerTest extends ControllerTestBase {
 	@Mock
 	private RoleService roleServiceMock;
 	
+	@Mock
+	private Configuration confMock;
+	
 	@InjectMocks
 	private UserController userController;
 	
@@ -73,6 +80,7 @@ public class UserControllerTest extends ControllerTestBase {
 												.build(),
 												testUser);  
 		
+		when(confMock.getInt(Mockito.anyString())).thenReturn(10);
 		when(userServiceMock.getAll()).thenReturn(allUsers);		
 		when(userServiceMock.findByEmail(testUser.getEmail())).thenReturn(testUser);
 		when(userServiceMock.getById(testUser.getId())).thenReturn(testUser);
@@ -109,6 +117,8 @@ public class UserControllerTest extends ControllerTestBase {
 		assertTrue("The second user was not found", contentAsString(result).contains(secondUser.getFirstName()));
 		assertTrue("The third user was not found", contentAsString(result).contains(thirdUser.getFirstName()));
 
+		verify(confMock, times(1)).getInt(Mockito.anyString());
+		
 	}
 	
 	@Test

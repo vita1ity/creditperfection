@@ -18,7 +18,6 @@ import models.enums.SubscriptionStatus;
 import play.Configuration;
 import play.Logger;
 import repository.SubscriptionRepository;
-import utils.Tokener;
 
 @Singleton
 public class SubscriptionService {

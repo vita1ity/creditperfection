@@ -111,6 +111,7 @@ public class CreditCardController extends Controller {
 	    			creditCard.getId() + " is not found")));
 	    }
 	    
+	    creditCardService.updateInfo(creditCardDB, creditCard);
 	    creditCardService.update(creditCardDB);
 	        	
 	    return ok(Json.toJson(new MessageResponse("SUCCESS", "Credit Card was edited successfully")));

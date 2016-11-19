@@ -15,8 +15,14 @@ $(document).ready(function() {
 		var description = $(this).closest('.modal-content').find('.description').val();
 		var loginId = $(this).closest('.modal-content').find('.login-id').val();
 		var transactionKey = $(this).closest('.modal-content').find('.transaction-key').val();
+		var isEnabled = false;
+		if ($(this).closest('.modal-content').find('.is-enabled').is(':checked')) {
+			isEnabled = true;
+		}
 		
-		var accountJSON = {name: name, description: description, loginId: loginId, transactionKey: transactionKey};
+		console.log("isEnabled: " + isEnabled);
+		
+		var accountJSON = {name: name, description: description, loginId: loginId, transactionKey: transactionKey, isEnabled: isEnabled};
 		
 		var form = $(this).closest('.modal-content');
 		
@@ -62,6 +68,7 @@ $(document).ready(function() {
 	    	$('.description:last').val(description);
 	    	$('.login-id:last').val(loginId);
 	    	$('.transaction-key:last').val(transactionKey);
+	    	$('.is-enabled').val(isEnabled);
 	    	
 			
 		}).fail (function(err) {
@@ -84,8 +91,13 @@ $(document).ready(function() {
 		var description = $(this).closest('.edit-form').find('.description').val();
 		var loginId = $(this).closest('.edit-form').find('.login-id').val();
 		var transactionKey = $(this).closest('.edit-form').find('.transaction-key').val();
+		var isEnabled = false;
+		if ($(this).closest('.edit-form').find('.is-enabled').is(':checked')) {
+			isEnabled = true;
+		}
 		
-		var accountJSON = {id: id, name: name, description: description, loginId: loginId, transactionKey: transactionKey};
+		console.log("isEnabled:" + isEnabled);
+		var accountJSON = {id: id, name: name, description: description, loginId: loginId, transactionKey: transactionKey, isEnabled: isEnabled};
 		
 		var form = $(this).closest('.edit-form');
 		

@@ -74,7 +74,7 @@ $(document).ready(function() {
 	    		}
 	    	});
 	    	$('.zip:last').val(zip);
-	    	$('.active:last').prop("checked", false);
+	    	$('.is-active:last').prop("checked", false);
 	    	
 	    	
 	    	
@@ -106,7 +106,7 @@ $(document).ready(function() {
 		var form = $(this).closest('.edit-form');
 		
 		var active = false;
-		if ($(this).closest('.edit-form').find('[name="active"]').is(':checked')) {
+		if ($(this).closest('.edit-form').find('[name="is-active"]').is(':checked')) {
 			console.log('checked');
 			active = true;
 		}
@@ -245,10 +245,10 @@ $(document).ready(function() {
 					
 					$(obj).find('.zip').val(zip);
 					if (active) {
-						$(obj).find('.active').prop("checked", true);
+						$(obj).find('.is-active').prop("checked", true);
 					}
 					else {
-						$(obj).find('.active').prop("checked", false);
+						$(obj).find('.is-active').prop("checked", false);
 					}
 				}
 		    	

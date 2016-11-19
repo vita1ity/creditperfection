@@ -1,17 +1,10 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import com.avaje.ebean.Model;
-
-import errors.ValidationError;
 
 @Entity
 public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> {
@@ -31,6 +24,8 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 	 private String transactionKey;
 	 
 	 private boolean isLastUsed;
+	 
+	 private boolean isEnabled;
 	 
 	 public AuthNetAccount() {
 		 
@@ -88,12 +83,19 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 	public void setIsLastUsed(boolean isLastUsed) {
 		this.isLastUsed = isLastUsed;
 	}
-	 
+
+	public boolean getIsEnabled() {
+		return isEnabled;
+	}
+
+	public void setIsEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 
 	@Override
 	public String toString() {
 		return "AuthorizeNetAccount [id=" + id + ", name=" + name + ", description=" + description + ", loginId="
-				+ loginId + ", transactionKey=" + transactionKey + "]";
+				+ loginId + ", transactionKey=" + transactionKey + "isLAstUsed = " + isLastUsed + ", isEnabled = " + isEnabled + "]";
 	}
 	 
 

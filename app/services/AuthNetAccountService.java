@@ -61,5 +61,18 @@ public class AuthNetAccountService {
 	public boolean delete(AuthNetAccount account) {
 		return authRepository.delete(account);		
 	}
+
+	public List<AuthNetAccount> getEnabled() {
+		
+		return authRepository.getEnabled();
+	}
+
+	public void updateInfo(AuthNetAccount accountDB, AuthNetAccount account) {
+		accountDB.setDescription(account.getDescription());
+		accountDB.setIsEnabled(account.getIsEnabled());
+		accountDB.setLoginId(account.getLoginId());
+		accountDB.setName(account.getName());
+		accountDB.setTransactionKey(account.getTransactionKey());
+	}
 	
 }

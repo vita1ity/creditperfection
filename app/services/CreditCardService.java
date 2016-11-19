@@ -15,6 +15,7 @@ import forms.CreditCardForm;
 import models.AuthNetAccount;
 import models.CreditCard;
 import models.Transaction;
+import models.User;
 import models.enums.CardType;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
@@ -43,7 +44,7 @@ import repository.CreditCardRepository;
 
 @Singleton
 public class CreditCardService {
-
+	
 	@Inject
 	private Configuration conf;
 
@@ -59,6 +60,7 @@ public class CreditCardService {
 		if (creditCardForm.getId() != null) {
 			creditCard.setId(Long.parseLong(creditCardForm.getId()));
 		}
+		
 		creditCard.setName(creditCardForm.getName());
 		creditCard.setCardType(CardType.valueOf(creditCardForm.getCardType()));
 		creditCard.setDigits(creditCardForm.getDigits());
@@ -71,6 +73,15 @@ public class CreditCardService {
 		return creditCard;
 	}
 
+	public void updateInfo(CreditCard creditCardDB, CreditCard creditCard) {
+		creditCardDB.setName(creditCard.getName());
+		creditCardDB.setCardType(creditCard.getCardType());
+		creditCardDB.setDigits(creditCard.getDigits());
+		creditCardDB.setCvv(creditCard.getCvv());
+		creditCardDB.setExpDate(creditCard.getExpDate());
+	}
+	
+	
 	public List<CreditCard> getAll() {
 		return creditCardRepository.getAll();
 	}
@@ -80,7 +91,10 @@ public class CreditCardService {
 	}
 
 	public AuthNetAccount chooseMerchantAccount() {
-		List<AuthNetAccount> authNetAccounts = authNetAccountService.getAll();
+		
+		List<AuthNetAccount> authNetAccounts = authNetAccountService.getEnabled();
+		
+		
 		if (authNetAccounts.size() == 0) {
 
 			String loginId = conf.getString("authorise.net.login.id");
@@ -135,7 +149,7 @@ public class CreditCardService {
 
 		AuthNetAccount account = chooseMerchantAccount();
 
-		Logger.info("Account: " + account);
+		Logger.info("Choosen Account: " + account);
 
 		try {
 			//Common code to set for all requests
@@ -320,6 +334,8 @@ public class CreditCardService {
 	public boolean delete(CreditCard creditCard) {
 		return creditCardRepository.delete(creditCard);
 	}
+
+	
 
 
 }

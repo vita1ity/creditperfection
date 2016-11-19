@@ -1,5 +1,7 @@
 package org.crama.creditperfection.test.services;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -7,8 +9,6 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.avaje.ebean.PagedList;
 
 import errors.ValidationError;
 import forms.SubscriptionForm;
@@ -204,9 +206,9 @@ public class SubscriptionServiceTest {
 				new SubscriptionBuilder().id(1l).build(),
 				new SubscriptionBuilder().id(2l).build());
 		
-		when(subscriptionRepositoryMock.findByStatus(SubscriptionStatus.ACTIVE, 1, 10).getList()).thenReturn(testSubscriptions);
+		when(subscriptionRepositoryMock.findByStatus(SubscriptionStatus.ACTIVE, 0, 10).getList()).thenReturn(testSubscriptions);
 		
-		List<Subscription> activeSubscriptions = subscriptionService.findByStatus(SubscriptionStatus.ACTIVE, 1, 10).getList();
+		List<Subscription> activeSubscriptions = subscriptionService.findByStatus(SubscriptionStatus.ACTIVE, 0, 10).getList();
 		
 		assertTrue(activeSubscriptions.size() == 3);
 		int i = 0;
@@ -215,7 +217,7 @@ public class SubscriptionServiceTest {
 			++i;
 		}
 		
-		verify(subscriptionRepositoryMock, times(1)).findByStatus(SubscriptionStatus.ACTIVE, 1, 10);
+		verify(subscriptionRepositoryMock, times(1)).findByStatus(SubscriptionStatus.ACTIVE, 0, 10).getList();
 		
 	}
 	

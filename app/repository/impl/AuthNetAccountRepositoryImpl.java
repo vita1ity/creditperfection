@@ -44,6 +44,12 @@ public class AuthNetAccountRepositoryImpl implements AuthNetAccountRepository {
 		return account.delete();		
 	}
 
+	@Override
+	public List<AuthNetAccount> getEnabled() {
+		List<AuthNetAccount> accountList = find.where().eq("isEnabled", true).findList();
+		return accountList;
+	}
+
 	
 	
 }

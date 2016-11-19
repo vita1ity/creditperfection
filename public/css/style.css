@@ -378,4 +378,10 @@ img {
 	cursor: pointer;
 }
 
+.is-enabled, .is-active {
+	margin-top: 5px;
+    width: 20px;
+    height: 20px;
+}
+
 
