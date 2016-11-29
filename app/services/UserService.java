@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import com.avaje.ebean.PagedList;
 
 import errors.ValidationError;
+import forms.UserSearchForm;
 import models.User;
 import repository.UserRepository;
 import utils.EmailValidator;
@@ -122,14 +123,14 @@ public class UserService {
 	
 	public void generateUsers(int numberOfUsers) {
 		
-		for (int i = 0; i < numberOfUsers; i++) {
+		for (int i = 0; i < numberOfUsers / 2; i++) {
 			
 			User user = new User();
 			user.setFirstName("First Name " + i);
 			user.setLastName("Last Name " + i);
 			user.setActive(true);
 			user.setAddress("Address " + i);
-			user.setCity("CIty " + i);
+			user.setCity("City " + i);
 			user.setEmail("Email " + i);
 			user.setPassword("Password" + i);
 			user.setState("AK");
@@ -140,6 +141,34 @@ public class UserService {
 			
 		}
 		
+		for (int i = numberOfUsers / 2; i < numberOfUsers; i++) {
+			
+			User user = new User();
+			user.setFirstName("John " + i);
+			user.setLastName("Smith " + i);
+			user.setActive(true);
+			user.setAddress("Address " + i);
+			user.setCity("City " + i);
+			user.setEmail("Email " + i);
+			user.setPassword("Password" + i);
+			user.setState("AK");
+			user.setZip("22222");
+			user.setToken(Tokener.randomString(48));
+			userRepository.save(user);
+			
+		}
+		
+		
+	}
+
+	public PagedList<User> searchByName(String query, int currentPage, int pageSize) {
+		
+		return userRepository.searchByName(query, currentPage, pageSize);
+	}
+
+	public PagedList<User> preciseSearch(UserSearchForm searchForm, int currentPage, int pageSize) {
+		
+		return userRepository.preciseSearch(searchForm, currentPage, pageSize);
 	}
 
 	

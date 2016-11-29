@@ -259,7 +259,8 @@ $(document).ready(function() {
 		
 		var cvv = $(ref).parent().find('[name="cvv"]').val();
 		
-		if(!cvv.match(/^\d+$/)) {
+		
+		if( cvv != "" && !cvv.match(/^\d+$/)) {
 			var cvvField = $(ref).parent().find('[name="cvv"]');
 			cvvField.addClass('error-border');
 			var errorsHtml = $(ref).parent().find('.cvv-error').html();

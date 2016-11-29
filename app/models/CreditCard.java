@@ -43,7 +43,7 @@ public class CreditCard extends Model {
     private YearMonth expDate;
     
     @Column(nullable = false)
-    private int cvv;
+    private Integer cvv;
     
     @JsonIgnore
     @ManyToOne
@@ -109,11 +109,11 @@ public class CreditCard extends Model {
 		this.expDate = expDate;
 	}
 
-	public int getCvv() {
+	public Integer getCvv() {
 		return cvv;
 	}
 
-	public void setCvv(int cvv) {
+	public void setCvv(Integer cvv) {
 		this.cvv = cvv;
 	}
 

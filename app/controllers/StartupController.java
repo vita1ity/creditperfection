@@ -35,11 +35,13 @@ public class StartupController {
 	
 	private RoleService roleService;
 	
+	private UserService userService;
 	
+	private SubscriptionService subscriptionService;
 	
 	@Inject
 	public StartupController(ActorSystem system, CreditCardChargeJob chargeJob, 
-			ProductService productService, RoleService roleService) {
+			ProductService productService, RoleService roleService, UserService userService, SubscriptionService subscriptionService) {
 		
 		Logger.info("Application startup...");
 		
@@ -47,6 +49,11 @@ public class StartupController {
 		this.chargeJob = chargeJob;
 		this.productService = productService;
 		this.roleService = roleService;
+		this.userService = userService;
+		this.subscriptionService = subscriptionService;
+		
+		//this.userService.generateUsers(300);
+		//this.subscriptionService.generateSubscriptions(250);
 		
 		fillDatabase();
 		

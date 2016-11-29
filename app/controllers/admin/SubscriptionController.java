@@ -209,19 +209,15 @@ public class SubscriptionController extends Controller {
 		
 		int pageSize = conf.getInt("page.size");
 		
-		List<Subscription> subscriptions = null;
 		PagedList<Subscription> subscriptionsPage = null;
 		if (status.equals("ALL")) {
 			
 			subscriptionsPage = subscriptionService.getSubscriptionsPage(0, pageSize);
 			
-			//subscriptions = subscriptionsPage.getList();
 		}
 		else {
 			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
 			 subscriptionsPage = subscriptionService.findByStatus(subscriptionStatus, 0, pageSize);
-			 //int numberOfPages = subscriptionsPage.getTotalPageCount();
-			 //subscriptions = subscriptionsPage.getList();
 			 
 		}		
 		

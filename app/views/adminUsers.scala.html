@@ -22,9 +22,172 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 				<div class="col-sm-12 text-center">
 					<span class="btn btn-success center-block add-btn" data-toggle="modal" data-target="#add-user" >Add User</span>
 				</div>
-			</div>			
+			</div>	
 			
-				<div class="panel-group" id="accordion">
+			<div class="row">
+	           	 <div class="input-group" id="adv-search">
+	                <input type="text" id="searchInput" class="form-control" placeholder="Search by name or email" />
+	                <div class="input-group-btn">
+	                    <div class="btn-group" role="group">
+	                        <div class="dropdown dropdown-lg">
+	                            <button type="button" class="btn btn-default" id="openSearch" aria-expanded="false"><span class="caret"></span></button>
+	                            <div class="dropdown-menu dropdown-menu-right" id="searchDropdown" role="menu">
+	                            
+	                            <form class="form-horizontal search-form" role="form">
+					      	
+								    <h3 class="text-center title">Precise Search:</h3>
+								    
+								    <div class="row form-group">
+								    
+								    	<div class="col-sm-2">
+								    		<label class="control-label" for="user-id">User&nbsp;ID:</label>
+								    	</div>
+								    	
+								    	<div class="col-sm-4">
+								    		<input class="form-input form-control user-id" type="text" name="id" placeholder="User ID" ></br></br>
+								    		<span class="error" id="id-error"></span>
+								    		
+								    	</div>
+								    	
+								    	<div class="col-sm-2">
+											<label class="control-label" for="state-filter">State&nbsp;Filter:</label>
+										</div>	
+										<div class="col-sm-4">
+											<select name="state-filter" class="form-input form-control state-filter" >
+												<option value="0" selected>Both Active and Inactive</option>
+										    	<option value="1">Only Active</option>
+										    	<option value="2">Only Inactive</option>
+										    </select>
+										</div>
+										
+								    </div>
+								    
+								    
+								    <div class="row form-group">
+								    
+								    	<div class="col-sm-2">
+								    		<label class="control-label" for="firstName">First&nbsp;Name:</label>
+								    	</div>
+								    	
+								    	<div class="col-sm-4">
+									    	<input class="form-input form-control first-name" type="text" name="firstName" placeholder="First Name" >
+									    	
+									    </div>
+									    
+									    <div class="col-sm-2">
+									    	<label class="control-label" for="lastName">Last&nbsp;Name:</label>
+									    </div>
+									    
+									    <div class="col-sm-4">
+									    	<input class="form-input form-control last-name" type="text" name="lastName" placeholder="Last Name" >
+									    	
+									    </div>
+									    
+								    </div>
+								    <div class="row form-group">
+								    
+								    	<div class="col-sm-2">
+								    		<label class="control-label" for="email">Email:</label>
+								    	</div>
+								    
+								    	<div class="col-sm-4">
+									    	<input class="form-input form-control email" type="email" name="email" placeholder="Email" ></br></br>
+									    	<span class="error" id="email-error"></span>
+									    	
+									    </div>
+									    
+									    <div class="col-sm-2">
+									    	<label class="control-label" for="address">Address:</label>
+									    </div>
+									    
+									    <div class="col-sm-4">
+									    	<input class="form-input form-control address" type="text" name="address" placeholder="Address" >
+									    	
+									    </div>
+								    	
+									 </div>
+									    
+								    <div class="row form-group">   
+								     
+									    
+									    <div class="col-sm-2">
+									    	<label class="control-label" for="city">City:</label>
+									    </div>
+									    
+									    <div class="col-sm-4">
+									    	<input class="form-input form-control city" type="text" name="city" placeholder="City">
+									    </div>
+									    
+									    <div class="col-sm-2">
+									    	<label class="control-label" for="state">State:</label>
+									    </div>
+								    
+									    <div class="col-sm-4">
+										    <select name="state" class="form-input form-control state" >
+										    	<option value=""></option>
+										        @for(state <- states) {
+										        	<option value="@state.getCode">@state.getName</option>
+												}	
+										    </select>
+										    
+										</div>
+										
+									    
+									    </div>
+									    
+									    <div class="row form-group">  
+									    
+									    	
+											<div class="col-sm-2">
+												<label class="control-label" for="zip">Zip:</label>
+											</div>
+											
+										    <div class="col-sm-4">
+											    <input class="form-input form-control zip" type="text" name="zip" placeholder="Zip Code"></br></br>
+											    <span class="error" id="zip-error"></span>
+										    </div>
+										    
+										    
+											
+									    </div>
+									    <hr class="separator">
+									    
+									     <div class="row form-group">  
+										    <div class="col-sm-12 text-center">
+										    	<button class="btn btn-success" id="preciseSearch" data-url="@admin.routes.UserController.preciseSearchUser()"
+										    		>Search <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+										    	<a class="user-page-link" id="clearForm">Clear form</a>
+											</div>
+										</div>
+									    
+	                            	</form>
+	                            	
+	                                
+	                            </div>
+	                        </div>
+	                        <button type="button" id="searchUser" class="btn btn-success" data-url="@admin.routes.UserController.searchUser()">
+	                        	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+	                        </button>
+	                    </div>
+	                </div>
+	            
+	          </div>
+	          
+	          
+	        </div>
+			
+			<div class="row search-results hidden">
+				<div class="col-sm-12 ">
+					<h4 class="search-result-text"></h4>
+					<a class="user-page-link" id="view-all" data-url="@admin.routes.UserController.viewAll()">View all users</a>
+				</div>
+			</div>
+			
+			<div class="clear">
+			</div>
+					
+			
+		    <div class="panel-group" id="accordion">
 				
 				@for((u, index) <- users.zipWithIndex) {
 				

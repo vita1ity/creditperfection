@@ -5,6 +5,7 @@ import java.util.List;
 import com.avaje.ebean.PagedList;
 import com.google.inject.ImplementedBy;
 
+import forms.UserSearchForm;
 import models.SecurityRole;
 import models.User;
 import repository.impl.UserRepositoryImpl;
@@ -25,5 +26,9 @@ public interface UserRepository {
 	boolean delete(User user);
 
 	PagedList<User> getUsersPage(int page, int pageSize);
+
+	PagedList<User> searchByName(String query, int currentPage, int pageSize);
+
+	PagedList<User> preciseSearch(UserSearchForm searchForm, int currentPage, int pageSize);
 
 }

@@ -110,7 +110,6 @@ function updatePagination(urlBase, pageStr, numberOfPages) {
 		var pageUrl = urlBase + (startDisplayPage + 10) + "";
 		pager += "<li class=\"next pager_nav pager_item\" data-page=\"" + pageUrl + "\"><a>Next 10</a></li>\n";
 	}
-	console.log("PAGER: " + pager);
 	$("#pagination").html(pager);
 	
 }

@@ -36,6 +36,9 @@ POST   /admin/users/edit	              controllers.admin.UserController.editUser
 POST   /admin/users/delete	              controllers.admin.UserController.deleteUser
 POST   /admin/users/add		              controllers.admin.UserController.addUser
 GET	   /admin/users/get-page			  controllers.admin.UserController.getUsers(page: java.lang.Integer)
+POST   /admin/users/search				  controllers.admin.UserController.searchUser
+GET    /admin/users/view-all			  controllers.admin.UserController.viewAll
+POST   /admin/users/precise-search		  controllers.admin.UserController.preciseSearchUser
 
 GET    /admin/products                    controllers.admin.ProductController.products
 POST   /admin/products/edit		          controllers.admin.ProductController.editProduct
@@ -46,7 +49,7 @@ GET    /admin/credit-cards                controllers.admin.CreditCardController
 POST   /admin/credit-cards/edit      	  controllers.admin.CreditCardController.editCreditCard
 POST   /admin/credit-cards/delete         controllers.admin.CreditCardController.deleteCreditCard
 POST   /admin/credit-cards/add	          controllers.admin.CreditCardController.addCreditCard
-GET    /admin/credit-cards/get-user-credit-cards        controllers.admin.CreditCardController.getUserCreditCards
+GET    /admin/credit-cards/get-user-credit-cards        controllers.admin.CreditCardController.getUserCreditCards	
 
 
 GET    /admin/transactions                			controllers.admin.TransactionController.transactions

@@ -12,13 +12,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
+import forms.UserSearchForm;
 import models.SecurityRole;
 import models.User;
 import models.enums.State;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
+import models.json.PagedObjectResponse;
 import play.Configuration;
 import play.Logger;
+import play.cache.CacheApi;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -44,9 +47,15 @@ public class UserController extends Controller {
 	
 	@Inject
 	private Configuration conf;
+	
+	@Inject
+	private CacheApi cache;
 
 	//users	
 	public Result users() {
+		
+		session().remove("query");
+		cache.remove("search.form");
 		
 		String email = session().get("email");
 		User user = userService.findByEmail(email);
@@ -73,7 +82,6 @@ public class UserController extends Controller {
 			}
 		}
 		
-		
 		int currentPage = 1;
 		
 		List<User> users = usersPage.getList();
@@ -87,12 +95,38 @@ public class UserController extends Controller {
 			return badRequest(Json.toJson(new MessageResponse("ERROR", "Invalid page value")));
 		}
 		
+		String query = session().get("query");
+		UserSearchForm searchForm = cache.get("search.form");
+		Logger.info("query: " + query);
+		Logger.info("search form: " + searchForm);
+		
 		int pageSize = conf.getInt("page.size");
-		PagedList<User> usersPage = userService.getUsersPage(page - 1, pageSize);
 		
-		List<User> users = usersPage.getList();
+		PagedList<User> usersPage = null;
+		if (query != null) {
+			usersPage = userService.searchByName(query, page - 1, pageSize);
+		}
+		else if (searchForm != null) {
+			usersPage = userService.preciseSearch(searchForm, page - 1, pageSize);
+		}
+		else {
+			usersPage = userService.getUsersPage(page - 1, pageSize);
+		}
 		
-		return ok(Json.toJson(users));
+		
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", usersPage.getList(), page, usersPage.getTotalPageCount())));
+	}
+	
+	public Result viewAll() {
+		
+		session().remove("query");
+		cache.remove("search.form");
+		
+		int pageSize = conf.getInt("page.size");
+		
+		PagedList<User> usersPage = userService.getUsersPage(0, pageSize);
+		
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", usersPage.getList(), 1, usersPage.getTotalPageCount())));
 	}
 	
 	@BodyParser.Of(BodyParser.Json.class)
@@ -179,5 +213,51 @@ public class UserController extends Controller {
         
         return ok(Json.toJson(new ObjectCreatedResponse("SUCCESS", "User was created successfully", user.getId())));
 
+	}
+	
+	public Result searchUser() {
+		
+		DynamicForm form = formFactory.form().bindFromRequest();
+		
+		String query = form.get("query");
+		
+		session().put("query", query);
+		
+		if (query == null) {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", "Please enter search criteria")));
+		}
+		
+		int pageSize = conf.getInt("page.size");
+		PagedList<User> searchResults = userService.searchByName(query, 0, pageSize);
+		
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", searchResults.getList(), 1, searchResults.getTotalPageCount())));
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public Result preciseSearchUser() {
+		
+		JsonNode json = request().body().asJson();
+		UserSearchForm searchForm = null;
+		try {
+			searchForm = Json.fromJson(json, UserSearchForm.class);
+		} 
+		catch (RuntimeException e) {
+			Logger.error("Cannot parse JSON to UserSearchForm.");
+	        return badRequest(Json.toJson(new MessageResponse("ERROR", "Cannot parse JSON to search form")));
+		}
+		
+	    List<ValidationError> errors = searchForm.validate();
+	    if (errors.size() != 0) {
+	    	Logger.error(errors.toString());
+	    	return badRequest(Json.toJson(errors));
+	    }
+		
+	    cache.set("search.form", searchForm);
+	    	    	
+		int pageSize = conf.getInt("page.size");
+		PagedList<User> searchResults = userService.preciseSearch(searchForm, 0, pageSize);
+		
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", searchResults.getList(), 1, searchResults.getTotalPageCount())));
+	    		
 	}
 }
