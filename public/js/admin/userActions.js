@@ -2,23 +2,27 @@ var deleteUserId = '';
 var userPanel = new Object();
 
 $(document).ready(function() {
-	
+		
 	  calculateDropdownSize();
-	  
 
-	  $(window).resize(function(){ // Adjusting position and size upon resizing window.
+	  $(window).resize(function(){
 		  
 		  calculateDropdownSize();
 	  });
 	  
 	  function calculateDropdownSize() {
 		  
-		  var containerWidth = $('#adv-search').width(); 
+		  var containerWidth = $('#adv-search').prop("clientWidth"); 
+		  
+		  var contWidth = $('#adv-search').width();
+		  
 		  $('#searchDropdown').width(containerWidth);
 		 
 		  var extraWidth = $('#searchDropdown').outerWidth();
 		  
 		  $('#searchDropdown').width(containerWidth - (extraWidth - containerWidth));
+		  
+		  
 	  }
 	
 	
@@ -451,6 +455,7 @@ $(document).ready(function() {
 			console.error(err);
 			processErrors(err, form);
 			
+			
 		});
 		
 		
@@ -459,6 +464,7 @@ $(document).ready(function() {
 	$(document).on('click', '#openSearch', function(e) {
 		
 		$("#searchDropdown").slideToggle();
+		e.stopPropagation(); 
 		
 	});
 	
@@ -469,6 +475,18 @@ $(document).ready(function() {
 		$(this).closest('form').find("input").val("");
 		
 	});
+	
+	var $userAccordion = $('#userAccordion');
+	$userAccordion.on('show.bs.collapse','.collapse', function() {
+		
+	    $userAccordion.find('.collapse.in').collapse('hide');
+	});
+	
+	$(document).click(function(){
+		$("#searchDropdown").slideUp();
+	});
+
+	
 	
 	
 });
