@@ -22,6 +22,7 @@ import scheduler.CreditCardChargeJob;
 import services.ProductService;
 import services.RoleService;
 import services.SubscriptionService;
+import services.TransactionService;
 import services.UserService;
 
 @Singleton
@@ -39,9 +40,11 @@ public class StartupController {
 	
 	private SubscriptionService subscriptionService;
 	
+	private TransactionService transactionService;
+	
 	@Inject
 	public StartupController(ActorSystem system, CreditCardChargeJob chargeJob, 
-			ProductService productService, RoleService roleService, UserService userService, SubscriptionService subscriptionService) {
+			ProductService productService, RoleService roleService, UserService userService, SubscriptionService subscriptionService, TransactionService transactionService) {
 		
 		Logger.info("Application startup...");
 		
@@ -51,9 +54,11 @@ public class StartupController {
 		this.roleService = roleService;
 		this.userService = userService;
 		this.subscriptionService = subscriptionService;
+		this.transactionService = transactionService;
 		
 		//this.userService.generateUsers(300);
 		//this.subscriptionService.generateSubscriptions(250);
+		//this.transactionService.generateTransactions(250);
 		
 		fillDatabase();
 		

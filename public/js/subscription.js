@@ -42,27 +42,170 @@ $(document).ready(function() {
 		
 		e.preventDefault();
 		
-		var url = $(this).data("url");
+		var url = $(this).data('url');
+		var cancelUrl = $(this).data('cancel-url');
+		
 		
 		$.ajax({
 			
-	        type: "POST",
+	        type: "GET",
 	        url: url,
 	        dataType: 'json'
 		
 	    }).done (function(data) {
 	    	
-	    	showSuccessAlert(data.message);
-	    	$('#cancelSubscription').modal('toggle');
+	    	if (!data.statement) {
+	    		//propose discount to user
+	    		$('#cancelSubscription').modal('toggle');
+	    		$('#freeWeek').modal('toggle');
+	    	}
+	    	else {
+	    		
+	    		sendCancelRequest($('#cancelSubscription'), cancelUrl);
+	    	}
+	    	
 	    
 	    }).fail (function(err) {
+	    	
 	    	console.log(err);
 	    	showErrorAlert(err.responseJSON.errorMessage);
 	    	$('#cancelSubscription').modal('toggle');
+	    	
 	    });
+		
 	});
 	
+	$(document).on('click', '#freeWeekCancel', function (e) {
+		
+		$('#freeWeek').modal('toggle');
+		$('#freeMonth').modal('toggle');
+	});
+	
+	$(document).on('click', '#freeMonthCancel', function (e) {
+		
+		$('#freeMonth').modal('toggle');
+		$('#yearDiscount').modal('toggle');
+	});
+	
+	$(document).on('click', '#yearDiscountCancel', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data("url");
+		
+		sendCancelRequest($('#yearDiscount'), url);
+		
+		
+	});
+	
+	$(document).on('click', '#acceptFreeWeekDiscount', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		
+		$.ajax({
+			
+	        type: 'POST',
+	        url: url,
+	        dataType: 'json'
+		
+	    }).done (function(data) {
+	    	
+	    	$('#freeWeek').modal('toggle');
+	    	showSuccessAlert(data.message);
+	    	
+	    
+	    }).fail (function(err) {
+	    	
+	    	console.log(err);
+	    	showErrorAlert(err.responseJSON.errorMessage);
+	    	$('#freeWeek').modal('toggle');
+	    	
+	    });
+		
+	});
+	
+	$(document).on('click', '#acceptFreeMonthDiscount', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		
+		$.ajax({
+			
+	        type: 'POST',
+	        url: url,
+	        dataType: 'json'
+		
+	    }).done (function(data) {
+	    	
+	    	$('#freeMonth').modal('toggle');
+	    	showSuccessAlert(data.message);
+	    	
+	    
+	    }).fail (function(err) {
+	    	
+	    	console.log(err);
+	    	showErrorAlert(err.responseJSON.errorMessage);
+	    	$('#freeMonth').modal('toggle');
+	    	
+	    });
+		
+	});
+	
+	$(document).on('click', '#acceptYearDiscount', function (e) {
+		
+		e.preventDefault();
+		
+		var url = $(this).data('url');
+		
+		$.ajax({
+			
+	        type: 'POST',
+	        url: url,
+	        dataType: 'json'
+		
+	    }).done (function(data) {
+	    	
+	    	$('#yearDiscount').modal('toggle');
+	    	showSuccessAlert(data.message);
+	    	
+	    
+	    }).fail (function(err) {
+	    	
+	    	console.log(err);
+	    	showErrorAlert(err.responseJSON.errorMessage);
+	    	$('#yearDiscount').modal('toggle');
+	    	
+	    });
+		
+	});
+	
+	
 });
+
+
+
+
+function sendCancelRequest(modal, url) {
+	$.ajax({
+		
+        type: "POST",
+        url: url,
+        dataType: 'json'
+	
+    }).done (function(data) {
+    	
+    	showSuccessAlert(data.message);
+    	$(modal).modal('toggle');
+    
+    }).fail (function(err) {
+    	console.log(err);
+    	showErrorAlert(err.responseJSON.errorMessage);
+    	$(modal).modal('toggle');
+    });
+}
 
 function clearErrors() {
 	

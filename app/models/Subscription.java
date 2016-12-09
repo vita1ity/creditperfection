@@ -3,14 +3,18 @@ package models;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import forms.SubscriptionForm;
 import models.enums.SubscriptionStatus;
@@ -41,6 +45,10 @@ public class Subscription extends Model {
 	
 	@Column(nullable = false)
 	private LocalDateTime lastChargeDate;
+	
+	@JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "subscription")
+    private Discount discount;
 	
 	public long getId() {
 		return id;
@@ -96,6 +104,15 @@ public class Subscription extends Model {
 
 	public void setLastChargeDate(LocalDateTime lastChargeDate) {
 		this.lastChargeDate = lastChargeDate;
+	}
+
+	
+	public Discount getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Discount discount) {
+		this.discount = discount;
 	}
 
 	public Subscription() {

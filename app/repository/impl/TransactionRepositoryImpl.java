@@ -5,7 +5,9 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import com.avaje.ebean.Model.Finder;
+import com.avaje.ebean.PagedList;
 
+import models.Subscription;
 import models.Transaction;
 import repository.TransactionRepository;
 
@@ -40,6 +42,12 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 	public boolean delete(Transaction transaction) {
 		return transaction.delete();
 		
+	}
+
+	@Override
+	public PagedList<Transaction> getTransactionsPage(int page, int pageSize) {
+		PagedList<Transaction> pagedList = find.findPagedList(page, pageSize);
+		return pagedList;
 	}
 	
 }

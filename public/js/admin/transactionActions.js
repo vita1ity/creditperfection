@@ -391,4 +391,112 @@ $(document).ready(function() {
 		
 	});
 	
+	
+	$(document).on('click', '.pager_item', function (e) {
+		e.preventDefault();
+		var url = $(this).data("page");
+		
+		var res = url.split("=");
+		var urlBase = res[0] + "=";
+		var page = res[1];
+		
+		$.ajax({
+	        url:url,
+	        type: 'GET',
+	        dataType: 'json'
+	        	
+		}).done (function(data) {
+			
+			console.log(data);
+			
+			var counter = 0;
+
+			var transactions = data.object;
+			
+			//show transactions for the selected page
+			$('.panel').each(function(i, obj) {
+				
+				var transaction = transactions[counter];
+				
+				if ($(obj).hasClass('hidden')) {
+					
+					console.log('hidden panel');
+				}
+				else if (transaction == null) {
+					$(obj).hide();
+				}
+				else {
+					
+					$(obj).show();
+					
+					var id = transaction.id;
+					var amount = transaction.amount;
+					var transactionId = transaction.transactionId;
+					var status = transaction.status;
+					
+					//user properties
+					var userId = transaction.user.id;
+					var firstName = transaction.user.firstName;
+					var lastName = transaction.user.lastName;
+					var userId = transaction.user.id;
+					var email = transaction.user.email;
+					
+					//credit card properties
+					var cardId = transaction.creditCard.id;
+					var cardName = transaction.creditCard.name;
+					var cardType = transaction.creditCard.cardType;
+					var cardNumber = transaction.creditCard.digits;
+					var expDate = transaction.creditCard.expDate;
+					var cvv = transaction.creditCard.cvv;
+					
+					//product properties
+					var productId = transaction.product.id;
+					var productName = transaction.product.name;
+					var productPrice = transaction.product.price;
+					var productSalePrice = transaction.product.salePrice;
+					
+					
+					$(obj).find('.name').text(firstName + ' ' + lastName + ' (card: ' + cardNumber + ') - ' + productName);
+					
+					$(obj).find('.transactionId').text(id);
+					
+					$(obj).find('.user-id').text(userId);
+					$(obj).find('.first-name').text(firstName);
+					$(obj).find('.last-name').text(lastName);
+					$(obj).find('.email').text(email);
+					
+					$(obj).find('.card-id').text(cardId);
+					$(obj).find('.card-name').text(cardName);
+					$(obj).find('.card-type').text(cardType);
+					$(obj).find('.card-number').text(cardNumber);
+					$(obj).find('.exp-date').text(expDate);
+					$(obj).find('.cvv').text(cvv);
+
+					$(obj).find('.product-id').text(productId);
+					$(obj).find('.product-name').text(productName);
+					$(obj).find('.product-price').text(productPrice);
+					$(obj).find('.sale-price').text(productSalePrice);
+					
+					$(obj).find('.status').text(status);
+					$(obj).find('.amount').text(amount);
+					$(obj).find('.authorizeNetTransactionId').text(transactionId);
+					
+					++counter;
+				}
+		    	
+			});
+			
+			//update pagination
+			var numberOfPages = data.totalPageCount;
+			updatePagination(urlBase, page, numberOfPages);
+			
+			
+		}).fail (function(err) {
+		    console.error(err);
+		       
+		});
+		
+	});
+	
+	
 });

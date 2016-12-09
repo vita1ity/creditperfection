@@ -1,6 +1,7 @@
 @import models.enums.TransactionStatus
 @(allTransactions: java.util.List[models.Transaction], allUsers: java.util.List[models.User], 
-	allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.TransactionStatus])
+	allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.TransactionStatus], 
+	numberOfPages: java.lang.Integer, displayedPages: Array[Int], currentPage: java.lang.Integer)
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +33,7 @@
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse" class="panel-title-text">
 					        	<span class="index">0</span>. 
-					        	DEFAULT</a>
+					        	<span class="name">DEFAULT</span></a>
 					      </h4>
 					    </div>
 					    <div id="collapse" class="panel-collapse collapse">
@@ -97,7 +98,7 @@
 					      <h4 class="panel-title">
 					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse@index" class="panel-title-text">
 					        	<span class="index">@(index + 1)</span>. 
-					        	@t.getUser.getFirstName @t.getUser.getLastName (card: @t.getCreditCard.getDigits) - @t.getProduct.getName</a>
+					        	<span class="name">@t.getUser.getFirstName @t.getUser.getLastName (card: @t.getCreditCard.getDigits) - @t.getProduct.getName</span></a>
 					      </h4>
 					    </div>
 					    <div id="collapse@index" class="panel-collapse collapse">
@@ -159,6 +160,50 @@
 				
 				}
 			</div>    
+		
+			<!-- PAGINATION -->
+
+			<input id="numOfPages" type="hidden" name="pages" value="@numberOfPages">
+			<input id="currentPage" type="hidden" name="currentPage" value="@currentPage">
+			<input id="startDisplayPage" type="hidden" name="startDisplayPage" value="${displayedPages[0]}">
+			<input id="pageUrl" type="hidden" name="pageUrl" value="@admin.routes.TransactionController.getTransactions(currentPage)">			
+			
+			<div class="text-center">
+			    <ul id="pagination" class="pagination">
+			    
+			    	@if(numberOfPages > 10 && currentPage > 10){
+			    		<li class="prev pager_nav pager_item" data-page="@admin.routes.TransactionController.getTransactions(currentPage - currentPage % 10 - 9)"><a>Prev 10</a></li>
+			    	}
+			    	
+			    	@if(currentPage != 1){
+			    		<c:url value="/scheduler/get-schedule?page=${currentPage - 1}" var="page"/>
+			    		<li class="prev pager_nav pager_item" data-page="@admin.routes.TransactionController.getTransactions(currentPage - 1)"><a>Prev</a></li>
+			    	}
+			    	
+			    	
+			    	@for(i <- displayedPages) {
+			    	
+			    		@if(currentPage == i) {
+			    			<li class="active"><a>@i</a></li>
+			    		} else {
+			    			<li class="pager_item" data-page="@admin.routes.TransactionController.getTransactions(i)"><a>@i</a></li>
+			    		}
+			    	
+			    	}
+			    	 
+					
+					
+					@if(currentPage < numberOfPages) {
+						
+						<li class="next pager_nav pager_item" data-page="@admin.routes.TransactionController.getTransactions(currentPage + 1)"><a>Next</a></li>
+					}
+					
+					@if((currentPage / 10) < (numberOfPages / 10)) {
+						<li class="next pager_nav pager_item" data-page="@admin.routes.TransactionController.getTransactions(currentPage + 1 + (10 - currentPage % 10))"><a>Next 10</a></li>
+					}
+					
+				</ul>
+			 </div>
 		
 		</div>
 		

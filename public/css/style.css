@@ -485,7 +485,9 @@ img {
     
 }
 
-
+select > option:hover {
+	background-color: #b91773;
+}
 
 
 

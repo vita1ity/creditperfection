@@ -32,7 +32,7 @@
 	      		<li ><a href="@routes.CreditReportController.reportPage">Report</a></li>
 	      		@if(session.get("email")!=null){
 		      		<li class="dropdown">
-				        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Account
+				        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Subscription
 				        <span class="caret"></span></a>
 				        <ul class="dropdown-menu">
 				          <li><a href="@routes.SubscriptionController.upgradeSubscriptionPage">Upgrade Subscription</a></li>
@@ -166,23 +166,6 @@
         </div>
     </div>
 </div>
+@subscriptionModals.render()
 
 
-<div class="modal fade" id="cancelSubscription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <strong>Confirm Cancel Subscription</strong>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to cancel the subscription?</p>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                <a id="confirmCancelSubscription" class="btn btn-danger btn-ok" 
-                	data-url="@routes.SubscriptionController.cancelSubscription()" >Yes</a>
-            </div>
-        </div>
-    </div>
-</div>

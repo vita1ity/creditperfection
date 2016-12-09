@@ -6,7 +6,7 @@
 GET     /                           controllers.SignUpFlowController.index(login: java.lang.Boolean ?= null)
 POST	/							controllers.SignUpFlowController.prePopulateRegisterForm
 POST    /register                   controllers.SignUpFlowController.register
-GET     /registertoken/:token       controllers.SignUpFlowController.registerToken(token: String)
+GET     /register-token/:token       controllers.SignUpFlowController.registerToken(token: String)
 POST    /choose-product             controllers.SignUpFlowController.chooseProduct()
 POST    /payment-details            controllers.SignUpFlowController.processPaymentAndGetReport
 
@@ -18,7 +18,7 @@ GET     /report                     controllers.CreditReportController.reportPag
 
 POST    /login                      controllers.LoginController.login
 GET     /logout                     controllers.LoginController.logout
-POST    /forgotpassword             controllers.LoginController.forgotPassword
+POST    /forgot-password             controllers.LoginController.forgotPassword
 
 # user
 
@@ -26,6 +26,12 @@ POST    /forgotpassword             controllers.LoginController.forgotPassword
 GET		/subscription/upgrade		controllers.SubscriptionController.upgradeSubscriptionPage
 POST	/subscription/upgrade		controllers.SubscriptionController.upgradeSubscription
 POST	/subscription/cancel		controllers.SubscriptionController.cancelSubscription
+
+#discount
+GET		/discount/check					controllers.DiscountController.checkUserHasDiscount
+POST    /discount/apply/free-week		controllers.DiscountController.applyFreeWeekDiscount
+POST    /discount/apply/free-month		controllers.DiscountController.applyFreeMonthDiscount
+POST    /discount/apply/year-discount	controllers.DiscountController.applyYearDiscount
 
 #payment
 GET 	/payment					controllers.PaymentController.paymentPage
@@ -57,6 +63,7 @@ POST   /admin/transactions/edit         			controllers.admin.TransactionControll
 POST   /admin/transactions/delete			        controllers.admin.TransactionController.deleteTransaction
 POST   /admin/transactions/add			            controllers.admin.TransactionController.addTransaction
 POST   /admin/transactions/refund			        controllers.admin.TransactionController.refundTransaction
+GET    /admin/subscriptions/get-page			    controllers.admin.TransactionController.getTransactions(page: java.lang.Integer)
 
 GET    /admin/auth-net-accounts                     controllers.admin.AuthNetAccountController.authNetAccounts
 POST   /admin/auth-net-accounts/add         		controllers.admin.AuthNetAccountController.addAuthNetAccount

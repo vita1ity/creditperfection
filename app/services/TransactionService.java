@@ -1,17 +1,23 @@
 package services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.avaje.ebean.PagedList;
+
 import forms.TransactionForm;
 import models.CreditCard;
 import models.Product;
+import models.Subscription;
 import models.Transaction;
 import models.User;
+import models.enums.SubscriptionStatus;
 import models.enums.TransactionStatus;
 import repository.TransactionRepository;
+import utils.Tokener;
 
 @Singleton
 public class TransactionService {
@@ -73,4 +79,35 @@ public class TransactionService {
 		return transactionRepository.delete(transaction);
 		
 	}
+
+	public PagedList<Transaction> getTransactionsPage(int page, int pageSize) {
+		return transactionRepository.getTransactionsPage(page, pageSize);
+	}
+	
+	
+	//FOR TESTTING
+	
+	public void generateTransactions(int numberOfTransactions) {
+		
+		for (int i = 0; i < numberOfTransactions; i++) {
+			
+			CreditCard creditCard = creditCardService.getById(1);
+			Product product = productService.getById(1);
+			User user = userService.getById(i + 2);
+			
+			Transaction transaction = new Transaction();
+			transaction.setCreditCard(creditCard);
+			transaction.setProduct(product);
+			transaction.setUser(user);
+			transaction.setTransactionId(Tokener.randomString(10));
+			transaction.setStatus(TransactionStatus.SUCCESSFUL);
+			transaction.setAmount(19.94);
+			
+			transactionRepository.save(transaction);
+			
+			
+		}
+		
+	}
+	
 }

@@ -2,6 +2,7 @@ package repository;
 
 import java.util.List;
 
+import com.avaje.ebean.PagedList;
 import com.google.inject.ImplementedBy;
 
 import models.Transaction;
@@ -19,5 +20,7 @@ public interface TransactionRepository {
 	void update(Transaction transaction);
 
 	boolean delete(Transaction transaction);
+
+	PagedList<Transaction> getTransactionsPage(int page, int pageSize);
 
 }

@@ -494,10 +494,12 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 			
 			var counter = 0;
 			
+			var subscriptions = data.object;
+			
 			//show subscriptions for the selected page
 			$('.panel').each(function(i, obj) {
 				
-				var subscription = data[counter];
+				var subscription = subscriptions[counter];
 				
 				if ($(obj).hasClass('hidden')) {
 					
@@ -575,8 +577,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 			});
 			
 			//update pagination
-			
-			var numberOfPages = $("#numOfPages").val();
+			var numberOfPages = data.totalPageCount;
 			updatePagination(urlBase, page, numberOfPages);
 			
 			

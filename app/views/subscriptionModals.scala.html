@@ -1,0 +1,78 @@
+<div class="modal fade" id="cancelSubscription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong>Confirm Cancel Subscription</strong>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel the subscription?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                <a id="confirmCancelSubscription" data-url="@routes.DiscountController.checkUserHasDiscount()"
+                data-cancel-url="@routes.SubscriptionController.cancelSubscription()" class="btn btn-danger btn-ok" >Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="freeWeek" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong>Additional FREE Week Trial Offer</strong>
+            </div>
+            <div class="modal-body">
+           		<p>Our customers are important for us and we would like to propose you another FREE week, so you can try all the benefits of our service. 
+                <p>Don't miss this wonderful opportunity.</p>
+                <p>Do you still want to cancel your subscription?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="acceptFreeWeekDiscount" data-url="@routes.DiscountController.applyFreeWeekDiscount()">No</button>
+                <a id="freeWeekCancel" class="btn btn-danger btn-ok"  >Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="freeMonth" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong>FREE Month Service Usage Offer</strong>
+            </div>
+            <div class="modal-body">
+           		<p>We really want you to stay with us so we would like to propose you one month of FREE usage of our service. 
+                <p>Whole month credit card reports absolutely FREE of charge.</p>
+                <p>Are you still ready to cancel your subscription?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="acceptFreeMonthDiscount" data-url="@routes.DiscountController.applyFreeMonthDiscount()">No</button>
+                <a id="freeMonthCancel" class="btn btn-danger btn-ok"  >Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="yearDiscount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong>A year service ONLY for 10$ a month</strong>
+            </div>
+            <div class="modal-body">
+           		<p>We are ready to offer you whole year service usage ONLY for 10$ a month!</p> 
+                <p>Please think twice. This is our last proposition.</p>
+                <p>Cancel subscription anyway?</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="acceptYearDiscount" data-url="@routes.DiscountController.applyYearDiscount()">No</button>
+                <a id="yearDiscountCancel" data-url="@routes.SubscriptionController.cancelSubscription()" class="btn btn-danger btn-ok"  >Yes</a>
+            </div>
+        </div>
+    </div>
+</div>

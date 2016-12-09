@@ -94,19 +94,19 @@ public class SubscriptionController extends Controller {
 		
 		int pageSize = conf.getInt("page.size");
 		List<Subscription> subscriptions = null;
+		PagedList<Subscription> subscriptionsPage = null;
 		
 		if (status.equals("ALL")) { 
-			PagedList<Subscription> subscriptionsPage = subscriptionService.getSubscriptionsPage(page - 1, pageSize);
-			
+			subscriptionsPage = subscriptionService.getSubscriptionsPage(page - 1, pageSize);
 			subscriptions = subscriptionsPage.getList();
 		}
 		else {
 			SubscriptionStatus subscriptionStatus = SubscriptionStatus.valueOf(status);
-			PagedList<Subscription> subscriptionsPage = subscriptionService.findByStatus(subscriptionStatus, page - 1, pageSize);
+			subscriptionsPage = subscriptionService.findByStatus(subscriptionStatus, page - 1, pageSize);
 			subscriptions = subscriptionsPage.getList();
 		}
 		
-		return ok(Json.toJson(subscriptions));
+		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", subscriptions, page, subscriptionsPage.getTotalPageCount())));
 	}
 	
 	public Result addSubscription() {

@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDate;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -52,11 +53,54 @@ public class MailService {
     	final String to = conf.getString("email.support");
     	
         final String subject = "Subscription Cancellation Notification";
-        final String text = "User " + user.getFirstName() + " " + user.getLastName() + " "
-        		+ "has submitted request about cancellation of his subscription.\n"
+        final String text = "User " + user.getFirstName() + " " + user.getLastName() + " with id: " + user.getId()
+        		+ " has submitted request about cancellation of his subscription.\n"
         		+ "Please confirm the request in the admin area";
         
-        sendEmail(user.getEmail(), to, subject, text);
+        sendEmail(to, to, subject, text);
+	}
+    
+   public void sendTransactionFailedNotification(User user) {
+	    final String from = conf.getString("email.support");
+   	
+        final String subject = "Subscription Cannot be Renewed";
+        final String text = "Your subscription at the service https://secure.creditperfection.org/ cannot be renewed due to transaction failure.\n\n "
+       		+ "Please verify your credit card information in the system";
+		sendEmail(from, user.getEmail(), subject, text);
+	}
+   
+   
+    public void sendFreeWeekTrialAccepted(User user, LocalDate endDate) {
+	    final String from = conf.getString("email.support");
+  	
+       final String subject = "One week for FREE";
+       final String text = "Congradulations! You have accepted an offer for a FREE week report at the service https://secure.creditperfection.org/.\n\n "
+      		+ "The offer will expire on: " + endDate;
+		sendEmail(from, user.getEmail(), subject, text);
+	}
+   
+    
+    public void sendFreeMonthTrialAccepted(User user, LocalDate endDate) {
+		
+    	final String from = conf.getString("email.support");
+      	
+        final String subject = "One month for FREE";
+        final String text = "Congradulations! You have accepted an offer for a FREE month report at the service https://secure.creditperfection.org/.\n\n "
+       		+ "The offer will expire on: " + endDate;
+ 		sendEmail(from, user.getEmail(), subject, text);
+		
+	}
+    
+	public void sendYearDiscountAccepted(User user, double amount, LocalDate endDate) {
+		
+    	final String from = conf.getString("email.support");
+      	
+        final String subject = "Discount for the WHOLE year";
+        final String text = "Congradulations! You have beed subscribed for a year discount at the service https://secure.creditperfection.org/. "
+        		+ "Starting from the next month you will pay only " + amount + "$ / month\n\n "
+       		+ "The offer will expire on: " + endDate;
+ 		sendEmail(from, user.getEmail(), subject, text);
+		
 	}
     
     private void sendEmail(String from, String to, String subject, String body) {
@@ -104,6 +148,10 @@ public class MailService {
 			
 		}
 	}
+
+	
+
+	
 
 	
 }
