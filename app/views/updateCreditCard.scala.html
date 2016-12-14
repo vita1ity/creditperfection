@@ -1,32 +1,23 @@
 @(creditCard: models.CreditCard, allTypes: Array[models.enums.CardType], months: Array[models.enums.Month], years: Array[models.enums.Year])
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    @head.render
-    <script src="/assets/js/creditCard.js" type="text/javascript"></script>
-    <script src="/assets/js/processPayment.js" type="text/javascript"></script>
+	<meta charset="ISO-8859-1">
+	<title>Update Credit Card</title>
+	@head.render
+	<script src="/assets/js/creditCard.js" type="text/javascript"></script>
 </head>
 <body>
-	
 	<div class="wrapper">
 		@header.render(false)
 		<div class="container-fluid">
 			
-			<h3 class="title text-center"> Credit Card Verification Page</h3>
-			
-			<div id="notification-box">
-				<div class="alert alert-warning">
-					<span id="alert-message"><b>Your subscription cannot be renewed! You are not able to use the service until you renew the subscription. </b></br> 
-					Please verify your credit card information, update it if needed and try to resume the subscription by pressing Update & Process button. </span>	
-				</div>
-		
-		   </div>
-		   
-		   <div id="alert-box" class="bottom-margin">
-		   </div>
-		   	
-		   <form class="form-horizontal update-form card-validation" role="form">
-			    <h4 class="text-center title">Credit Card Info:</h4>
+			<div class="row" id="alert-box">
+			</div>
+			 
+					      
+	      	<form class="form-horizontal update-form card-validation" role="form">
+			    <h3 class="text-center title">Credit Card Info:</h3>
 			    
 			    <input class="cardID" type="hidden" value="@creditCard.getId"/>
 			    
@@ -146,19 +137,23 @@
 			    <hr class="separator">
 			    <div class="row form-group">  
 				    <div class="col-sm-12 text-center">
-				    	<button class="btn btn-success" id="updateAndProcess"
-				    		data-url="@routes.PaymentController.updateAndProcess()"
-				    		data-report-url="@routes.CreditReportController.reportPage()" >Update & Process</button>
+				    	<button class="btn btn-success" id="updateCreditCard"
+				    		data-url="@routes.CreditCardController.updateCreditCard()" >Update Credit Card</button>
 				    	
 					</div>
 				</div>
-			</form> 
-		    
-		    
-	    </div>
-	    <div class="push"></div>
-	    
-    </div>
-    @footer.render()
+			</form>
+					      
+	
+		
+			<div class="push"></div>
+			
+		</div>
+		
+		
+	</div>
+	
+	@footer.render()
+	
 </body>
 </html>

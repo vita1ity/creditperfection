@@ -57,6 +57,8 @@ public class LoginController extends Controller {
             else if (user.getActive() == false && user.getSubscription() != null && 
             		user.getSubscription().getStatus().equals(SubscriptionStatus.CANCELLED)) {
             	
+            	session("email", email);
+                session("name", user.getFirstName());
             	return ok(Json.toJson(new SuccessLoginResponse("SUCCESS", "user", false)));
             }
             else if (user.getActive() == false) {

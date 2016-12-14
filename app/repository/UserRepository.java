@@ -31,4 +31,6 @@ public interface UserRepository {
 
 	PagedList<User> preciseSearch(UserSearchForm searchForm, int currentPage, int pageSize);
 
+	User findByEmailOnlyActive(String email);
+
 }

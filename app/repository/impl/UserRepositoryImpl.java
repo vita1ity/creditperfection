@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import com.avaje.ebean.Model.Finder;
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.PagedList;
 
 import forms.UserSearchForm;
@@ -24,6 +25,14 @@ public class UserRepositoryImpl implements UserRepository {
 	public User findByEmail(String email) {
 		
 		User user = find.where().eq("email", email).findUnique();
+		return user;
+		
+	}
+	
+	@Override
+	public User findByEmailOnlyActive(String email) {
+		
+		User user = find.where().and(Expr.eq("email", email), Expr.eq("active", true)).findUnique();
 		return user;
 		
 	}
@@ -74,10 +83,6 @@ public class UserRepositoryImpl implements UserRepository {
 		String queryStr = "WHERE MATCH (first_name,last_name,email) AGAINST ('" + query + "' IN NATURAL LANGUAGE MODE)";
 	    PagedList<User> resultUsers = find.setQuery(queryStr).findPagedList(currentPage, pageSize);
 		
-	    /*List<User> users = resultUsers.getList();
-		for (User user: users) {
-			Logger.info("Result user: " + user);
-		}*/
 	    
 	    
 		return resultUsers;

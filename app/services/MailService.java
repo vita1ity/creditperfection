@@ -65,8 +65,8 @@ public class MailService {
    	
         final String subject = "Subscription Cannot be Renewed";
         final String text = "Your subscription at the service https://secure.creditperfection.org/ cannot be renewed due to transaction failure.\n\n "
-       		+ "Please verify your credit card information in the system";
-		sendEmail(from, user.getEmail(), subject, text);
+       		+ "Please verify your credit card information in the service. Your subscription will be resumed ones we will be able to process the transaction.\n\n "
+       		+ "You can change your credit card information and try to run the transaction again by login in the site.";
 	}
    
    

@@ -171,6 +171,11 @@ public class UserService {
 		return userRepository.preciseSearch(searchForm, currentPage, pageSize);
 	}
 
+	public User findByEmailOnlyActive(String email) {
+		return userRepository.findByEmailOnlyActive(email);
+		
+	}
+
 	
 	
 }

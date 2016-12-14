@@ -71,27 +71,7 @@ $(document).ready(function() {
 		
 	});
 	
-	function processErrors(err, form) { 
-		for (var i = 0; i < err.responseJSON.length; i++) {
-			var error = err.responseJSON[i];
-			var field = error.field;
-			var errorMessage = error.error;
-			
-			$(form).find('.form-input').each(function(i, obj) {
-				
-				if (field == $(obj).attr('name')) {
-					$(obj).addClass('error-border');
-					var errorsHtml = $(obj).parent().find('.error').html();
-					
-					errorsHtml += errorMessage + "</br>";
-					
-					$(obj).parent().find('.error').html(errorsHtml);
-					
-				}
-			});
-			
-		}
-	}
+	
 	
 	// After Form Submitted Validation of required fields only
 	function validateRequired(e) {

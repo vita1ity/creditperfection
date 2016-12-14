@@ -35,6 +35,11 @@ POST    /discount/apply/year-discount	controllers.DiscountController.applyYearDi
 
 #payment
 GET 	/payment					controllers.PaymentController.paymentPage
+POST	/payment/process			controllers.PaymentController.updateAndProcess
+
+#credit card
+GET		/account/credit-card			controllers.CreditCardController.updateCreditCardPage
+POST	/account/credit-card/update		controllers.CreditCardController.updateCreditCard
 
 # admin
 GET    /admin/users                       controllers.admin.UserController.users

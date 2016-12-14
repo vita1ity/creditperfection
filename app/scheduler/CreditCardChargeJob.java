@@ -94,56 +94,66 @@ public class CreditCardChargeJob implements Runnable {
             		chargeAmount = s.getProduct().getPrice();
             		
             	}
-        		//subscription expired. charge credit card
-        		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(chargeAmount, 
-        				s.getCreditCard());
-        		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
-    	    	if (transactionResponse instanceof MessageResponse) {
         		
-	        		s.setLastChargeDate(LocalDateTime.now());
-	        		
-	        		
-	        		if (s.getStatus().equals(SubscriptionStatus.TRIAL) && (discount == null || !discount.getDiscountType().equals(DiscountType.WEEKLY_DISCOUNT))) {
-	        			s.setStatus(SubscriptionStatus.ACTIVE);	        			
-	        		}
-	        		
-	        		subscriptionService.update(s);
-	        		
-	        		//save transaction
-	        		String transactionId = creditCardService.getTransactionId(response);
-    	    		Transaction transaction = new Transaction(s.getUser(), s.getCreditCard(), s.getProduct(), chargeAmount, 
-    	    				transactionId, TransactionStatus.SUCCESSFUL);
-    	    		
-    	    		Logger.info("Successful transaction: " + transaction);
-    	    		
-    	    		transactionService.save(transaction);
-    	    		
-    	    	}
-    	    	else {
-    	    		
-    	    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
-    	    		
-    	    		
-    	    		//TODO only cancel after second try
-    	    		//subscription cannot be renewed. make user inactive and cancel the subscription
-    	    		User user = s.getUser(); 
-    	    		mailService.sendTransactionFailedNotification(user);
-    	    		user.setActive(false);
-    	    		
-    	    		userService.update(user);
-    	    		
-    	    		s.setStatus(SubscriptionStatus.CANCELLED);
-    	    		
-    	    		subscriptionService.update(s);
-    	    		
-    	    		
-    	    	}
+            	processPayment(s, chargeAmount, discount);
+            	
         	}
         }
         
         
     }
     
-        
+     
+    public boolean processPayment(Subscription s, double chargeAmount, Discount discount) {
+    	
+    	//subscription expired. charge credit card
+		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(chargeAmount, 
+				s.getCreditCard());
+		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+    	if (transactionResponse instanceof MessageResponse) {
+		
+    		s.setLastChargeDate(LocalDateTime.now());
+    		
+    		
+    		if (s.getStatus().equals(SubscriptionStatus.TRIAL) && (discount == null || !discount.getDiscountType().equals(DiscountType.WEEKLY_DISCOUNT))) {
+    			s.setStatus(SubscriptionStatus.ACTIVE);	        			
+    		}
+    		
+    		subscriptionService.update(s);
+    		
+    		//save transaction
+    		String transactionId = creditCardService.getTransactionId(response);
+    		Transaction transaction = new Transaction(s.getUser(), s.getCreditCard(), s.getProduct(), chargeAmount, 
+    				transactionId, TransactionStatus.SUCCESSFUL);
+    		
+    		Logger.info("Successful transaction: " + transaction);
+    		
+    		transactionService.save(transaction);
+    		
+    		return true;
+    		
+    	}
+    	else {
+    		
+    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
+    		
+    		
+    		//TODO only cancel after second try
+    		//subscription cannot be renewed. make user inactive and cancel the subscription
+    		User user = s.getUser(); 
+    		mailService.sendTransactionFailedNotification(user);
+    		user.setActive(false);
+    		
+    		userService.update(user);
+    		
+    		s.setStatus(SubscriptionStatus.CANCELLED);
+    		
+    		subscriptionService.update(s);
+    		
+    		return false;
+    		
+    	}
+    }
+    
     
 }

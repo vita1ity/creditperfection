@@ -39,7 +39,7 @@ public class DeadboltHandlerImpl extends AbstractDeadboltHandler {
 		
 		Logger.info("UserService: " + userService);
 		
-        return CompletableFuture.supplyAsync(() -> Optional.ofNullable(userService.findByEmail(email)),
+        return CompletableFuture.supplyAsync(() -> Optional.ofNullable(userService.findByEmailOnlyActive(email)),
                                              (Executor) executionContextProvider.get());
     }
 
