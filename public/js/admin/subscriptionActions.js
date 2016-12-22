@@ -3,7 +3,11 @@ var subscriptionPanel = new Object();
 
 $(document).ready(function() {
 	
-$(document).on('click', '#confirmAddSubscription', function(e) {
+	$("#subscriptionFilterSelect").select2( {
+		theme: "bootstrap"
+	});
+	
+	$(document).on('click', '#confirmAddSubscription', function(e) {
 		
 		e.preventDefault();
 		
@@ -435,6 +439,13 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	var lastName = subscription.user.lastName;
 		    	var email = subscription.user.email;
 		    	
+		    	var cardId = subscription.creditCard.id;
+				var cardName = subscription.creditCard.name;
+				var cardType = subscription.creditCard.cardType;
+				var cardNumber = subscription.creditCard.digits;
+				var expDate = subscription.creditCard.expDate;
+				var cvv = subscription.creditCard.cvv;
+		    	
 		    	var productId = subscription.product.id;
 		    	var productName = subscription.product.name;
 		    	var productPrice = subscription.product.price;
@@ -464,6 +475,13 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	$('.last-name:last').text(lastName);
 		    	$('.email:last').text(email);
 				
+		    	$('.card-id:last').text(cardId);
+				$('.card-name:last').text(cardName);
+				$('.card-type:last').text(cardType);
+				$('.card-number:last').text(cardNumber);
+				$('.exp-date:last').text(expDate);
+				$('.cvv:last').text(cvv);
+		    	
 		    	$('.product-id:last').text(productId);
 		    	$('.product-name:last').text(productName);
 		    	$('.product-price:last').text(productPrice);

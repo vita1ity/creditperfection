@@ -223,7 +223,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control user-cards" id="user" name="user" class="width5 expiry-field gray-text"
+						    	<select class="form-input form-control user-cards select-box" id="user" name="user" class="width5 expiry-field gray-text"
 						    		data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									<option value="">Select User</option>
@@ -245,7 +245,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control credit-card" id="creditCard" name="creditCard" 
+						    	<select class="form-input form-control credit-card select-box" id="creditCard" name="creditCard" 
 						    		class="width5 expiry-field gray-text" disabled>
 					
 									<option value="">Select Credit Card</option>
@@ -264,7 +264,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control" id="product" name="product" class="width5 expiry-field gray-text">
+						    	<select class="form-input form-control select-box" id="product" name="product" class="width5 expiry-field gray-text">
 					
 									<option value="">Select Product</option>
 									@for((p, i) <- allProducts.zipWithIndex){
@@ -337,7 +337,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control user-cards" id="userTransactionEdit" name="user" class="width5 expiry-field gray-text"
+						    	<select class="form-input form-control user-cards select-box" id="userTransactionEdit" name="user" class="width5 expiry-field gray-text"
 						    		data-url="@admin.routes.CreditCardController.getUserCreditCards()">
 					
 									@for((u, i) <- allUsers.zipWithIndex){
@@ -358,7 +358,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control credit-card" id="creditCardTransactionEdit" name="creditCard" 
+						    	<select class="form-input form-control credit-card select-box" id="creditCardTransactionEdit" name="creditCard" 
 						    		class="width5 expiry-field gray-text" disabled>
 									
 									
@@ -375,7 +375,7 @@
 						    </div>
 						
 						    <div class="col-sm-8">
-						    	<select class="form-input form-control" id="productTransactionEdit" name="product" class="width5 expiry-field gray-text">
+						    	<select class="form-input form-control select-box" id="productTransactionEdit" name="product" class="width5 expiry-field gray-text">
 					
 									@for((p, i) <- allProducts.zipWithIndex){
 										<option value="@p.getId">@p.getId. @p.getName: @p.getPrice</option>
@@ -424,7 +424,7 @@
 						    	<label class="control-label" for="status">Transaction Status:</label>
 						    </div>
 		    				<div class="col-sm-8">
-						    	<select class="form-input form-control" id="statusTransactionEdit" name="status" class="width5 expiry-field gray-text">
+						    	<select class="form-input form-control select-box" id="statusTransactionEdit" name="status" class="width5 expiry-field gray-text">
 					
 									@for((s, i) <- allStatuses.zipWithIndex){
 										<option value="@s">@s</option>

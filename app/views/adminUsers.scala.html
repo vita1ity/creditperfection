@@ -57,11 +57,13 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 											<label class="control-label" for="state-filter">State&nbsp;Filter:</label>
 										</div>	
 										<div class="col-sm-4">
-											<select name="state-filter" class="form-input form-control state-filter" >
-												<option value="0" selected>Both Active and Inactive</option>
-										    	<option value="1">Only Active</option>
-										    	<option value="2">Only Inactive</option>
-										    </select>
+											<div id="stateFilter">
+												<select name="state-filter" class="form-input form-control state-filter select-box" >
+													<option value="0" selected>Both Active and Inactive</option>
+											    	<option value="1">Only Active</option>
+											    	<option value="2">Only Inactive</option>
+											    </select>
+										    </div>
 										</div>
 										
 								    </div>
@@ -127,7 +129,7 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 									    </div>
 								    
 									    <div class="col-sm-4">
-										    <select name="state" class="form-input form-control state" >
+										    <select name="state" class="form-input form-control state select-box" >
 										    	<option value=""></option>
 										        @for(state <- states) {
 										        	<option value="@state.getCode">@state.getName</option>
@@ -276,7 +278,7 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 								    </div>
 							    
 								    <div class="col-sm-4">
-									    <select name="state" class="form-input form-control state" >
+									    <select name="state" class="form-input form-control state select-box" >
 									    	
 									        @for(state <- states) {
 									        	@if(u.getState == state.getCode){
@@ -518,7 +520,7 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 						    </div>
 					    
 						    <div class="col-sm-4">
-							    <select name="state" class="form-input form-control" >
+							    <select name="state" class="form-input form-control select-box" >
 							    	<option value=""></option>
 							        @for(state <- states) {
 										<option value="@state.getCode">@state.getName</option>

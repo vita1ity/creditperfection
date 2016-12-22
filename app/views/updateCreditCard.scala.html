@@ -39,7 +39,7 @@
 					</div>
 					
 					<div class="col-sm-8">
-						<select class="form-input form-control card-type" name="cardType">
+						<select class="form-input form-control card-type select-box" name="cardType">
 							@if(creditCard.getCardType == null){
 					    		<option value="" >Choose Card Type</option>
 					    	}
@@ -89,7 +89,7 @@
 				   	
 				   	<div class="col-sm-4">
 				
-						<select class="form-input form-control month" id="ccmonth" name="month" class="width5 expiry-field gray-text">
+						<select class="form-input form-control month select-box" id="ccmonth" name="month" class="width5 expiry-field gray-text">
 							@if(creditCard.getExpDate == null){
 								<option value="">Month</option>	
 							}
@@ -107,7 +107,7 @@
 						<span class="error" id="monthyear-error"></span>
 					</div>
 					<div class="col-sm-4">
-						<select class="form-input form-control year" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+						<select class="form-input form-control year select-box" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
 							@if(creditCard.getExpDate == null){
 								<option value="">Year</option>
 							}

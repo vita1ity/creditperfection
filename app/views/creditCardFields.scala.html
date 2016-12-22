@@ -16,19 +16,21 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 	
 	<div class="col-sm-4">
-		<select class="form-input form-control card-type payment-input" name="cardType">
-			@if(c.getCardType == null){
-	    		<option value="" >Choose Card Type</option>
-	    	}
-	    	
-	        @for(cardType <- allTypes) {
-	        	@if(c.getCardType != null && c.getCardType.value == cardType.value) {
-	        		<option value="@cardType" selected>@cardType.value</option>
-	        	}else{
-	    			<option value="@cardType">@cardType.value</option>
-	    		}
-			}
-   		 </select>
+		<div id="cardType">
+			<select class="form-input form-control card-type payment-input select-box" name="cardType">
+				@if(c.getCardType == null){
+		    		<option value="" >Choose Type</option>
+		    	}
+		    	
+		        @for(cardType <- allTypes) {
+		        	@if(c.getCardType != null && c.getCardType.value == cardType.value) {
+		        		<option value="@cardType" selected>@cardType.value</option>
+		        	}else{
+		    			<option value="@cardType">@cardType.value</option>
+		    		}
+				}
+	   		 </select>
+   		 </div>
     	<span class="error" id="cardtype-error"></span>
     </div>
     
@@ -45,11 +47,11 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    	 	<span class="error" id="digits-error"></span>
     </div>
     
-    <div class="col-sm-3">
+    <div class="col-sm-2">
 		<label class="control-label" for="cardType">CVV&nbsp;Number:</label>
 	</div>
     
-    <div class="col-sm-3">
+    <div class="col-sm-4">
 		<input class="form-input form-control cvv payment-input" type="text" name="cvv" placeholder="CVV Number" value="@c.getCvv" />
 		<span class="error cvv-error" ></span>
 	</div>
@@ -64,7 +66,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    	
    	<div class="col-sm-2">
 
-		<select class="form-input form-control month payment-input" id="ccmonth" name="month" class="width5 expiry-field gray-text">
+		<select class="form-input form-control month payment-input select-box" id="ccmonth" name="month" class="width5 expiry-field gray-text">
 			@if(c.getExpDate == null){
 				<option value="">Month</option>	
 			}
@@ -82,7 +84,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		<span class="error" id="monthyear-error"></span>
 	</div>
 	<div class="col-sm-2">
-		<select class="form-input form-control year payment-input" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+		<select class="form-input form-control year payment-input select-box" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
 			@if(c.getExpDate == null){
 				<option value="">Year</option>
 			}
@@ -106,7 +108,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	   	
 	   	<div class="col-sm-4">
 	
-			<select class="form-input form-control payment-input" id="ccowner" name="owner" class="width5 expiry-field gray-text">
+			<select class="form-input form-control payment-input select-box" id="ccowner" name="owner" class="width5 expiry-field gray-text">
 				
 				<option value="">Select Card Owner</option>
 				@for((u, i) <- allUsers.zipWithIndex){

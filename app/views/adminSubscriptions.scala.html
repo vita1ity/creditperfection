@@ -31,7 +31,7 @@
 				
 				<p>Subscription Filter:</p>
 				
-				<select class="form-input form-control" id="subscriptionFilterSelect" name="status" 
+				<select class="form-input form-control select-box" id="subscriptionFilterSelect" name="status" 
 		    		class="width5 expiry-field gray-text" data-url="@admin.routes.SubscriptionController.filterSubscriptions()">
 					<option value="ALL">ALL</option>
 					@for((s, i) <- allStatuses.zipWithIndex){

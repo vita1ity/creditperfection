@@ -1,4 +1,9 @@
 $(document).ready(function () {
+	
+	$(".select-box").select2({
+		theme: "bootstrap"
+	});
+	
     var url = window.location;
     $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
     $('ul.nav a').filter(function() {

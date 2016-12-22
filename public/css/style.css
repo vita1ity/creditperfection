@@ -498,9 +498,9 @@ img {
     
 }
 
-select > option:hover {
+/* select > option:hover {
 	background-color: #b91773;
-}
+} */
 
 .bottom-margin {
 	margin-bottom: 80px;
@@ -508,3 +508,24 @@ select > option:hover {
 .margin-top {
 	margin-top: 80px;
 }
+
+/* .select-box > option:hover {
+	background-color: green;
+} */
+	
+/* .select2-highlighted {
+    background-color: #f00;
+    color: #fff;
+}  */
+/* .select2-default {background-color: green;}	
+ .select2-highlighted { background-color: green; }  */
+
+/* .select2-search input { background-color: green; }  */
+
+/* .select-box option:hover {
+	background-color: green;
+} */
+/* .select2-results__option--highlighted[aria-selected] {
+    background-color: green;
+} */
+
