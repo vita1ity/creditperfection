@@ -47,3 +47,13 @@ function showErrorAlert(message) {
 		
 	$('#alert-box').html(alertHtml);
 }
+
+
+function showSmallErrorAlert(message, obj) {
+	var alertHtml = "";
+	alertHtml += "<div class=\"alert alert-small alert-danger\">\n";
+	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
+	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
+		
+	$(obj).html(alertHtml);
+}

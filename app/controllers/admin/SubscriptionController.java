@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
+import exceptions.UserAlreadySubscribedException;
 import forms.SubscriptionForm;
 import models.Product;
 import models.Subscription;
@@ -135,7 +136,12 @@ public class SubscriptionController extends Controller {
 	    	return badRequest(Json.toJson(new MessageResponse("ERROR", "User is already subscribed")));
 	    }
 	
-    	Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
+    	Subscription subscription;
+		try {
+			subscription = subscriptionService.createSubscription(subscriptionForm);
+		} catch (UserAlreadySubscribedException e) {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", e.getMessage())));
+		}
     	
 		subscriptionService.save(subscription);
 		
@@ -159,7 +165,13 @@ public class SubscriptionController extends Controller {
     		Logger.error(errors.toString());
     		return badRequest(Json.toJson(errors));
     	}
-		Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
+    	
+		Subscription subscription;
+		try {
+			subscription = subscriptionService.createSubscription(subscriptionForm);
+		} catch (UserAlreadySubscribedException e) {
+			return badRequest(Json.toJson(new MessageResponse("ERROR", e.getMessage())));
+		}
 		subscriptionService.update(subscription);
 		
 		return ok(Json.toJson(new ObjectResponse("SUCCESS", "Subscription was edited successfully", subscription)));

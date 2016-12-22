@@ -14,6 +14,7 @@ $(document).ready(function() {
 		var name = $(this).closest('.modal-content').find('[name="name"]').val();
 		var price = $(this).closest('.modal-content').find('[name="price"]').val();
 		var salePrice = $(this).closest('.modal-content').find('[name="salePrice"]').val();
+		var trialPeriod = $(this).closest('.modal-content').find('[name="trialPeriod"]').val();
 		
 		var form = $(this).closest('.modal-content');
 		
@@ -21,7 +22,7 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var productJSON =  {'name': name, 'price': price, 'salePrice': salePrice};
+		var productJSON =  {'name': name, 'price': price, 'salePrice': salePrice, 'trialPeriod': trialPeriod};
 		
 		console.log(url);
 		console.log(productJSON);
@@ -63,6 +64,7 @@ $(document).ready(function() {
 	    	
 	    	$('.price').eq(-2).val(price);
 	    	$('.sale-price').eq(-2).val(salePrice);
+	    	$('.trial-period').eq(-2).val(trialPeriod);
 	    	
 	    	
 	    }).fail (function(err) {
@@ -85,6 +87,7 @@ $(document).ready(function() {
 		var name = $(this).closest('.edit-form').find('[name="name"]').val();
 		var price = $(this).closest('.edit-form').find('[name="price"]').val();
 		var salePrice = $(this).closest('.edit-form').find('[name="salePrice"]').val();
+		var trialPeriod = $(this).closest('.edit-form').find('[name="trialPeriod"]').val();
 		
 		var form = $(this).closest('.edit-form');
 		
@@ -92,7 +95,7 @@ $(document).ready(function() {
 			return;
 		}
 		
-		var productJSON =  {'id': id, 'name': name, 'price': price, 'salePrice': salePrice};
+		var productJSON =  {'id': id, 'name': name, 'price': price, 'salePrice': salePrice, 'trialPeriod': trialPeriod};
 		
 		console.log(url);
 		console.log(productJSON);
@@ -214,6 +217,21 @@ $(document).ready(function() {
 			var errorsHtml = $(ref).closest('.validate-product').find('.salePrice-error').html();
 			errorsHtml += "Sale Price should be greater than 0" + "</br>";
 			$(ref).closest('.validate-product').find('.salePrice-error').html(errorsHtml);
+			validated = false;
+		}
+		
+		var trialPeriod = $(ref).closest('.validate-product').find('[name="trialPeriod"]').val();
+		
+		if(!trialPeriod.match(/^-?(\d*\.)?\d*$/)) {
+			var errorsHtml = $(ref).closest('.validate-product').find('.trialPeriod-error').html();
+			errorsHtml += "Trial Period should be numeric value" + "</br>";
+			$(ref).closest('.validate-product').find('.trialPeriod-error').html(errorsHtml);
+			validated = false;
+		}
+		else if (trialPeriod < 0) {
+			var errorsHtml = $(ref).closest('.validate-product').find('.trialPeriod-error').html();
+			errorsHtml += "Trial Period should be greater than 0" + "</br>";
+			$(ref).closest('.validate-product').find('.trialPeriod-error').html(errorsHtml);
 			validated = false;
 		}
 		return validated;

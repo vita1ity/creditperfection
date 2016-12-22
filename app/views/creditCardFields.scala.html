@@ -7,7 +7,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 
 	<div class="col-sm-4">
-		<input class="form-input form-control name " type="text" name="name" placeholder="Card Holder Name" value="@c.getName"/>
+		<input class="form-input form-control name payment-input" type="text" name="name" placeholder="Card Holder Name" value="@c.getName"/>
 		<span class="error" id="name-error"></span>
 	</div>
 	
@@ -16,7 +16,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
 	
 	<div class="col-sm-4">
-		<select class="form-input form-control card-type" name="cardType">
+		<select class="form-input form-control card-type payment-input" name="cardType">
 			@if(c.getCardType == null){
 	    		<option value="" >Choose Card Type</option>
 	    	}
@@ -41,7 +41,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
    	
     <div class="col-sm-4">
-   	 	<input class="form-input form-control digits" type="text" name="digits" placeholder="Card Number" value="@c.getDigits"/>
+   	 	<input class="form-input form-control digits payment-input" type="text" name="digits" placeholder="Card Number" value="@c.getDigits"/>
    	 	<span class="error" id="digits-error"></span>
     </div>
     
@@ -50,7 +50,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	</div>
     
     <div class="col-sm-3">
-		<input class="form-input form-control cvv" type="text" name="cvv" placeholder="CVV Number" value="@c.getCvv" />
+		<input class="form-input form-control cvv payment-input" type="text" name="cvv" placeholder="CVV Number" value="@c.getCvv" />
 		<span class="error cvv-error" ></span>
 	</div>
 	
@@ -64,7 +64,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
    	
    	<div class="col-sm-2">
 
-		<select class="form-input form-control month" id="ccmonth" name="month" class="width5 expiry-field gray-text">
+		<select class="form-input form-control month payment-input" id="ccmonth" name="month" class="width5 expiry-field gray-text">
 			@if(c.getExpDate == null){
 				<option value="">Month</option>	
 			}
@@ -82,7 +82,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 		<span class="error" id="monthyear-error"></span>
 	</div>
 	<div class="col-sm-2">
-		<select class="form-input form-control year" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
+		<select class="form-input form-control year payment-input" id="ccyear" name="year" class="width5 expiry-field gray-text input-separator">
 			@if(c.getExpDate == null){
 				<option value="">Year</option>
 			}
@@ -106,7 +106,7 @@ months: Array[models.enums.Month], years: Array[models.enums.Year])
 	   	
 	   	<div class="col-sm-4">
 	
-			<select class="form-input form-control" id="ccowner" name="owner" class="width5 expiry-field gray-text">
+			<select class="form-input form-control payment-input" id="ccowner" name="owner" class="width5 expiry-field gray-text">
 				
 				<option value="">Select Card Owner</option>
 				@for((u, i) <- allUsers.zipWithIndex){

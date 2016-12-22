@@ -13,6 +13,29 @@ $(document).ready(function() {
 	$( "input" ).on( "input", removeBorder );
 	$( "select" ).on( "click", removeBorder );
 	
+	
+	$('.register-input').keypress(function (e) {
+		if (e.which == 13) {
+			  
+		  console.log("register form enter pressed");
+		
+		  $('.register-form').submit();
+		
+		  return false;  
+		}
+	});
+	
+	$('.payment-input').keypress(function (e) {
+		if (e.which == 13) {
+			  
+		  console.log("payment form enter pressed");
+		
+		  $('.payment-form').submit();
+		
+		  return false;  
+		}
+	});
+	
 	//register new user
 	$(document).on('submit', '.register-form', function (e) {
 		

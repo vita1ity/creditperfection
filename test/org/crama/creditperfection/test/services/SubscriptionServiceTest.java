@@ -18,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.crama.creditperfection.test.builders.CreditCardBuilder;
+import org.crama.creditperfection.test.builders.DiscountBuilder;
 import org.crama.creditperfection.test.builders.ProductBuilder;
 import org.crama.creditperfection.test.builders.SubscriptionBuilder;
 import org.crama.creditperfection.test.builders.SubscriptionFormBuilder;
@@ -30,11 +31,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import errors.ValidationError;
+import exceptions.UserAlreadySubscribedException;
 import forms.SubscriptionForm;
 import models.CreditCard;
+import models.Discount;
 import models.Product;
 import models.Subscription;
 import models.User;
+import models.enums.DiscountType;
 import models.enums.SubscriptionStatus;
 import play.Configuration;
 import play.Logger;
@@ -65,15 +69,15 @@ public class SubscriptionServiceTest {
 	@Mock 
 	private Configuration confMock;
 	
-	@Before
-	public void setUpCreateSubscription_NewSubscription() {
-		
+	private void setUp() {
 		MockitoAnnotations.initMocks(this);
-		
 	}
+	
 	
 	@Test
 	public void testCreateSubscription_NewSubscription() {
+		
+		setUp();
 		
 		User user = new UserBuilder().build();
 		CreditCard creditCard = new CreditCardBuilder().build();
@@ -87,7 +91,13 @@ public class SubscriptionServiceTest {
 		when(creditCardServiceMock.getById(1)).thenReturn(creditCard);
 		when(productServiceMock.getById(1)).thenReturn(product);
 		
-		Subscription subscription = subscriptionService.createSubscription(subscriptionForm);
+		Subscription subscription = null;
+		try {
+			subscription = subscriptionService.createSubscription(subscriptionForm);
+		} catch (UserAlreadySubscribedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Logger.info("Subscription: " + subscription);
 		
@@ -102,15 +112,11 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpCreateSubscription_EditSubscription() {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
 	public void testCreateSubscription_EditSubscription() {
+		
+		setUp();
 		
 		User user = new UserBuilder().build();
 		CreditCard creditCard = new CreditCardBuilder().build();
@@ -129,7 +135,13 @@ public class SubscriptionServiceTest {
 		when(creditCardServiceMock.getById(1)).thenReturn(creditCard);
 		when(productServiceMock.getById(1)).thenReturn(product);
 		
-		Subscription subscriptionResult = subscriptionService.createSubscription(subscriptionForm);
+		Subscription subscriptionResult = null;
+		try {
+			subscriptionResult = subscriptionService.createSubscription(subscriptionForm);
+		} catch (UserAlreadySubscribedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Logger.info("Subscription: " + subscription);
 		
@@ -145,14 +157,10 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpFindById() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-	}
-	
 	@Test
 	public void testFindById() {
+		
+		setUp();
 		
 		Subscription testSubscription = new SubscriptionBuilder().build();
 		
@@ -168,15 +176,11 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpFindByUser() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
 	public void testFindByUser() {
+	
+		setUp();
 		
 		Subscription testSubscription = new SubscriptionBuilder().build();
 		User user = new UserBuilder().build();
@@ -196,17 +200,13 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpFindByStatus() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	//TODO fix test PgedList
 	@Ignore
 	@Test
 	public void testFindByStatus() {
+	
+		setUp();
 		
 		List<Subscription> testSubscriptions = Arrays.asList(
 				new SubscriptionBuilder().build(),
@@ -228,15 +228,11 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpFindExcludingStatus() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
 	public void testFindExcludingStatus() {
+	
+		setUp();
 		
 		List<Subscription> testSubscriptions = Arrays.asList(
 				new SubscriptionBuilder().build(),
@@ -258,15 +254,11 @@ public class SubscriptionServiceTest {
 		
 	}
 	
-	@Before
-	public void setUpFindAll() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
 	public void testFindAll() {
+	
+		setUp();
 		
 		List<Subscription> testSubscriptions = Arrays.asList(
 				new SubscriptionBuilder().build(),
@@ -324,18 +316,14 @@ public class SubscriptionServiceTest {
 		MockitoAnnotations.initMocks(this);
 		
 	}
+	//TODO alreadySubscribed
 	
-	@Before
-	public void setUpCheckExpire_trialAndExpired() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
-	public void testCheckExpire_trialAndExpired() throws Exception {
+	public void testCheckExpire_trialAndExpired() {
 		
-		when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
+		setUp();
+		//when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
 		
 		LocalDateTime today = LocalDateTime.now();
 		LocalDateTime subscriptionDate = today.minusDays(7);
@@ -354,21 +342,17 @@ public class SubscriptionServiceTest {
 		
 		assertTrue(isExpired);
 		
-		verify(confMock, times(1)).getInt("creditperfection.trial.days");
+		//verify(confMock, times(1)).getInt("creditperfection.trial.days");
 		
 	}
 	
-	@Before
-	public void setUpCheckExpire_trialAndNotExpired() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
-	public void testCheckExpire_trialAndNotExpired() throws Exception {
+	public void testCheckExpire_trialAndNotExpired() {
+	
+		setUp();
 		
-		when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
+		//when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
 		
 		LocalDateTime today = LocalDateTime.now();
 		LocalDateTime subscriptionDate = today.minusDays(7).plusHours(1);
@@ -387,21 +371,15 @@ public class SubscriptionServiceTest {
 		
 		assertFalse(isExpired);
 		
-		verify(confMock, times(1)).getInt("creditperfection.trial.days");
+		//verify(confMock, times(1)).getInt("creditperfection.trial.days");
 		
 	}
 	
-	@Before
-	public void setUpCheckExpire_acriveAndExpired() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
-	public void testCheckExpire_activeAndExpired() throws Exception {
-		
-		when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
+	public void testCheckExpire_activeAndExpired() {
+	
+		setUp();
 		
 		LocalDateTime today = LocalDateTime.now();
 		int daysInMonth = today.getMonth().minus(1).length(true);
@@ -423,21 +401,14 @@ public class SubscriptionServiceTest {
 		
 		assertTrue(isExpired);
 		
-		verify(confMock, times(0)).getInt("creditperfection.trial.days");
 		
 	}
 	
-	@Before
-	public void setUpCheckExpire_acriveAndNotExpired() throws Exception {
-		
-		MockitoAnnotations.initMocks(this);
-		
-	}
 	
 	@Test
-	public void testCheckExpire_activeAndNotExpired() throws Exception {
-		
-		when(confMock.getInt("creditperfection.trial.days")).thenReturn(7);
+	public void testCheckExpire_activeAndNotExpired() {
+	
+		setUp();
 		
 		LocalDateTime today = LocalDateTime.now();
 		int daysInMonth = today.getMonth().minus(1).length(true);
@@ -459,7 +430,193 @@ public class SubscriptionServiceTest {
 		
 		assertFalse(isExpired);
 		
-		verify(confMock, times(0)).getInt("creditperfection.trial.days");
+		
+	}
+	
+	@Test
+	public void testCheckExpire_activeWeeklyDiscountExpired() {
+	
+		setUp();
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		LocalDateTime lastChargeDate = today.minusDays(7);
+		
+		Logger.info("today: " + today);
+		Logger.info("lastChargeDate: " + lastChargeDate);
+		
+		Discount discount = new DiscountBuilder().build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.lastChargeDate(lastChargeDate)
+											.discount(discount)
+											.build();
+		
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkExpired(testSubscription);
+		
+		assertTrue(isExpired);
+		
+		
+	}
+	
+	@Test
+	public void testCheckExpire_activeWeeklyDiscountNotExpired() {
+		
+		setUp();
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		LocalDateTime lastChargeDate = today.minusDays(7).plusMinutes(1);
+		
+		Logger.info("today: " + today);
+		Logger.info("lastChargeDate: " + lastChargeDate);
+		
+		Discount discount = new DiscountBuilder().build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.lastChargeDate(lastChargeDate)
+											.discount(discount)
+											.build();
+		
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkExpired(testSubscription);
+		
+		assertFalse(isExpired);
+		
+		
+	}
+	
+	@Test
+	public void testCheckExpire_yearProductExpired() {
+		
+		setUp();
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		int daysInMonth = today.getMonth().minus(1).length(true);
+		LocalDateTime lastChargeDate = today.minusDays(daysInMonth);
+		
+		Logger.info("today: " + today);
+		Logger.info("lastChargeDate: " + lastChargeDate);
+		
+		Discount discount = new DiscountBuilder()
+								.discountType(DiscountType.MONTHLY_DISCOUNT)
+								.build();
+		Product product = new ProductBuilder()
+							.trialPeriod(365)
+							.build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.lastChargeDate(lastChargeDate)
+											.discount(discount)
+											.product(product)
+											.build();
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkExpired(testSubscription);
+		
+		assertTrue(isExpired);
+		
+		
+	}
+	
+	@Test
+	public void testCheckExpire_yearProductNotExpired() {
+		
+		setUp();
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		int daysInMonth = today.getMonth().minus(1).length(true);
+		LocalDateTime lastChargeDate = today.minusDays(daysInMonth).plusMinutes(1);
+		
+		Logger.info("today: " + today);
+		Logger.info("lastChargeDate: " + lastChargeDate);
+		
+		Discount discount = new DiscountBuilder()
+								.discountType(DiscountType.MONTHLY_DISCOUNT)
+								.build();
+		Product product = new ProductBuilder()
+							.trialPeriod(365)
+							.build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.lastChargeDate(lastChargeDate)
+											.discount(discount)
+											.product(product)
+											.build();
+		
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkExpired(testSubscription);
+		
+		assertFalse(isExpired);
+		
+		
+	}
+	
+	@Test
+	public void testCheckTrialEnded_True() {
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		LocalDateTime subscriptionDate = today.minusDays(365);
+		
+		Logger.info("today: " + today);
+		Logger.info("subscriptionDate: " + subscriptionDate);
+		
+		Product product = new ProductBuilder()
+							.trialPeriod(365)
+							.build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.subscriptionDate(subscriptionDate)
+											.product(product)
+											.build();
+		
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkTrialEnded(testSubscription);
+		
+		assertTrue(isExpired);
+		
+		
+	}
+	
+	@Test
+	public void testCheckTrialEnded_False() {
+		
+		LocalDateTime today = LocalDateTime.now();
+		
+		LocalDateTime subscriptionDate = today.minusDays(365).plusMinutes(1);
+		
+		Logger.info("today: " + today);
+		Logger.info("subscriptionDate: " + subscriptionDate);
+		
+		Product product = new ProductBuilder()
+							.trialPeriod(365)
+							.build();
+		Subscription testSubscription = new SubscriptionBuilder()
+											.status(SubscriptionStatus.ACTIVE)
+											.subscriptionDate(subscriptionDate)
+											.product(product)
+											.build();
+		
+		
+		Logger.info("testSubscription: " + testSubscription);
+		
+		boolean isExpired = subscriptionService.checkTrialEnded(testSubscription);
+		
+		assertFalse(isExpired);
+		
 		
 	}
 		

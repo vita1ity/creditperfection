@@ -23,7 +23,7 @@ public class ProductService {
 		product.setName(productForm.getName());
 		product.setPrice(Double.parseDouble(productForm.getPrice()));
 		product.setSalePrice(Double.parseDouble(productForm.getSalePrice()));
-		
+		product.setTrialPeriod(Integer.parseInt(productForm.getTrialPeriod()));
 		return product;
 	}
 	
@@ -49,6 +49,13 @@ public class ProductService {
 
 	public boolean delete(Product product) {
 		return productRepository.delete(product);
+	}
+
+	public void editProduct(Product productDB, Product product) {
+		productDB.setName(product.getName());
+		productDB.setPrice(product.getPrice());
+		productDB.setSalePrice(product.getSalePrice());
+		productDB.setTrialPeriod(product.getTrialPeriod());
 	}
 	
 }

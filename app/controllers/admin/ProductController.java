@@ -90,10 +90,7 @@ public class ProductController extends Controller {
 		if (productDB == null) {
 			return badRequest(Json.toJson(new MessageResponse("ERROR", "Product with id " + product.getId() + " is not found")));
 		}
-		
-		productDB.setName(product.getName());
-		productDB.setPrice(product.getPrice());
-		productDB.setSalePrice(product.getSalePrice());
+		productService.editProduct(productDB, product);
 		
 		productService.update(productDB);
 			    

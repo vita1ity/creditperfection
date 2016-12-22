@@ -9,11 +9,15 @@ import javax.inject.Singleton;
 
 import com.avaje.ebean.PagedList;
 
+import exceptions.UserAlreadySubscribedException;
 import forms.SubscriptionForm;
 import models.CreditCard;
+import models.Discount;
 import models.Product;
 import models.Subscription;
 import models.User;
+import models.enums.DiscountStatus;
+import models.enums.DiscountType;
 import models.enums.SubscriptionStatus;
 import play.Configuration;
 import play.Logger;
@@ -37,11 +41,15 @@ public class SubscriptionService {
 	@Inject 
 	private ProductService productService;
 	
-	public Subscription createSubscription(SubscriptionForm subscriptionForm) {
+	public Subscription createSubscription(SubscriptionForm subscriptionForm) throws UserAlreadySubscribedException {
 
 		User user = userService.getById(Long.parseLong(subscriptionForm.getUserId()));
 		CreditCard creditCard = creditCardService.getById(Long.parseLong(subscriptionForm.getCardId()));
 		Product product = productService.getById(Long.parseLong(subscriptionForm.getProductId()));
+		
+		if (user.getSubscription() != null) {
+			throw new UserAlreadySubscribedException("User is already subscribed");
+		}
 		
 		SubscriptionStatus status = null;
 		if (subscriptionForm.getStatus() != null) {
@@ -102,14 +110,36 @@ public class SubscriptionService {
     	LocalDateTime subscriptionDate = s.getSubscriptionDate();    	
     	LocalDateTime today = LocalDateTime.now();
     	
-    	if (s.getStatus().equals(SubscriptionStatus.TRIAL)) {
+    	int trialPeriod = s.getProduct().getTrialPeriod();
+    	
+    	//get number of days in this month
+    	int daysInMonth = lastChargeDate.getMonth().length(true);
+    	
+    	Discount discount = s.getDiscount();
+    	
+		if (discount != null && discount.getDiscountStatus().equals(DiscountStatus.ACTIVE) && discount.getDiscountType().equals(DiscountType.WEEKLY_DISCOUNT)) {
+		
+
+	    	long daysBetween = ChronoUnit.DAYS.between(lastChargeDate, today);
+			
+	    	if (daysBetween >= 7) {
+        		return true;
+        	}
+        	else {
+        		return false;
+        	}
+			
+			
+		}
+		else if (s.getStatus().equals(SubscriptionStatus.TRIAL) && trialPeriod < daysInMonth) {
     		
         	long daysBetween = ChronoUnit.DAYS.between(subscriptionDate, today);
         	
         	Logger.info("daysBetween: " + daysBetween);
-        	int daysInTrial = conf.getInt("creditperfection.trial.days");
         	
-        	if (daysBetween >= daysInTrial) {
+        	//int daysInTrial = conf.getInt("creditperfection.trial.days");
+        	
+        	if (daysBetween >= trialPeriod) {
         		return true;
         	}
         	else {
@@ -119,9 +149,6 @@ public class SubscriptionService {
     	else {    	
     	
 	    	long daysBetween = ChronoUnit.DAYS.between(lastChargeDate, today);
-	    	
-	    	//get number of days in this month
-	    	int daysInMonth = lastChargeDate.getMonth().length(true);
 	    	
 	    	Logger.info("daysBetween: " + daysBetween + "days in current month: " + daysInMonth);
 	    	
@@ -134,6 +161,26 @@ public class SubscriptionService {
     	}
     }
 
+	public boolean checkTrialEnded(Subscription s) {
+		
+		LocalDateTime subscriptionDate = s.getSubscriptionDate();
+		LocalDateTime today = LocalDateTime.now();
+		
+		int trialPeriod = s.getProduct().getTrialPeriod();
+		
+		long daysBetween = ChronoUnit.DAYS.between(subscriptionDate, today);
+		
+		Logger.info("Check trial ended: Days between: " + daysBetween + ", trial period: " +  trialPeriod);
+		
+		if (daysBetween >= trialPeriod) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+		
+	}
+	
 	public PagedList<Subscription> getSubscriptionsPage(int page, int pageSize) {
 		return subscriptionRepository.getSubscriptionsPage(page, pageSize);
 	}

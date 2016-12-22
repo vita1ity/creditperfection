@@ -15,6 +15,7 @@ public class ProductForm extends Model {
     private String name;
     private String price;
     private String salePrice;
+    private String trialPeriod;
 	
     public String getId() {
 		return id;
@@ -47,6 +48,15 @@ public class ProductForm extends Model {
 	public void setSalePrice(String salePrice) {
 		this.salePrice = salePrice;
 	}
+	
+
+	public String getTrialPeriod() {
+		return trialPeriod;
+	}
+
+	public void setTrialPeriod(String trialPeriod) {
+		this.trialPeriod = trialPeriod;
+	}
 
 	public List<ValidationError> validate() {
 		
@@ -56,6 +66,7 @@ public class ProductForm extends Model {
 		fieldErrorMap.put(new ValidationError("name", "Please enter Product Name"), name);
 		fieldErrorMap.put(new ValidationError("price", "Please enter Product Price"), price);
 		fieldErrorMap.put(new ValidationError("salePrice", "Please enter Product Sale Price"), salePrice);
+		fieldErrorMap.put(new ValidationError("trialPeriod", "Please enter Product Trial Period"), trialPeriod);
 		
 		for (Map.Entry<ValidationError, String> entry: fieldErrorMap.entrySet()) {
 			String field = entry.getValue(); 
@@ -85,11 +96,22 @@ public class ProductForm extends Model {
 			errors.add(new ValidationError("salePrice", "Product sale price should be numeric value"));
 		}
 		
+		int trialPeriodInt = 0;
+		try {
+			trialPeriodInt = Integer.parseInt(trialPeriod);
+		}
+		catch(NumberFormatException e) {
+			errors.add(new ValidationError("trialPeriod", "Product trial period should be numeric value"));
+		}
+		
 		if (doublePrice < 0) {
 			errors.add(new ValidationError("price", "Product price should be greater than 0"));
 		}
 		if (doubleSalePrice < 0) {
 			errors.add(new ValidationError("salePrice", "Product sale price should be greater than 0"));
+		}
+		if (trialPeriodInt < 0) {
+			errors.add(new ValidationError("trialPeriod", "Product trial period should be positive value"));
 		}
 		
 		if (errors.size() != 0) {

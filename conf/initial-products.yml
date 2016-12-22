@@ -3,3 +3,12 @@
  name: 1 Bureau Report with 1 Bureau Monitoring + Identity Protection
  price: 19.95
  salePrice: 1
+ trialPeriod: 7
+ 
+- &bureauReport2 !!models.Product
+ id: 2 
+ name: 1 Bureau Report
+ price: 19.99
+ salePrice: 9.99
+ trialPeriod: 365
+  

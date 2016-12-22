@@ -32,6 +32,9 @@ public class Product extends Model {
     @Column(nullable = false)
     private double salePrice;
     
+    @Column(nullable = false)
+    private int trialPeriod;
+    
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<Transaction> transactions;
@@ -88,6 +91,13 @@ public class Product extends Model {
 		this.subscriptions = subscriptions;
 	}
 
+	public int getTrialPeriod() {
+		return trialPeriod;
+	}
+
+	public void setTrialPeriod(int trialPeriod) {
+		this.trialPeriod = trialPeriod;
+	}
 
 	public List<ValidationError> validate() {
 		

@@ -14,11 +14,13 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
 import forms.UserSearchForm;
 import models.SecurityRole;
+import models.Subscription;
 import models.User;
 import models.enums.State;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
 import models.json.PagedObjectResponse;
+import models.json.UserSubscriptionSearchResultResponse;
 import play.Configuration;
 import play.Logger;
 import play.cache.CacheApi;
@@ -103,18 +105,39 @@ public class UserController extends Controller {
 		int pageSize = conf.getInt("page.size");
 		
 		PagedList<User> usersPage = null;
+		List<User> users = null;
+		List<Subscription> subscriptions = new ArrayList<Subscription>();
+		
 		if (query != null) {
 			usersPage = userService.searchByName(query, page - 1, pageSize);
+			users = usersPage.getList();
+			
+			for (User user: users) {
+				subscriptions.add(user.getSubscription());
+			}
+			
 		}
 		else if (searchForm != null) {
 			usersPage = userService.preciseSearch(searchForm, page - 1, pageSize);
+			users = usersPage.getList();
+			
+			for (User user: users) {
+				subscriptions.add(user.getSubscription());
+			}
+			
 		}
 		else {
 			usersPage = userService.getUsersPage(page - 1, pageSize);
 		}
 		
+		if (subscriptions.size() != 0) {
+			return ok(Json.toJson(new UserSubscriptionSearchResultResponse("SUCCESS", users, subscriptions, page, usersPage.getTotalPageCount())));
+		}
+		else {
+			return ok(Json.toJson(new PagedObjectResponse("SUCCESS", usersPage.getList(), page, usersPage.getTotalPageCount())));
+		}
 		
-		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", usersPage.getList(), page, usersPage.getTotalPageCount())));
+		
 	}
 	
 	public Result viewAll() {
@@ -228,9 +251,17 @@ public class UserController extends Controller {
 		}
 		
 		int pageSize = conf.getInt("page.size");
+		
 		PagedList<User> searchResults = userService.searchByName(query, 0, pageSize);
 		
-		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", searchResults.getList(), 1, searchResults.getTotalPageCount())));
+		List<Subscription> subscriptions = new ArrayList<Subscription>();
+		List<User> users = searchResults.getList();
+		
+		for (User user: users) {
+			subscriptions.add(user.getSubscription());
+		}
+		
+		return ok(Json.toJson(new UserSubscriptionSearchResultResponse("SUCCESS", users, subscriptions, 1, searchResults.getTotalPageCount())));
 	}
 	
 	@BodyParser.Of(BodyParser.Json.class)
@@ -255,9 +286,17 @@ public class UserController extends Controller {
 	    cache.set("search.form", searchForm);
 	    	    	
 		int pageSize = conf.getInt("page.size");
+		
 		PagedList<User> searchResults = userService.preciseSearch(searchForm, 0, pageSize);
 		
-		return ok(Json.toJson(new PagedObjectResponse("SUCCESS", searchResults.getList(), 1, searchResults.getTotalPageCount())));
-	    		
+		List<Subscription> subscriptions = new ArrayList<Subscription>();
+		List<User> users = searchResults.getList();
+		
+		for (User user: users) {
+			subscriptions.add(user.getSubscription());
+		}
+		
+		return ok(Json.toJson(new UserSubscriptionSearchResultResponse("SUCCESS", users, subscriptions, 1, searchResults.getTotalPageCount())));
+				
 	}
 }

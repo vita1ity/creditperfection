@@ -58,47 +58,66 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 	    	
 	    	var status = data.object.status;
 	    	var subscriptionDate = data.object.subscriptionDate;
+	    	var lastPaymentDate = data.object.lastChargeDate;
 	    	
 	    	var subscriptionHtml = $('.panel').html();
 	    	subscriptionHtml = '<div class="panel panel-default">\n' + subscriptionHtml + "\n</div>";
 	    	
-	    	var index = parseInt($('.index:last').text()) + 1;
+	    	var visibleItems = 0;
+	    	$('.panel:visible').each(function(i, obj) {
+	    		visibleItems++;
+	    	});
 	    	
-	    	$('#accordion').append(subscriptionHtml);
+	    	if (visibleItems != 10) {
 	    	
-	    	console.log("index: " + index);
-	    	
-	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
-	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
-	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
-	    			index + "</span>. " + firstName + " " + lastName + " - " + productName);
-	    	$('.subscriptionID:last').text(id);
-	    	
-	    	$('.user-id:last').text(userId);
-	    	$('.first-name:last').text(firstName);
-	    	$('.last-name:last').text(lastName);
-	    	$('.email:last').text(email);
-			
-	    	$('.card-id:last').text(cardId);
-	    	$('.card-name:last').text(cardName);
-	    	$('.card-type:last').text(cardType);
-	    	$('.card-number:last').text(digits);
-	    	$('.exp-date:last').text(expDate);
-	    	$('.cvv:last').text(cvv);
-	    	
-	    	$('.product-id:last').text(productId);
-	    	$('.product-name:last').text(productName);
-	    	$('.product-price:last').text(productPrice);
-	    	$('.sale-price:last').text(productSalePrice);
-	    	
-	    	$('.status:last').text(status);
-	    	var dateStr = subscriptionDate[0] + "-" + subscriptionDate[1] + "-" + subscriptionDate[2] + "T" + 
-	    		subscriptionDate[3] + ":" + subscriptionDate[4] + ":" + subscriptionDate[5]; 
-	    	$('.subscription-date:last').text(dateStr);
-	    	
+		    	var index = ++visibleItems;
+	    		
+		    	$('.panel').not(':visible').each(function(i, obj) {
+		    		
+		    		if (i == 1) {
+		    			
+		    			$(obj).show();
+		    			
+		    			$(obj).find('.panel-title-text').html("<span class=\"index\">" + 
+				    			index + "</span>. " + firstName + " " + lastName + " - " + productName);
+				    	$(obj).find('.subscriptionID').text(id);
+				    	
+				    	$(obj).find('.user-id').text(userId);
+				    	$(obj).find('.first-name').text(firstName);
+				    	$(obj).find('.last-name').text(lastName);
+				    	$(obj).find('.email').text(email);
+						
+				    	$(obj).find('.card-id').text(cardId);
+				    	$(obj).find('.card-name').text(cardName);
+				    	$(obj).find('.card-type').text(cardType);
+				    	$(obj).find('.card-number').text(digits);
+				    	$(obj).find('.exp-date').text(expDate);
+				    	$(obj).find('.cvv').text(cvv);
+				    	
+				    	$(obj).find('.product-id').text(productId);
+				    	$(obj).find('.product-name').text(productName);
+				    	$(obj).find('.product-price').text(productPrice);
+				    	$(obj).find('.sale-price').text(productSalePrice);
+				    	
+				    	$(obj).find('.status').text(status);
+				    	var dateStr = subscriptionDate[0] + "-" + subscriptionDate[1] + "-" + subscriptionDate[2] + "T" + 
+				    		subscriptionDate[3] + ":" + subscriptionDate[4] + ":" + subscriptionDate[5];
+				    	var lastDateStr = lastPaymentDate[0] + "-" + lastPaymentDate[1] + "-" + lastPaymentDate[2] + "T" + 
+				    	lastPaymentDate[3] + ":" + lastPaymentDate[4] + ":" + lastPaymentDate[5];
+				    	$(obj).find('.subscription-date').text(dateStr);
+				    	$(obj).find('.last-payment-date').text(lastDateStr);
+		    			
+		    		}
+		    	});
+		    	
+	    	}
 		}).fail (function(err) {
 			
 			console.log(err);
+			if (err.responseJSON.message) {
+				var alertBox = $('#alert-box-add');
+				showSmallErrorAlert(err.responseJSON.message, alertBox);
+			}
 			processErrors(err, form);
 		})
 		
@@ -278,6 +297,11 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		}).fail (function(err) {
 			
 			console.log(err);
+			
+			if (err.responseJSON.message) {
+				var alertBox = $('#alert-box-edit');
+				showSmallErrorAlert(err.responseJSON.message, alertBox);
+			}
 			processErrors(err, form);
 		})
 		
@@ -312,7 +336,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 			
 			showSuccessAlert(data.message);
 	    
-	    	$(panel).remove();
+	    	$(panel).hide();
 	    	
 	    	$('#deleteSubscription').modal('toggle');
 	    	
@@ -418,6 +442,7 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	
 		    	var status = subscription.status;
 		    	var subscriptionDate = subscription.subscriptionDate;
+		    	var lastPaymentDate = subscription.lastChargeDate;
 		    	
 		    	var subscriptionHtml = $('.panel').html();
 		    	subscriptionHtml = '<div class="panel panel-default">\n' + subscriptionHtml + "\n</div>";
@@ -447,7 +472,11 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 		    	$('.status:last').text(status);
 		    	var dateStr = subscriptionDate[0] + "-" + subscriptionDate[1] + "-" + subscriptionDate[2] + "T" + 
 		    		subscriptionDate[3] + ":" + subscriptionDate[4] + ":" + subscriptionDate[5]; 
+		    	var lastDateStr = lastPaymentDate[0] + "-" + lastPaymentDate[1] + "-" + lastPaymentDate[2] + "T" + 
+		    	lastPaymentDate[3] + ":" + lastPaymentDate[4] + ":" + lastPaymentDate[5];
 		    	$('.subscription-date:last').text(dateStr);
+		    	$('.last-payment-date').text(lastDateStr);
+		    	
 			}
 			
 			//update pagination to the 1 page
@@ -561,8 +590,12 @@ $(document).on('click', '#confirmAddSubscription', function(e) {
 					$(obj).find('.sale-price').text(productSalePrice);
 					
 					$(obj).find('.status').text(status);
-					$(obj).find('.subscription-date').text(subscriptionDate);
-					$(obj).find('.last-payment-date').text(lastPaymentDate);
+					var dateStr = subscriptionDate[0] + "-" + subscriptionDate[1] + "-" + subscriptionDate[2] + "T" + 
+		    		subscriptionDate[3] + ":" + subscriptionDate[4] + ":" + subscriptionDate[5]; 
+					var lastDateStr = lastPaymentDate[0] + "-" + lastPaymentDate[1] + "-" + lastPaymentDate[2] + "T" + 
+					lastPaymentDate[3] + ":" + lastPaymentDate[4] + ":" + lastPaymentDate[5];
+					$(obj).find('.subscription-date').text(dateStr);
+					$(obj).find('.last-payment-date').text(lastDateStr);
 					
 					if (status == 'PENDING') {
 						$(obj).find('.cancel-subscription').removeClass('hidden');

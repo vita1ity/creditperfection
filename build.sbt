@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
   "org.hamcrest" % "hamcrest-library" % "1.3"
 )
 
+javaOptions in Test += "-Dlogger.file=conf/test-logger.xml"
+
 // Java project. Don't expect Scala IDE
  EclipseKeys.projectFlavor := EclipseProjectFlavor.Java           
  // Use .class files instead of generated .scala files for views and routes

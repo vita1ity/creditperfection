@@ -68,36 +68,57 @@ $(document).ready(function() {
 	    	var transactionHtml = $('.panel').html();
 	    	transactionHtml = '<div class="panel panel-default">\n' + transactionHtml + "\n</div>";
 	    	
-	    	var index = parseInt($('.index:last').text()) + 1;
+	    	var visibleItems = 0;
+	    	$('.panel:visible').each(function(i, obj) {
+	    		visibleItems++;
+	    	});
 	    	
-	    	$('#accordion').append(transactionHtml);
+	    	if (visibleItems != 10) {
 	    	
-	    	console.log("index: " + index);
-	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
-	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
-	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
-	    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
-	    	$('.transactionId:last').text(id);
-	    	
-	    	$('.user-id:last').text(userId);
-	    	$('.first-name:last').text(firstName);
-	    	$('.last-name:last').text(lastName);
-	    	$('.email:last').text(email);
-			
-	    	$('.card-id:last').text(cardId);
-	    	$('.card-name:last').text(cardName);
-	    	$('.card-type:last').text(cardType);
-	    	$('.card-number:last').text(digits);
-	    	$('.exp-date:last').text(expDate);
-	    	$('.cvv:last').text(cvv);
-	    	
-	    	$('.product-id:last').text(productId);
-	    	$('.product-name:last').text(productName);
-	    	$('.product-price:last').text(productPrice);
-	    	$('.sale-price:last').text(productSalePrice);
-	    	$('.amount:last').text(amount);
-	    	$('.authorizeNetTransactionId:last').text(transactionId);
-	    	$('.status:last').text(status);
+	    		var index = ++visibleItems;
+	    		
+		    	$('.panel').not(':visible').each(function(i, obj) {
+		    		
+		    		if (i == 1) {
+		    			
+		    			$(obj).show();
+		    			
+		    			$(obj).find('.panel-title-text').html("<span class=\"index\">" + 
+				    			index + "</span>. " + firstName + " " + lastName + " - " + productName);
+		    			$(obj).find('.subscriptionID').text(id);
+				    	
+		    			$(obj).find('.panel-title-text').prop('href', '#collapse' + (index - 1));
+		    			$(obj).find('.collapse').prop('id', 'collapse' + (index - 1));
+		    			$(obj).find('.panel-title-text').html("<span class=\"index\">" + 
+				    			index + "</span>. " + firstName + " " + lastName + "(card: " + digits + ") - " + productName);
+		    			$(obj).find('.transactionId').text(id);
+				    	
+		    			$(obj).find('.user-id').text(userId);
+		    			$(obj).find('.first-name').text(firstName);
+		    			$(obj).find('.last-name').text(lastName);
+		    			$(obj).find('.email').text(email);
+						
+		    			$(obj).find('.card-id').text(cardId);
+		    			$(obj).find('.card-name').text(cardName);
+		    			$(obj).find('.card-type').text(cardType);
+		    			$(obj).find('.card-number').text(digits);
+		    			$(obj).find('.exp-date').text(expDate);
+		    			$(obj).find('.cvv').text(cvv);
+				    	
+		    			$(obj).find('.product-id').text(productId);
+		    			$(obj).find('.product-name').text(productName);
+		    			$(obj).find('.product-price').text(productPrice);
+		    			$(obj).find('.sale-price').text(productSalePrice);
+		    			$(obj).find('.amount').text(amount);
+		    			$(obj).find('.authorizeNetTransactionId').text(transactionId);
+		    			$(obj).find('.status').text(status);
+		    			
+		    			
+		    		}
+		    		
+		    	});
+		    	
+	    	}
 	    	
 		}).fail (function(err) {
 			
@@ -325,8 +346,8 @@ $(document).ready(function() {
 			console.log(data);
 			
 			showSuccessAlert(data.message);
-	    
-	    	$(panel).remove();
+
+	    	$(panel).hide();
 	    	
 	    	$('#deleteTransaction').modal('toggle');
 	    	

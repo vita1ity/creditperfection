@@ -13,6 +13,8 @@ $(document).ready(function() {
 	});
 
 
+	
+	
 	$(document).on('click', '#sendLogin', function(e) {
 		
 		e.preventDefault();
@@ -69,6 +71,23 @@ $(document).ready(function() {
 		
 	});
 	
+	
+	$('.login-modal').keypress(function (e) {
+		  if (e.which == 13) {
+			  
+			  if ($('.flipper').hasClass('rotate')) {
+				  $('#sendPassword').click();
+			  }
+			  else {
+				  $('#sendLogin').click();  
+			  }
+			  
+			  return false;  
+		  }
+	});
+	
+	
+	
 	$(document).on('click', '#sendPassword', function(e) {
 		
 		e.preventDefault();
@@ -89,7 +108,7 @@ $(document).ready(function() {
 	    	
 	    	var message = data.message;
 	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert-small alert-success\">\n";
+	    	alertHtml += "<div class=\"alert alert-small alert-success\">\n";
 	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
 	    	alertHtml += "<span id=\"alert-message\">" + message + "</span>\n"	
 	    		
@@ -103,7 +122,7 @@ $(document).ready(function() {
 	    	var errorMessage = err.responseJSON.errorMessage;
 	    	
 	    	var alertHtml = "";
-	    	alertHtml += "<div class=\"alert-small alert-danger\">\n";
+	    	alertHtml += "<div class=\"alert alert-small alert-danger\">\n";
 	    	alertHtml += "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\n";
 	    	alertHtml += "<span id=\"alert-message\">" + errorMessage + "</span>\n"	
 	    		

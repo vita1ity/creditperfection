@@ -12,6 +12,7 @@ public class ProductBuilder {
 	
 	private double salePrice = 1.0;
 	
+	private int trialPeriod = 7;
 	
 	public ProductBuilder id(long id) {
 		this.id = id;
@@ -33,6 +34,11 @@ public class ProductBuilder {
 		return this;
 	}
 	
+	public ProductBuilder trialPeriod(int trialPeriod) {
+		this.trialPeriod = trialPeriod;
+		return this;
+	}
+	
 	public Product build() {
 		
 		Product product = new Product();
@@ -41,6 +47,7 @@ public class ProductBuilder {
 		product.setName(name);
 		product.setPrice(price);
 		product.setSalePrice(salePrice);
+		product.setTrialPeriod(trialPeriod);
 		
 		return product;
 		

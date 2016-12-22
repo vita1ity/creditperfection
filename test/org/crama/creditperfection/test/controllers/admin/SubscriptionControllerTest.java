@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import controllers.admin.SubscriptionController;
+import exceptions.UserAlreadySubscribedException;
 import forms.SubscriptionForm;
 import models.Subscription;
 import models.enums.SubscriptionStatus;
@@ -75,7 +76,12 @@ public class SubscriptionControllerTest extends ControllerTestBase {
 		when(subscriptionServiceMock.findByStatus(SubscriptionStatus.TRIAL, 1, 10).getList()).thenReturn(
 					ImmutableList.of(allSubscriptions.get(0), allSubscriptions.get(1)));
 		when(subscriptionServiceMock.findById(testSubscription.getId())).thenReturn(testSubscription);
-		when(subscriptionServiceMock.createSubscription(testSubscriptionForm)).thenReturn(testSubscription);
+		try {
+			when(subscriptionServiceMock.createSubscription(testSubscriptionForm)).thenReturn(testSubscription);
+		} catch (UserAlreadySubscribedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

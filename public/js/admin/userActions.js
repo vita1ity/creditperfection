@@ -25,6 +25,12 @@ $(document).ready(function() {
 		  
 	  }
 	
+	$('#add-user').keypress(function (e) {
+		  if (e.which == 13) {
+		    $('#confirmAdd').click();
+		    return false;  
+		  }
+	});
 	
 	$(document).on('click', '#confirmAdd', function (e) {
 		
@@ -71,35 +77,44 @@ $(document).ready(function() {
 	    	var userHtml = $('.panel').html();
 	    	userHtml = '<div class="row">\n<div class="panel panel-default">\n' + userHtml + "\n</div></div>";
 	    	
-	    	var index = parseInt($('.index:last').text()) + 1;
-	    	
-	    	$('#accordion').append(userHtml);
-	    	
-	    	console.log("index: " + index);
-	    	$('.panel-title-text:last').prop('href', '#collapse' + (index - 1));
-	    	$('.collapse:last').prop('id', 'collapse' + (index - 1));
-	    	$('.panel-title-text:last').html("<span class=\"index\">" + 
-	    			index + "</span>. " + firstName + " " + lastName);
-	    	$('.userID:last').text(id);
-	    	
-	    	$('.first-name:last').val(firstName);
-	    	
-	    	$('.last-name:last').val(lastName);
-	    	$('.email:last').val(email);
-	    	$('.address:last').val(address);
-	    	$('.city:last').val(city);
-	    	$('.state:last > option').each(function(i, obj) {
-	    		if (state == $(obj).val()) {
-	    			$(obj).prop("selected", true);
-	    		}
-	    		else {
-	    			$(obj).prop("selected", false);
-	    		}
+	    	var visibleItems = 0;
+	    	$('.panel:visible').each(function(i, obj) {
+	    		visibleItems++;
 	    	});
-	    	$('.zip:last').val(zip);
-	    	$('.is-active:last').prop("checked", false);
 	    	
+	    	if (visibleItems != 10) {
 	    	
+		    	var index = ++visibleItems;
+		    	
+		    	$('.panel').not(':visible').each(function(i, obj) {
+		    		
+		    		if (i == 1) {
+		    			
+		    			$(obj).show();
+		    	
+				    	$(obj).find('.panel-title-text').html("<span class=\"index\">" + 
+				    			index + "</span>. " + firstName + " " + lastName);
+				    	$(obj).find('.userID').text(id);
+				    	
+				    	$(obj).find('.first-name').val(firstName);
+				    	
+				    	$(obj).find('.last-name').val(lastName);
+				    	$(obj).find('.email').val(email);
+				    	$(obj).find('.address').val(address);
+				    	$(obj).find('.city').val(city);
+				    	$(obj).find('.state > option').each(function(j, obj2) {
+				    		if (state == $(obj2).val()) {
+				    			$(obj2).prop("selected", true);
+				    		}
+				    		else {
+				    			$(obj2).prop("selected", false);
+				    		}
+				    	});
+				    	$(obj).find('.zip').val(zip);
+				    	$(obj).find('.is-active').prop("checked", false);
+		    		}
+		    	});
+	    	}
 	    	
 	    }).fail (function(err) {
 			
@@ -197,7 +212,7 @@ $(document).ready(function() {
 	    	
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
 	    	
-	    	$(panel).remove();
+	    	$(panel).hide();
 	    	
 	    	$('#deleteUser').modal('toggle');
 	    
@@ -228,8 +243,15 @@ $(document).ready(function() {
 			
 			console.log(data);
 			
-			//update user information
-			updateUsersList(data.object);
+			if (data.object != null) {
+				//update user information
+				updateUsersList(data.object);
+			}
+			//search results active
+			else {
+				updateUsersList(data.users);
+				showSubscriptions(data.subscriptions);
+			}
 			
 			//update pagination
 			var numberOfPages = data.totalPageCount;
@@ -263,7 +285,7 @@ $(document).ready(function() {
 			
 			
 			//add search results menu
-			if(data.object.length == 0) {
+			if(data.users.length == 0) {
 				$('.search-result-text').text("No results found"); 
 			}
 			else {
@@ -272,8 +294,8 @@ $(document).ready(function() {
 			$('.search-results').removeClass('hidden');
 			
 			//update user information
-			updateUsersList(data.object);
-			
+			updateUsersList(data.users);
+			showSubscriptions(data.subscriptions);
 			
 			//update pagination to the 1 page
 			var page = data.currentPage;
@@ -340,11 +362,88 @@ $(document).ready(function() {
 				else {
 					$(obj).find('.is-active').prop("checked", false);
 				}
+				
+				$(obj).find('.subscription-form').addClass('hidden');
+				
 			}
 	    	
 		});
 		
 		
+	}
+	
+	function showSubscriptions(data) {
+		$('.panel').each(function(i, obj) {
+			
+			var subscription = data[i];
+			
+			if (subscription != null) {
+				
+				var subscriptionForm = $(obj).find('.subscription-form');
+				$(subscriptionForm).removeClass('hidden');
+				
+				
+				var id = subscription.id;
+				var status = subscription.status;
+				var subscriptionDate = subscription.subscriptionDate;
+				var lastPaymentDate = subscription.lastChargeDate;
+				
+				//user properties
+				var userId = subscription.user.id;
+				var firstName = subscription.user.firstName;
+				var lastName = subscription.user.lastName;
+				var userId = subscription.user.id;
+				var email = subscription.user.email;
+				
+				//credit card properties
+				var cardId = subscription.creditCard.id;
+				var cardName = subscription.creditCard.name;
+				var cardType = subscription.creditCard.cardType;
+				var cardNumber = subscription.creditCard.digits;
+				var expDate = subscription.creditCard.expDate;
+				var cvv = subscription.creditCard.cvv;
+				
+				//product properties
+				var productId = subscription.product.id;
+				var productName = subscription.product.name;
+				var productPrice = subscription.product.price;
+				var productSalePrice = subscription.product.salePrice;
+				
+				
+				$(subscriptionForm).find('.subscriptionID').text(id);
+				
+				$(obj).find('.user-id').text(userId);
+				$(obj).find('.first-name').text(firstName);
+				$(obj).find('.last-name').text(lastName);
+				$(obj).find('.email').text(email);
+				
+				$(subscriptionForm).find('.card-id').text(cardId);
+				$(subscriptionForm).find('.card-name').text(cardName);
+				$(subscriptionForm).find('.card-type').text(cardType);
+				$(subscriptionForm).find('.card-number').text(cardNumber);
+				$(subscriptionForm).find('.exp-date').text(expDate);
+				$(subscriptionForm).find('.cvv').text(cvv);
+
+				$(subscriptionForm).find('.product-id').text(productId);
+				$(subscriptionForm).find('.product-name').text(productName);
+				$(subscriptionForm).find('.product-price').text(productPrice);
+				$(subscriptionForm).find('.sale-price').text(productSalePrice);
+				
+				$(subscriptionForm).find('.status').text(status);
+				$(subscriptionForm).find('.subscription-date').text(subscriptionDate);
+				$(subscriptionForm).find('.last-payment-date').text(lastPaymentDate);
+				
+				if (status == 'PENDING') {
+					$(subscriptionForm).find('.cancel-subscription').removeClass('hidden');
+				}
+				else {
+					$(subscriptionForm).find('.cancel-subscription').addClass('hidden');
+				}
+				
+				
+			}
+			
+		});
 	}
 	
 	$(document).on('click', '#view-all', function (e) {
@@ -426,7 +525,7 @@ $(document).ready(function() {
 			
 			
 			//add search results menu
-			if(data.object.length == 0) {
+			if(data.users.length == 0) {
 				$('.search-result-text').text("No results found"); 
 			}
 			else {
@@ -435,7 +534,8 @@ $(document).ready(function() {
 			$('.search-results').removeClass('hidden');
 			
 			//update user information
-			updateUsersList(data.object);
+			updateUsersList(data.users);
+			showSubscriptions(data.subscriptions);
 			
 			
 			//update pagination to the 1 page

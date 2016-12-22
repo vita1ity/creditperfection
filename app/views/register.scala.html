@@ -4,38 +4,38 @@
     <div class="row form-group">
     	<div class="col-xs-12 col-sm-6">
     		<label class="control-label" for="firstName">First Name:</label>
-    		<input class="form-input form-control" type="text" name="firstName" placeholder="First Name" value="@user.getFirstName">
+    		<input class="form-input form-control register-input" type="text" name="firstName" placeholder="First Name" value="@user.getFirstName">
 	    	<span class="error" id="firstname-error"></span>
     	</div>
     		    
 	    <div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="lastName">Last Name:</label>
-	    	<input class="form-input form-control" type="text" name="lastName" placeholder="Last Name" value="@user.getLastName">
+	    	<input class="form-input form-control register-input" type="text" name="lastName" placeholder="Last Name" value="@user.getLastName">
 	    	<span class="error" id="lastname-error"></span>
 	    </div>	   	    
     </div>
     <div class="row form-group">    
     	<div class="col-xs-12 col-sm-6">
     		<label class="control-label" for="email">Email:</label>
-    		<input class="form-input form-control" type="email" name="email" placeholder="Email" value="@user.getEmail">
+    		<input class="form-input form-control register-input" type="email" name="email" placeholder="Email" value="@user.getEmail">
 	    	<span class="error" id="email-error"></span>
     	</div>    	
     	<div class="col-xs-12 col-sm-6">
     		<label class="control-label" for="confirmEmail">Confirm Email:</label>
-    		<input class="form-input form-control" type="email" name="confirmEmail" placeholder="Confirm Email" value="@user.getEmail">
+    		<input class="form-input form-control register-input" type="email" name="confirmEmail" placeholder="Confirm Email" value="@user.getEmail">
 	    	<span class="error" id="confirmEmail-error"></span>
     	</div>
     </div>
     <div class="row form-group">
     	<div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="email">Password:</label>
-	    	<input class="form-input form-control" type="password" name="password" placeholder="Password" value="@user.getPassword">
+	    	<input class="form-input form-control register-input" type="password" name="password" placeholder="Password" value="@user.getPassword">
     		<span class="error" id="password-error"></span>
 	    </div>
 	    
 	    <div class="col-xs-12 col-sm-6">
     		<label class="control-label" for="confirmPassword">Confirm Password:</label>
-    		<input class="form-input form-control" type="password" name="confirmPassword" 
+    		<input class="form-input form-control register-input" type="password" name="confirmPassword" 
     			placeholder="Confirm Password" value="@user.getPassword">
     		<span class="error" id="confirmPassword-error"></span>
     	</div>
@@ -43,13 +43,13 @@
     <div class="row form-group">     
 	    <div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="address">Address:</label>
-	    	<input class="form-input form-control" type="text" name="address" placeholder="Address" value="@user.getAddress">
+	    	<input class="form-input form-control register-input" type="text" name="address" placeholder="Address" value="@user.getAddress">
 	    	<span class="error" id="address-error"></span>
 	    </div>
    
 	    <div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="city">City:</label>
-	    	<input class="form-input form-control" type="text" name="city" placeholder="City" value="@user.getCity">
+	    	<input class="form-input form-control register-input" type="text" name="city" placeholder="City" value="@user.getCity">
 	    	<span class="error" id="city-error"></span>
 	    </div>
     </div>    
@@ -57,7 +57,7 @@
     	<div class="col-xs-12 col-sm-6">
 	    	<label class="control-label" for="state">State:</label>
 	    	<div id="state">
-		    	<select class="form-input form-control" name="state">
+		    	<select class="form-input form-control register-input" name="state">
 			    	@if(user.getState == null){
 			    		<option value=""></option>
 			    	}
@@ -75,7 +75,7 @@
 	    </div>		
 		<div class="col-xs-12 col-sm-6">
 			<label class="control-label" for="zip">Zip:</label>
-			<input class="form-input form-control" type="text" name="zip" placeholder="Zip Code" value="@user.getZip">
+			<input class="form-input form-control register-input" type="text" name="zip" placeholder="Zip Code" value="@user.getZip">
 		    <span class="error" id="zip-error"></span>
 		</div>
     </div>

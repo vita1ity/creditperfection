@@ -505,4 +505,6 @@ select > option:hover {
 .bottom-margin {
 	margin-bottom: 80px;
 }
-
+.margin-top {
+	margin-top: 80px;
+}

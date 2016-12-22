@@ -1,6 +1,7 @@
 package scheduler;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -61,6 +62,7 @@ public class CreditCardChargeJob implements Runnable {
             	
         		if (discount != null && discount.getDiscountStatus().equals(DiscountStatus.ACTIVE)) {
 
+        			
         			//check if still active after usage
         			if (discountService.checkDiscountExpired(discount)) {
         				discount.setDiscountStatus(DiscountStatus.USED);
@@ -71,7 +73,8 @@ public class CreditCardChargeJob implements Runnable {
         				
         				s.setLastChargeDate(LocalDateTime.now());
         				
-        				if (!discount.getDiscountType().equals(DiscountType.WEEKLY_DISCOUNT)) {
+        				
+        				if (subscriptionService.checkTrialEnded(s)) {
         					
         					Logger.info("Setting Active status to the subscription...");
         					
@@ -89,12 +92,24 @@ public class CreditCardChargeJob implements Runnable {
         			}
             			
             	}
-            			
+        		
             	if (chargeAmount == 0.00) {
-            		chargeAmount = s.getProduct().getPrice();
+            		
+            		if (subscriptionService.checkTrialEnded(s)) {
+            			chargeAmount = s.getProduct().getPrice();
+            			
+            		}
+            		else {
+            			
+            			chargeAmount = s.getProduct().getSalePrice();
+            			
+            		}
             		
             	}
-        		
+            	
+            	Logger.info("Charge amount: " + chargeAmount);
+            	
+            	
             	processPayment(s, chargeAmount, discount);
             	
         	}
@@ -114,9 +129,10 @@ public class CreditCardChargeJob implements Runnable {
 		
     		s.setLastChargeDate(LocalDateTime.now());
     		
-    		
-    		if (s.getStatus().equals(SubscriptionStatus.TRIAL) && (discount == null || !discount.getDiscountType().equals(DiscountType.WEEKLY_DISCOUNT))) {
-    			s.setStatus(SubscriptionStatus.ACTIVE);	        			
+    		if (s.getStatus().equals(SubscriptionStatus.TRIAL) && subscriptionService.checkTrialEnded(s)) {
+    			
+    			Logger.info("Setting Active status to the subscription...");
+    			s.setStatus(SubscriptionStatus.ACTIVE);	   			
     		}
     		
     		subscriptionService.update(s);
