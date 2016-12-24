@@ -1,15 +1,18 @@
 package repository.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Singleton;
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.Model.Finder;
 import com.avaje.ebean.PagedList;
 
 import models.Subscription;
 import models.User;
 import models.enums.SubscriptionStatus;
+import play.Logger;
 import repository.SubscriptionRepository;
 
 @Singleton
@@ -69,6 +72,20 @@ public class SubscriptionRepositoryImpl implements SubscriptionRepository {
 	public PagedList<Subscription> getSubscriptionsPage(int page, int pageSize) {	
 		PagedList<Subscription> pagedList = find.findPagedList(page, pageSize);
 		return pagedList;
+	}
+
+	@Override
+	public List<Subscription> findFailedToRenew(LocalDate startDate, LocalDate endDate) {
+		
+		List<Subscription> subscriptionList = find.where()
+				.and(Expr.between("renewFailedDate", startDate, endDate), Expr.eq("status", SubscriptionStatus.CANCELLED)).findList();
+		
+		Logger.info("Subscriptions Failed to renew: " + subscriptionList.size());
+		for (Subscription s: subscriptionList) {
+			Logger.info("Subsciption failed to renew: " + s);
+		}
+		
+		return subscriptionList;
 	}
 	
 }

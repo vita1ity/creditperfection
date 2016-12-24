@@ -1,22 +1,19 @@
 package models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.avaje.ebean.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import forms.SubscriptionForm;
 import models.enums.SubscriptionStatus;
 
 @Entity
@@ -49,6 +46,9 @@ public class Subscription extends Model {
 	@JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "subscription")
     private Discount discount;
+	
+	@Column(nullable = true)
+	private LocalDate renewFailedDate;
 	
 	public long getId() {
 		return id;
@@ -114,6 +114,14 @@ public class Subscription extends Model {
 	public void setDiscount(Discount discount) {
 		this.discount = discount;
 	}
+	
+	public LocalDate getRenewFailedDate() {
+		return renewFailedDate;
+	}
+
+	public void setRenewFailedDate(LocalDate renewFailedDate) {
+		this.renewFailedDate = renewFailedDate;
+	}
 
 	public Subscription() {
 		
@@ -142,7 +150,7 @@ public class Subscription extends Model {
 	@Override
 	public String toString() {
 		return "Subscription [id=" + id + ", status=" + status + ", subscriptionDate=" + subscriptionDate
-				+ ", lastChargeDate=" + lastChargeDate + "]";
+				+ ", lastChargeDate=" + lastChargeDate + ", renewFailedDate=" + renewFailedDate + "]";
 	}
 	
 	

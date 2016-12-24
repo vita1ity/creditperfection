@@ -1,5 +1,6 @@
 package repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.avaje.ebean.PagedList;
@@ -30,5 +31,7 @@ public interface SubscriptionRepository {
 	PagedList<Subscription> getSubscriptionsPage(int page, int pageSize);
 
 	PagedList<Subscription> findByStatus(SubscriptionStatus status, int page, int pageSize);
+
+	List<Subscription> findFailedToRenew(LocalDate startDate, LocalDate endDate);
 	
 }

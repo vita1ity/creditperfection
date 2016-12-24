@@ -75,7 +75,7 @@ public class DiscountService {
 			
 		}
 		
-		Discount discount = new Discount(subscription, DiscountType.WEEKLY_DISCOUNT, 0.00, startDate, startDate.plusDays(7), DiscountStatus.ACTIVE);
+		Discount discount = new Discount(subscription, DiscountType.WEEKLY_DISCOUNT, 0.01, startDate, startDate.plusDays(7), DiscountStatus.ACTIVE);
 		
 		subscription.setDiscount(discount);
 		
@@ -101,7 +101,7 @@ public class DiscountService {
 			
 		}
 		
-		Discount discount = new Discount(subscription, DiscountType.MONTHLY_DISCOUNT, 0.00, startDate, startDate.plusDays(daysInMonth), DiscountStatus.ACTIVE);
+		Discount discount = new Discount(subscription, DiscountType.MONTHLY_DISCOUNT, 0.01, startDate, startDate.plusDays(daysInMonth), DiscountStatus.ACTIVE);
 		
 		subscription.setDiscount(discount);
 		

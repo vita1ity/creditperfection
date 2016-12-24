@@ -1,5 +1,6 @@
 package org.crama.creditperfection.test.builders;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import models.CreditCard;
@@ -26,6 +27,8 @@ public class SubscriptionBuilder {
 	private LocalDateTime lastChargeDate = LocalDateTime.now().minusDays(30);
 	
 	private Discount discount = null;
+	
+	private LocalDate renewFailedDate = null;
 	
 	public SubscriptionBuilder id(long id) {
 		this.id = id;
@@ -67,6 +70,10 @@ public class SubscriptionBuilder {
 		return this;
 	}
 	
+	public SubscriptionBuilder renewFailedDate(LocalDate renewFailedDate) {
+		this.renewFailedDate = renewFailedDate;
+		return this;
+	}
 	
 	public Subscription build() {
 		
@@ -79,6 +86,7 @@ public class SubscriptionBuilder {
 		subscription.setSubscriptionDate(subscriptionDate);
 		subscription.setLastChargeDate(lastChargeDate);
 		subscription.setDiscount(discount);
+		subscription.setRenewFailedDate(renewFailedDate);
 		
 		return subscription;
 	}

@@ -46,10 +46,16 @@ public class PaymentController extends Controller {
 	
 	public Result paymentPage() {
 		
+		String discountMessage = session().get("discountMessage");
+		if (discountMessage != null) {
+			
+			session().remove("discountMessage");
+		}
+		
 		String email = session().get("email");
 		User user = userService.findByEmail(email);
 		
-		if (user.getActive()) {
+		if (user == null || user.getActive()) {
 			return redirect(routes.SignUpFlowController.index(false));
 		}
 		
@@ -59,7 +65,7 @@ public class PaymentController extends Controller {
 		Month[] months = Month.values();
     	Year[] years = Year.values();
     	
-		return ok(views.html.paymentPage.render(creditCard, allTypes, months, years));
+		return ok(views.html.paymentPage.render(creditCard, allTypes, months, years, discountMessage));
 		
 	}
 	
@@ -117,7 +123,7 @@ public class PaymentController extends Controller {
 			subscriptionService.update(subscription);
 			userService.update(user);
 			
-			return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction passed successfully. Your account is not active and you can use the service. "
+			return ok(Json.toJson(new MessageResponse("SUCCESS", "Transaction passed successfully. Your account is now active and you can use the service. "
 					+ "You will be redirected to the report page in 5 seconds")));
 		}
 		else {

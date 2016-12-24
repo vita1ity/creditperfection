@@ -1,5 +1,6 @@
 package scheduler;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -11,7 +12,6 @@ import models.Subscription;
 import models.Transaction;
 import models.User;
 import models.enums.DiscountStatus;
-import models.enums.DiscountType;
 import models.enums.SubscriptionStatus;
 import models.enums.TransactionStatus;
 import models.json.JSONResponse;
@@ -50,74 +50,78 @@ public class CreditCardChargeJob implements Runnable {
     	
         Logger.info("Credit card charging job is running...");
      
+        //subscriptions with failed transaction
+        processFailed();
+        
         List<Subscription> activeSubscriptions = subscriptionService.findExcludingStatus(SubscriptionStatus.CANCELLED);
-        for (Subscription s: activeSubscriptions) {
+        if (activeSubscriptions != null) {
         	
-        	Logger.info("subscription: " + s);
-        	
-            if (subscriptionService.checkExpired(s)) {
-            	
-            	double chargeAmount = 0.00;
-            	Discount discount = s.getDiscount();
-            	
-        		if (discount != null && discount.getDiscountStatus().equals(DiscountStatus.ACTIVE)) {
-
-        			
-        			//check if still active after usage
-        			if (discountService.checkDiscountExpired(discount)) {
-        				discount.setDiscountStatus(DiscountStatus.USED);
-        			}
-        			
-        			//do not charge credit card
-        			if (discount.getDiscountAmount() == 0.00) {
-        				
-        				s.setLastChargeDate(LocalDateTime.now());
-        				
-        				
-        				if (subscriptionService.checkTrialEnded(s)) {
-        					
-        					Logger.info("Setting Active status to the subscription...");
-        					
-        					s.setStatus(SubscriptionStatus.ACTIVE);	 
-        				}
-        				
-        				subscriptionService.update(s);
-        				
-        				break;
-        				
-        			}
-        			//charge credit card
-        			else {
-        				chargeAmount = discount.getDiscountAmount();
-        			}
-            			
-            	}
-        		
-            	if (chargeAmount == 0.00) {
-            		
-            		if (subscriptionService.checkTrialEnded(s)) {
-            			chargeAmount = s.getProduct().getPrice();
-            			
-            		}
-            		else {
-            			
-            			chargeAmount = s.getProduct().getSalePrice();
-            			
-            		}
-            		
-            	}
-            	
-            	Logger.info("Charge amount: " + chargeAmount);
-            	
-            	
-            	processPayment(s, chargeAmount, discount);
-            	
-        	}
+		    for (Subscription s: activeSubscriptions) {
+		    	
+		    	Logger.info("subscription: " + s);
+		    	
+		        if (subscriptionService.checkExpired(s)) {
+		        	
+		        	double chargeAmount = 0.00;
+		        	Discount discount = s.getDiscount();
+		        	
+		    		if (discount != null && discount.getDiscountStatus().equals(DiscountStatus.ACTIVE)) {
+		
+		    			
+		    			//check if still active after usage
+		    			if (discountService.checkDiscountExpired(discount)) {
+		    				discount.setDiscountStatus(DiscountStatus.USED);
+		    			}
+		    			
+		    			//do not charge credit card
+		    			if (discount.getDiscountAmount() == 0.00) {
+		    				
+		    				s.setLastChargeDate(LocalDateTime.now());
+		    				
+		    				
+		    				if (subscriptionService.checkTrialEnded(s)) {
+		    					
+		    					Logger.info("Setting Active status to the subscription...");
+		    					
+		    					s.setStatus(SubscriptionStatus.ACTIVE);	 
+		    				}
+		    				
+		    				subscriptionService.update(s);
+		    				
+		    				break;
+		    				
+		    			}
+		    			//charge credit card
+		    			else {
+		    				chargeAmount = discount.getDiscountAmount();
+		    			}
+		        			
+		        	}
+		    		
+		        	if (chargeAmount == 0.00) {
+		        		
+		        		if (subscriptionService.checkTrialEnded(s)) {
+		        			chargeAmount = s.getProduct().getPrice();
+		        			
+		        		}
+		        		else {
+		        			
+		        			chargeAmount = s.getProduct().getSalePrice();
+		        			
+		        		}
+		        		
+		        	}
+		        	
+		        	Logger.info("Charge amount: " + chargeAmount);
+		        	
+		        	
+		        	processPayment(s, chargeAmount, discount);
+		        	
+		    	}
+		    }
+        
         }
-        
-        
     }
-    
      
     public boolean processPayment(Subscription s, double chargeAmount, Discount discount) {
     	
@@ -154,19 +158,67 @@ public class CreditCardChargeJob implements Runnable {
     		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
     		
     		
-    		//TODO only cancel after second try
-    		//subscription cannot be renewed. make user inactive and cancel the subscription
-    		User user = s.getUser(); 
-    		mailService.sendTransactionFailedNotification(user);
-    		user.setActive(false);
+    		//transaction failed for the second time. subscription cannot be renewed. make user inactive and cancel the subscription
+    		if (s.getStatus().equals(SubscriptionStatus.RENEW_FAILED)) {
+    			User user = s.getUser(); 
+        		mailService.sendTransactionFailedNotification(user);
+        		user.setActive(false);
+        		
+        		userService.update(user);
+        		
+        		s.setStatus(SubscriptionStatus.CANCELLED);
+        		s.setRenewFailedDate(LocalDate.now());
+        		
+        		
+    		}
+    		//transaction failed for the first time. keep subscription active but change status to indicate failure
+    		else {
+    			s.setStatus(SubscriptionStatus.RENEW_FAILED);
+    		}
     		
-    		userService.update(user);
-    		
-    		s.setStatus(SubscriptionStatus.CANCELLED);
     		
     		subscriptionService.update(s);
     		
     		return false;
+    		
+    	}
+    }
+    
+    private void processFailed() {
+    	
+    	LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        LocalDate startDate = today.minusDays(3);
+    	
+    	List<Subscription> failedToRenewList = subscriptionService.findFailedToRenew(startDate, yesterday);
+       
+    	for (Subscription s: failedToRenewList) {
+    		Discount discount = s.getDiscount();
+    		
+    		//if discount haven't been used yet
+    		if (discount == null) {
+    			User user = s.getUser();
+	    		LocalDate renewFailedDate = s.getRenewFailedDate();
+	    		int daysBetween = (int)ChronoUnit.DAYS.between(renewFailedDate, today);
+	    		switch (daysBetween) {
+	    			//2 day of failure
+	    			case 1:
+	    				mailService.sendFreeWeekOffer(user, renewFailedDate);
+	    				break;
+	    			//3 day of failure
+	    			case 2:
+	    				mailService.sendFreeMonthOffer(user, renewFailedDate);
+	    				break;
+	    			//4 day of failure
+	    			case 3:
+	    				mailService.sendYearDiscountOffer(user, renewFailedDate);
+	    				break;
+	    			default:
+	    				Logger.error("Wrong subscription renew failed date: " + renewFailedDate);
+	    				break;
+	    			
+	    		}
+    		}
     		
     	}
     }

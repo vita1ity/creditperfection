@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -208,6 +209,11 @@ public class SubscriptionService {
 			
 		}
 		
+	}
+
+	public List<Subscription> findFailedToRenew(LocalDate startDate, LocalDate endDate) {
+		
+		return subscriptionRepository.findFailedToRenew(startDate, endDate);
 	}
 	
 	

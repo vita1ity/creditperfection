@@ -28,10 +28,13 @@ POST	/subscription/upgrade		controllers.SubscriptionController.upgradeSubscripti
 POST	/subscription/cancel		controllers.SubscriptionController.cancelSubscription
 
 #discount
-GET		/discount/check					controllers.DiscountController.checkUserHasDiscount
-POST    /discount/apply/free-week		controllers.DiscountController.applyFreeWeekDiscount
-POST    /discount/apply/free-month		controllers.DiscountController.applyFreeMonthDiscount
-POST    /discount/apply/year-discount	controllers.DiscountController.applyYearDiscount
+GET		/discount/check						controllers.DiscountController.checkUserHasDiscount
+POST    /discount/apply/free-week			controllers.DiscountController.applyFreeWeekDiscount
+POST    /discount/apply/free-month			controllers.DiscountController.applyFreeMonthDiscount
+POST    /discount/apply/year-discount		controllers.DiscountController.applyYearDiscount
+GET    /discount/apply/free-week-mail		controllers.DiscountController.applyFreeWeekDiscountAndUpdateSubscription
+GET    /discount/apply/free-month-mail		controllers.DiscountController.applyFreeMonthDiscountAndUpdateSubscription
+GET    /discount/apply/year-discount-mail	controllers.DiscountController.applyYearDiscountAndUpdateSubscription
 
 #payment
 GET 	/payment					controllers.PaymentController.paymentPage

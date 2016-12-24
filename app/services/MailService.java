@@ -65,8 +65,9 @@ public class MailService {
    	
         final String subject = "Subscription Cannot be Renewed";
         final String text = "Your subscription at the service https://secure.creditperfection.org/ cannot be renewed due to transaction failure.\n\n "
-       		+ "Please verify your credit card information in the service. Your subscription will be resumed ones we will be able to process the transaction.\n\n "
+       		+ "Please verify your credit card information at the service. Your subscription will be resumed ones we are able to process the transaction.\n\n "
        		+ "You can change your credit card information and try to run the transaction again by login in the site.";
+        sendEmail(from, user.getEmail(), subject, text);
 	}
    
    
@@ -102,6 +103,59 @@ public class MailService {
  		sendEmail(from, user.getEmail(), subject, text);
 		
 	}
+	
+	
+	public void sendFreeWeekOffer(User user, LocalDate renewFailedDate) {
+		
+		final String url = conf.getString("app.host");
+		//final String url = conf.getString("app.localhost");
+		
+		final String from = conf.getString("email.support");
+      	
+        final String subject = "Additional FREE Week Trial Offer";
+        final String text = "We would like to inform you that your subscription was failed to renew on " + renewFailedDate +
+        		 ".\n In order to use the service you need to confirm credit card details and try to run transaction again. \n\n" + 
+        		"Our customers are important for us and we would like to propose you another FREE week, so you can try all the benefits of our service. " + 
+                "Don't miss this wonderful opportunity!\n\n " + 
+                "Please click on the following link to accept the offer and proceed with subscription renewal: " + url + "/discount/apply/free-week-mail";
+ 		sendEmail(from, user.getEmail(), subject, text);
+	}
+
+	public void sendFreeMonthOffer(User user, LocalDate renewFailedDate) {
+
+		final String url = conf.getString("app.host");
+		//final String url = conf.getString("app.localhost");
+		
+		final String from = conf.getString("email.support");
+      	
+        final String subject = "FREE Month Service Usage Offer";
+        final String text = "We would like to inform you that your subscription was failed to renew on " + renewFailedDate +
+        		 ".\n In order to use the service you need to confirm credit card details and try to run transaction again. \n\n" + 
+        		"We really want you to stay with us so we would like to propose you one month of FREE usage of our service. " +
+                "Whole month credit card reports absolutely FREE of charge!\n\n " + 
+                "Please click on the following link to accept the offer and proceed with subscription renewal: " + url + "/discount/apply/free-month-mail";
+ 		sendEmail(from, user.getEmail(), subject, text);
+ 		
+	}
+
+	public void sendYearDiscountOffer(User user, LocalDate renewFailedDate) {
+		
+		final String url = conf.getString("app.host");
+		//final String url = conf.getString("app.localhost");
+		
+		final String from = conf.getString("email.support");
+      	
+        final String subject = "A year service ONLY for 10$ a month";
+        final String text = "We would like to inform you that your subscription was failed to renew on " + renewFailedDate +
+        		 ".\n In order to use the service you need to confirm credit card details and try to run transaction again. \n\n" + 
+        		"We are ready to offer you whole year service usage ONLY for 10$ a month! " + 
+        		"Please think twice. This is our last proposition.\n\n " + 
+                "Please click on the following link to accept the offer and proceed with subscription renewal: " + url + "/discount/apply/year-discount-mail";
+ 		sendEmail(from, user.getEmail(), subject, text);
+	}
+
+	
+	
     
     private void sendEmail(String from, String to, String subject, String body) {
 		
