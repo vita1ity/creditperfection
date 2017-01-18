@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import models.AuthNetAccount;
 import models.CreditCard;
 import models.Discount;
 import models.Product;
@@ -111,7 +112,7 @@ public class CreditCardChargeJobTest {
 		when(subscriptionServiceMock.findExcludingStatus(SubscriptionStatus.CANCELLED)).thenReturn(activeSubscriptions);
 		when(subscriptionServiceMock.checkExpired(any(Subscription.class))).thenReturn(true);
 		CreateTransactionResponse response = null;
-		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class))).thenReturn(response);
+		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class), any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(response)).thenReturn(new MessageResponse("SUCCESS", "Successful Credit Card Transaction"));
 		String transactionId = "123456789";
 		when(creditCardServiceMock.getTransactionId(response)).thenReturn(transactionId);
@@ -128,7 +129,7 @@ public class CreditCardChargeJobTest {
 		verify(subscriptionServiceMock, times(1)).findExcludingStatus(SubscriptionStatus.CANCELLED);
 		verify(subscriptionServiceMock, times(activeSubscriptions.size())).checkExpired(any(Subscription.class));
 		verify(discountServiceMock, times(0)).checkDiscountExpired(any(Discount.class));
-		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class));
+		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class), any(AuthNetAccount.class));
 		verify(creditCardServiceMock, times(1)).checkTransaction(eq(response));
 		verify(creditCardServiceMock, times(1)).getTransactionId(eq(response));
 		verify(subscriptionServiceMock, times(1)).update(any(Subscription.class));
@@ -158,7 +159,7 @@ public class CreditCardChargeJobTest {
 		when(subscriptionServiceMock.findExcludingStatus(SubscriptionStatus.CANCELLED)).thenReturn(activeSubscriptions);
 		when(subscriptionServiceMock.checkExpired(any(Subscription.class))).thenReturn(true);
 		CreateTransactionResponse response = null;
-		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class))).thenReturn(response);
+		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class), any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(response)).thenReturn(new MessageResponse("SUCCESS", "Successful Credit Card Transaction"));
 		String transactionId = "123456789";
 		when(creditCardServiceMock.getTransactionId(response)).thenReturn(transactionId);
@@ -175,7 +176,7 @@ public class CreditCardChargeJobTest {
 		verify(subscriptionServiceMock, times(1)).findExcludingStatus(SubscriptionStatus.CANCELLED);
 		verify(subscriptionServiceMock, times(activeSubscriptions.size())).checkExpired(any(Subscription.class));
 		verify(discountServiceMock, times(0)).checkDiscountExpired(any(Discount.class));
-		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class));
+		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class), any(AuthNetAccount.class));
 		verify(creditCardServiceMock, times(1)).checkTransaction(eq(response));
 		verify(creditCardServiceMock, times(1)).getTransactionId(eq(response));
 		verify(subscriptionServiceMock, times(1)).update(any(Subscription.class));
@@ -198,7 +199,7 @@ public class CreditCardChargeJobTest {
 		when(subscriptionServiceMock.findExcludingStatus(SubscriptionStatus.CANCELLED)).thenReturn(activeSubscriptions);
 		when(subscriptionServiceMock.checkExpired(any(Subscription.class))).thenReturn(true);
 		CreateTransactionResponse response = null;
-		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class))).thenReturn(response);
+		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class), any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(response)).thenReturn(new ErrorResponse("ERROR", "201", "Transaction Failed"));
 		
 		creditCardChargeJob.run();
@@ -213,7 +214,7 @@ public class CreditCardChargeJobTest {
 		verify(subscriptionServiceMock, times(1)).findExcludingStatus(SubscriptionStatus.CANCELLED);
 		verify(subscriptionServiceMock, times(activeSubscriptions.size())).checkExpired(any(Subscription.class));
 		verify(discountServiceMock, times(0)).checkDiscountExpired(any(Discount.class));
-		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class));
+		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class), any(AuthNetAccount.class));
 		verify(creditCardServiceMock, times(1)).checkTransaction(eq(response));
 		verify(subscriptionServiceMock, times(1)).update(any(Subscription.class));
 		verify(userServiceMock, times(0)).update(eq(s.getUser()));
@@ -312,7 +313,7 @@ public class CreditCardChargeJobTest {
 		when(subscriptionServiceMock.checkExpired(any(Subscription.class))).thenReturn(true);
 		when(discountServiceMock.checkDiscountExpired(any(Discount.class))).thenReturn(false);
 		CreateTransactionResponse response = null;
-		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class))).thenReturn(response);
+		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class), any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(response)).thenReturn(new MessageResponse("SUCCESS", "Successful Credit Card Transaction"));
 		String transactionId = "123456789";
 		when(creditCardServiceMock.getTransactionId(response)).thenReturn(transactionId);
@@ -330,7 +331,7 @@ public class CreditCardChargeJobTest {
 		verify(subscriptionServiceMock, times(1)).findExcludingStatus(SubscriptionStatus.CANCELLED);
 		verify(subscriptionServiceMock, times(activeSubscriptions.size())).checkExpired(any(Subscription.class));
 		verify(discountServiceMock, times(1)).checkDiscountExpired(any(Discount.class));
-		verify(creditCardServiceMock, times(1)).charge(eq(discountAmount), any(CreditCard.class));
+		verify(creditCardServiceMock, times(1)).charge(eq(discountAmount), any(CreditCard.class), any(AuthNetAccount.class));
 		verify(creditCardServiceMock, times(1)).checkTransaction(eq(response));
 		verify(creditCardServiceMock, times(1)).getTransactionId(eq(response));
 		verify(subscriptionServiceMock, times(1)).update(any(Subscription.class));
@@ -352,7 +353,7 @@ public class CreditCardChargeJobTest {
 		when(subscriptionServiceMock.findExcludingStatus(SubscriptionStatus.CANCELLED)).thenReturn(activeSubscriptions);
 		when(subscriptionServiceMock.checkExpired(any(Subscription.class))).thenReturn(true);
 		CreateTransactionResponse response = null;
-		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class))).thenReturn(response);
+		when(creditCardServiceMock.charge(anyDouble(), any(CreditCard.class), any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(response)).thenReturn(new ErrorResponse("ERROR", "201", "Transaction Failed"));
 		
 		creditCardChargeJob.run();
@@ -367,7 +368,7 @@ public class CreditCardChargeJobTest {
 		verify(subscriptionServiceMock, times(1)).findExcludingStatus(SubscriptionStatus.CANCELLED);
 		verify(subscriptionServiceMock, times(activeSubscriptions.size())).checkExpired(any(Subscription.class));
 		verify(discountServiceMock, times(0)).checkDiscountExpired(any(Discount.class));
-		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class));
+		verify(creditCardServiceMock, times(1)).charge(eq(price), any(CreditCard.class), any(AuthNetAccount.class));
 		verify(creditCardServiceMock, times(1)).checkTransaction(eq(response));
 		verify(subscriptionServiceMock, times(1)).update(any(Subscription.class));
 		verify(userServiceMock, times(1)).update(eq(s.getUser()));

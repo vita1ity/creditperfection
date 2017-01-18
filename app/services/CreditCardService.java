@@ -90,6 +90,8 @@ public class CreditCardService {
 		return creditCardRepository.getById(id);
 	}
 
+	
+	
 	public AuthNetAccount chooseMerchantAccount() {
 		
 		List<AuthNetAccount> authNetAccounts = authNetAccountService.getEnabled();
@@ -143,11 +145,11 @@ public class CreditCardService {
 		}
 	}
 
-	public ANetApiResponse charge(Double amount, CreditCard userCreditCard) {
+	public ANetApiResponse charge(Double amount, CreditCard userCreditCard, AuthNetAccount account) {
 
 		Logger.info("Charging credit card: " + userCreditCard);
 
-		AuthNetAccount account = chooseMerchantAccount();
+		//AuthNetAccount account = chooseMerchantAccount();
 
 		Logger.info("Choosen Account: " + account);
 

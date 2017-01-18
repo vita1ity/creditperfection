@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import models.json.CreditReportSuccessResponse;
 import models.json.ErrorResponse;
 import models.json.JSONResponse;
 import play.Configuration;
@@ -53,6 +54,7 @@ public class CreditReportServiceTest {
 	public static void main(String args[]) {
 		
         CreditReportServiceTest reportService = new CreditReportServiceTest();
+        //reportService.cancellSubscription("");
         
         //reportService.authenticate("vitalii.oleksiv@gmail.com");
         reportService.getReport("");
@@ -606,9 +608,12 @@ public class CreditReportServiceTest {
               
               JSONResponse response = parseGetReportResponse(soapResponse);
               
+              System.out.println("response: " + response);
+              
               //TODO log it or delete - Print the SOAP Response
               printSOAPResponse(soapResponse);
 
+              
               soapConnection.close();
               
               return response;
@@ -622,8 +627,11 @@ public class CreditReportServiceTest {
               
           }
   		
+  		
   	}
 
+  	
+  	
 
   	private SOAPMessage createGetReportRequest(String memberId) throws SOAPException, IOException {
   		
@@ -658,7 +666,7 @@ public class CreditReportServiceTest {
         		" <Request xmlns=\"\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">&#xD;" +
         		  "<Product>&#xD;" +
         		    "<ProductUser>&#xD;" +
-        		      "<MemberId>vitalii.oleksiv@gmail.com.test.2</MemberId>&#xD;" +
+        		      "<MemberId>louisehardy@ymail.com</MemberId>&#xD;" +
         		    "</ProductUser>&#xD;" +
         		  "</Product>&#xD;" +
         		  "<PartnerType>ALL</PartnerType>&#xD;" +  
@@ -683,10 +691,194 @@ public class CreditReportServiceTest {
   	}
   	
 
-  	private JSONResponse parseGetReportResponse(SOAPMessage soapResponse) {
-  		// TODO Auto-generated method stub
+  	@SuppressWarnings("rawtypes")
+	private JSONResponse parseGetReportResponse(SOAPMessage soapResponse) throws SOAPException {
+  		JSONResponse response = null;
+		 
+    	Iterator itr = soapResponse.getSOAPBody().getChildElements();
+    	while (itr.hasNext()) {
+    	    Node node = (Node)itr.next();
+    	    
+    	    if (node.getNodeType() == Node.ELEMENT_NODE) {
+    	        Element ele = (Element)node;
+    	        if (ele.getNodeName().equals("GetIDSDataMonitoringReportStringResponse")) {
+    	        	
+    	        	String responseStr = ele.getTextContent();
+    	        	//handle success
+    	        	if (responseStr.contains("<Status>SUCCESS</Status>")) {
+    	        		
+    	    	        // get report from the response
+    	        		if (responseStr.contains("<Report>")) {
+    	    	        	String report = responseStr.substring(responseStr.indexOf("<Report>") + "<Report>".length(), 
+    	    	        			responseStr.indexOf("</Report>"));
+    	    	        	report = report.replaceAll("&amp;", "&");
+    	    	        	
+    	    	        	response = new CreditReportSuccessResponse("SUCCESS", report); 
+    	    	        	return response;
+    	    	        }
+    	        	}
+    	        	
+    	        	else if (responseStr.contains("<Status>FAIL</Status>")) {
+    	        		if (responseStr.contains("<ErrorCode>") && responseStr.contains("<ErrorMessage>")) {
+    	        			String errorCode = responseStr.substring(responseStr.indexOf("<ErrorCode>") + "<ErrorCode>".length(), 
+    	    	        			responseStr.indexOf("</ErrorCode>"));
+    	        			String errorMessage = responseStr.substring(responseStr.indexOf("<ErrorMessage>") + "<ErrorMessage>".length(), 
+    	    	        			responseStr.indexOf("</ErrorMessage>"));
+    	        			
+    	        			
+    	        			response = new ErrorResponse("ERROR", errorCode, errorMessage); 
+    	    	        	return response;
+    	        		}
+    	        		else {
+    	        			
+    	        			response = new ErrorResponse("ERROR", "102", "Unknown error"); 
+    	    	        	return response;
+    	        		}
+    	        	}
+    	        	else {
+    	        		response = new ErrorResponse("ERROR", "102", "Unknown error"); 
+	    	        	return response;
+    	        	}
+    	        	
+	    	        
+    	        }
+    	        
+    	    } else if (node.getNodeType() == Node.TEXT_NODE) {
+    	        
+    	    }
+    	}
+    	
+    	response = new ErrorResponse("ERROR", "103", "Invalid response"); 
+    	return response;
+  	}
+  	
+  	
+  	//CANCEL SUBSCRIPTION
+  	
+  	public JSONResponse cancellSubscription(String memberId) {
   		
-  		return null;
+  		try {
+              // Create SOAP Connection
+              SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+              SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+
+              // Send SOAP Message to SOAP Server
+              String url = "https://xml.idcreditservices.com/PartnerWebServices/UpdateStatusRequest.asmx";
+              //String url = conf.getString("idcs.authenticate.url");
+              
+              SOAPMessage soapResponse = soapConnection.call(createCancelSubscriptionRequest(memberId), url);
+              
+              JSONResponse response = parseGetReportResponse(soapResponse);
+              
+              //TODO log it or delete - Print the SOAP Response
+              printSOAPResponse(soapResponse);
+
+              soapConnection.close();
+              
+              return response;
+              
+          } catch (Exception e) {
+              System.err.println("Error occurred while sending SOAP Request to Server");
+              e.printStackTrace();
+              
+              JSONResponse response = new ErrorResponse("ERROR", "104", "Error occurred while sending SOAP Request to Server");
+              return response;
+              
+          }
+  		
+  	}
+  	
+  	//TODO error
+  	private SOAPMessage createCancelSubscriptionRequest(String memberId) throws SOAPException, IOException {
+  		
+  		MessageFactory messageFactory = MessageFactory.newInstance();
+        SOAPMessage soapMessage = messageFactory.createMessage();
+      
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        
+        String serverURI = "http://updatestatusrequest.idsecure.mypublicinfo.com/";
+
+        // SOAP Envelope
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.setPrefix("soap12");
+        envelope.removeNamespaceDeclaration("SOAP-ENV");
+        envelope.addNamespaceDeclaration("soap12", "http://www.w3.org/2003/05/soap-envelope");
+        envelope.addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
+        
+        //SOAP header
+        SOAPHeader header = envelope.getHeader();
+        header.detachNode();
+        
+        // SOAP Body
+        SOAPBody soapBody = envelope.getBody();
+        soapBody.setPrefix("soap12");
+        
+        SOAPElement getIDSDataMonitoringReportString = soapBody.addChildElement("UpdateCustomerStatus", "", serverURI);
+        //idsEnrollmentString.addNamespaceDeclaration("", serverURI);
+        
+        SOAPElement customerStatusInformation = getIDSDataMonitoringReportString.addChildElement("customerStatusInformation");
+        customerStatusInformation.addTextNode("<?xml version=\"1.0\" encoding=\"utf-16\"?> "
+        		+ "<MPIUpdateStatusRequest "
+        		+ "xmlns=\"request.reactiveuser.xml.mpi\" " 
+        		+ "xmlns:ac=\"addresstype.common.xml.mpi\" "
+        		+ "xmlns:cm=\"common.xml.mpi\" "
+        		+ "xmlns:ct=\"customerinfotype.common.xml.mpi\" "
+        		+ "xmlns:ec=\"emailtype.common.xml.mpi\" "
+        		+ "xmlns:n1=\"mpi.xml.common.addresstype\" "
+        		+ "xmlns:nt=\"nametype.common.xml.mpi\" "
+        		+ "xmlns:pt=\"partnerinfotype.common.xml.mpi\" "
+        		+ "xmlns:ns1=\"phonetype.common.xml.mpi\" "
+        		+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        		+ "xsi:schemaLocation=\"request.reactiveuser.xml.mpi\">&#xD;" +
+        		  "<GUID>String</GUID>&#xD;" +
+        		  "<Transaction>Cancel</Transaction>&#xD;" +
+        		  "<CustomerId>vitalii.oleksiv@gmail.com.test.2</CustomerId>&#xD;" +
+        		  "<PartnerAccountInfo>&#xD;" +
+        		  	"<pt:PartnerName>MPI</pt:PartnerName>&#xD;" +
+        		  	"<pt:PartnerAccount>CRDPRF</pt:PartnerAccount>&#xD;" +
+        		  	"<pt:PartnerPassword>kYmfR5@23</pt:PartnerPassword>&#xD;" +
+        		  	"<pt:ServerDate>2017-01-07T09:30:38Z</pt:ServerDate>" +
+        		  "</PartnerAccountInfo>&#xD;" +
+        		"</MPIUpdateStatusRequest>");
+        
+       /* <MPIUpdateStatusRequest
+        xmlns="request.reactiveuser.xml.mpi"
+        xmlns:ac="addresstype.common.xml.mpi"
+        xmlns:cm="common.xml.mpi"
+        xmlns:ct="customerinfotype.common.xml.mpi"
+        xmlns:ec="emailtype.common.xml.mpi"
+        xmlns:n1="mpi.xml.common.addresstype"
+        xmlns:nt="nametype.common.xml.mpi"
+        xmlns:pt="partnerinfotype.common.xml.mpi"
+        xmlns:ns1="phonetype.common.xml.mpi"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="request.reactiveuser.xml.mpi">
+        <GUID>String</GUID>
+        <Transaction>Cancel</Transaction>
+        <CustomerId>XXXXXX</CustomerId>
+        <PartnerAccountInfo>
+        <pt:PartnerName>MPI</pt:PartnerName>
+        <pt:PartnerAccount>XXXXXXXX</pt:PartnerAccount>
+        Page | 3
+        Identity and Credit Services CONFIDENTIAL
+        <pt:PartnerPassword>String</pt:PartnerPassword>
+        <pt:ServerDate>2006-09-07T09:30:38Z</pt:ServerDate>
+        </PartnerAccountInfo>
+        </MPIUpdateStatusRequest>*/
+        
+        
+        
+        MimeHeaders headers = soapMessage.getMimeHeaders();
+        headers.addHeader("SOAPAction", serverURI + "UpdateCustomerStatus");
+
+        soapMessage.saveChanges();
+
+        soapMessage.writeTo(System.out);
+        System.out.println();
+
+        return soapMessage;
+  		
   	}
     
 }

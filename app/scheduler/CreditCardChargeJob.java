@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import models.AuthNetAccount;
 import models.Discount;
 import models.Subscription;
 import models.Transaction;
@@ -18,6 +19,8 @@ import models.json.JSONResponse;
 import models.json.MessageResponse;
 import net.authorize.api.contract.v1.CreateTransactionResponse;
 import play.Logger;
+import play.libs.Json;
+import services.AuthNetAccountService;
 import services.CreditCardService;
 import services.DiscountService;
 import services.MailService;
@@ -44,6 +47,9 @@ public class CreditCardChargeJob implements Runnable {
 	
 	@Inject
 	private TransactionService transactionService;
+	
+	@Inject
+	private AuthNetAccountService authNetAccountService;
 	
     @Override
     public void run() {
@@ -115,7 +121,7 @@ public class CreditCardChargeJob implements Runnable {
 		        	Logger.info("Charge amount: " + chargeAmount);
 		        	
 		        	
-		        	processPayment(s, chargeAmount, discount);
+		        	processPayment(s, chargeAmount);
 		        	
 		    	}
 		    }
@@ -123,11 +129,81 @@ public class CreditCardChargeJob implements Runnable {
         }
     }
      
-    public boolean processPayment(Subscription s, double chargeAmount, Discount discount) {
+    //subscription expired. charge credit card
+    public boolean processPayment(Subscription s, double chargeAmount) {
     	
-    	//subscription expired. charge credit card
-		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(chargeAmount, 
-				s.getCreditCard());
+    	//try all merchant account until successful transaction
+    	List<AuthNetAccount> authNetAccounts = authNetAccountService.getEnabled();
+    	
+    	AuthNetAccount account = null;
+    	if (authNetAccounts == null || authNetAccounts.size() == 0) {
+    		
+    		account = authNetAccountService.getDefaultAccount();
+    		
+    		if (chargeAndProcessTransaction(s, chargeAmount, account)) {
+   			 	return true;
+    		}
+    	}
+    	
+    	else {
+    	
+    		int nextPriority = 1;
+	    	for (int i = 1; i <= authNetAccounts.size(); i++) {
+	    		
+	    		account = authNetAccountService.getAccountByPriority(nextPriority);
+	    		
+        		if (account == null) {
+        			
+        			Logger.error("Can't find Auth Net Account with priority: " + i + ". Default account is used");
+        			
+        			account = authNetAccountService.getDefaultAccount();
+        			nextPriority++;
+        		}
+        		else {
+        			nextPriority = account.getPriority();
+        			nextPriority++;
+        		}
+	    		if (chargeAndProcessTransaction(s, chargeAmount, account)) {
+	   			 	return true;
+	    		}
+	    		
+	    	}
+    	
+    	}
+    	
+		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
+		
+		
+		//transaction failed for the second time. subscription cannot be renewed. make user inactive and cancel the subscription
+		if (s.getStatus().equals(SubscriptionStatus.RENEW_FAILED)) {
+			User user = s.getUser(); 
+    		mailService.sendTransactionFailedNotification(user);
+    		user.setActive(false);
+    		
+    		userService.update(user);
+    		
+    		s.setStatus(SubscriptionStatus.CANCELLED);
+    		s.setRenewFailedDate(LocalDate.now());
+    		
+    		
+		}
+		//transaction failed for the first time. keep subscription active but change status to indicate failure
+		else {
+			s.setStatus(SubscriptionStatus.RENEW_FAILED);
+		}
+		
+		
+		subscriptionService.update(s);
+		
+		return false;
+		
+	}
+
+    
+    private boolean chargeAndProcessTransaction(Subscription s, double chargeAmount, AuthNetAccount account) {
+    	
+    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(chargeAmount, 
+				s.getCreditCard(), account);
 		JSONResponse transactionResponse = creditCardService.checkTransaction(response);
     	if (transactionResponse instanceof MessageResponse) {
 		
@@ -153,35 +229,7 @@ public class CreditCardChargeJob implements Runnable {
     		return true;
     		
     	}
-    	else {
-    		
-    		Logger.error("Payment Transaction was unsuccessful. Subscription cannot be renewed");
-    		
-    		
-    		//transaction failed for the second time. subscription cannot be renewed. make user inactive and cancel the subscription
-    		if (s.getStatus().equals(SubscriptionStatus.RENEW_FAILED)) {
-    			User user = s.getUser(); 
-        		mailService.sendTransactionFailedNotification(user);
-        		user.setActive(false);
-        		
-        		userService.update(user);
-        		
-        		s.setStatus(SubscriptionStatus.CANCELLED);
-        		s.setRenewFailedDate(LocalDate.now());
-        		
-        		
-    		}
-    		//transaction failed for the first time. keep subscription active but change status to indicate failure
-    		else {
-    			s.setStatus(SubscriptionStatus.RENEW_FAILED);
-    		}
-    		
-    		
-    		subscriptionService.update(s);
-    		
-    		return false;
-    		
-    	}
+    	else return false;
     }
     
     private void processFailed() {

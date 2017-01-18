@@ -17,6 +17,7 @@ import models.Product;
 import models.SecurityRole;
 import play.Logger;
 import play.libs.Yaml;
+import play.mvc.Controller;
 import scala.concurrent.duration.Duration;
 import scheduler.CreditCardChargeJob;
 import services.ProductService;
@@ -94,11 +95,12 @@ public class StartupController {
                 chargeJob, system.dispatcher()
         );
 
-        system.scheduler().schedule(
+       system.scheduler().schedule(
                 Duration.create(nextExecutionInSeconds(0, 0), TimeUnit.SECONDS),
                 Duration.create(24, TimeUnit.HOURS),
                 chargeJob, system.dispatcher()
         );
+        
 	}
 
 

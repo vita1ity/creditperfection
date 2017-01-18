@@ -115,7 +115,7 @@ public class PaymentController extends Controller {
 			amount = subscription.getProduct().getPrice();
 		}
 		
-		boolean success = creditCardChargeJob.processPayment(subscription, amount, discount);
+		boolean success = creditCardChargeJob.processPayment(subscription, amount);
 		
 		if (success) {
 			subscription.setStatus(SubscriptionStatus.ACTIVE);

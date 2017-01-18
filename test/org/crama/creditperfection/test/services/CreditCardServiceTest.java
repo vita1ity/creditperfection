@@ -53,6 +53,10 @@ public class CreditCardServiceTest {
 	@Mock
 	private Configuration confMock;
 	
+	
+	private final static String AUTH_NET_LOGIN_ID = "9yTxLt29j7Xb";
+	private final static String	AUTH_NET_TRANSACTION_KEY = "33h923f5FYL4j3bE";
+	
 	@Inject
 	@InjectMocks
 	private CreditCardService creditCardService;
@@ -403,10 +407,12 @@ public class CreditCardServiceTest {
 				.cvv(146)
 				.build();
 		
-		when(confMock.getString("authorise.net.login.id")).thenReturn("9yTxLt29j7Xb");
-		when(confMock.getString("authorise.net.transaction.key")).thenReturn("33h923f5FYL4j3bE");
+		when(confMock.getString("authorise.net.login.id")).thenReturn(AUTH_NET_LOGIN_ID);
+		when(confMock.getString("authorise.net.transaction.key")).thenReturn(AUTH_NET_TRANSACTION_KEY);
 		
-		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard);
+		AuthNetAccount account = new AuthNetAccount(AUTH_NET_LOGIN_ID, AUTH_NET_TRANSACTION_KEY);
+		
+		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard, account);
 		
 		Logger.info("Response: " + response);
 		
@@ -442,10 +448,12 @@ public class CreditCardServiceTest {
 				.cvv(123)
 				.build();
 		
-		when(confMock.getString("authorise.net.login.id")).thenReturn("9yTxLt29j7Xb");
-		when(confMock.getString("authorise.net.transaction.key")).thenReturn("33h923f5FYL4j3bE");
+		when(confMock.getString("authorise.net.login.id")).thenReturn(AUTH_NET_LOGIN_ID);
+		when(confMock.getString("authorise.net.transaction.key")).thenReturn(AUTH_NET_TRANSACTION_KEY);
 		
-		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard);
+		AuthNetAccount account = new AuthNetAccount(AUTH_NET_LOGIN_ID, AUTH_NET_TRANSACTION_KEY);
+		
+		CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(0.01, realCreditCard, account);
 		
 		Logger.info("Response: " + response);
 		

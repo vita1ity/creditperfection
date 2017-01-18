@@ -49,7 +49,9 @@ public class SubscriptionService {
 		Product product = productService.getById(Long.parseLong(subscriptionForm.getProductId()));
 		
 		if (user.getSubscription() != null) {
-			throw new UserAlreadySubscribedException("User is already subscribed");
+			if (subscriptionForm.getId() != null && user.getSubscription().getId() != Long.parseLong(subscriptionForm.getId())) {
+				throw new UserAlreadySubscribedException("User is already subscribed");
+			}
 		}
 		
 		SubscriptionStatus status = null;

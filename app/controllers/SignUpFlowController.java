@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import errors.ValidationError;
 import forms.CreditCardForm;
 import forms.RegisterForm;
+import models.AuthNetAccount;
 import models.CreditCard;
 import models.KBAQuestions;
 import models.Product;
@@ -40,9 +41,9 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.AuthNetAccountService;
 import services.CreditCardService;
 import services.CreditReportService;
-import services.MailService;
 import services.ProductService;
 import services.RoleService;
 import services.SubscriptionService;
@@ -80,6 +81,9 @@ public class SignUpFlowController extends Controller {
     
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private AuthNetAccountService authNetAccountService;
     
     public Result index(Boolean login){
     	
@@ -247,53 +251,93 @@ public class SignUpFlowController extends Controller {
     	   	
     	   	Logger.info("Product to be purchased: " + product);
     	   	
-    	   	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard);
-    	   	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
-    	   	if (transactionResponse instanceof MessageResponse) {
-    	   		
-    	   		//save credit card 
-            	creditCard.setUser(user);
-            	creditCardService.save(creditCard);
-            	
-            	String transactionId = creditCardService.getTransactionId(response);
-    	   		//save transaction
-    	   		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
-    	   				transactionId, TransactionStatus.SUCCESSFUL);
-    	   		transactionService.save(transaction);
-    	   		
-    	   		//save kba questions url for user
-    	   		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
-        		KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
-        		user.setKbaQuestions(kbaQuestions);
-        		userService.update(user);
+    	    //try all merchant account until successful transaction
+        	List<AuthNetAccount> authNetAccounts = authNetAccountService.getEnabled();
+        	AuthNetAccount account = null;
+        	if (authNetAccounts == null || authNetAccounts.size() == 0) {
         		
-        		//assign default product to subscription        	    	
-            	Logger.info("Product to be purchased after end of the Trial period: " + product);
+        		account = authNetAccountService.getDefaultAccount();
         		
-        		//subscribe user
-        		Subscription subscription = new Subscription(user, creditCard, product, 
-        				SubscriptionStatus.TRIAL, LocalDateTime.now(), LocalDateTime.now());
-        		subscriptionService.save(subscription);
-        		        			
-        		//TODO subscribe user 
-        		/*Akka.system().scheduler().schedule(
-                        Duration.create(5, TimeUnit.SECONDS), //Initial delay 0 milliseconds
-                        Duration.create(10, TimeUnit.SECONDS),     //Frequency 30 minutes
-                        new CreditCardChargeJob(),
-                        Akka.system().dispatcher()
-                );*/
-    	   		
-        		//clear session
-        		session().remove("userEmail");
-        		session().remove("productId");
-        		 
-    	   		return ok(Json.toJson(kbaUrlResponse));
-    	   		
-    	   	}
-    	   	else {
-    	   		
-    	   		return badRequest(Json.toJson(transactionResponse));
-    	   	}    			
+        		if (chargeAndProcessTransaction(product, creditCard, user, kbaUrlResponse, account)) {
+       			 	return ok(Json.toJson(kbaUrlResponse));
+        		}
+        	}
+        	
+        	else {
+        		int nextPriority = 1;
+        		for (int i = 1; i <= authNetAccounts.size(); i++) {
+        			
+	        		account = authNetAccountService.getAccountByPriority(nextPriority);
+	        		if (account == null) {
+	        			
+	        			Logger.error("Can't find Auth Net Account with priority: " + i + ". Default account is used");
+	        			
+	        			account = authNetAccountService.getDefaultAccount();
+	        			nextPriority++;
+	        		}
+	        		else {
+	        			nextPriority = account.getPriority();
+	        			nextPriority++;
+	        		}
+	        		if (chargeAndProcessTransaction(product, creditCard, user, kbaUrlResponse, account)) {
+	        			 return ok(Json.toJson(kbaUrlResponse));
+	        		}
+	    	   	
+        	
+        		}
+        	}
+        	JSONResponse transactionResponse = new ErrorResponse("ERROR", "201", "Transaction Failed");
+        	
+        	return badRequest(Json.toJson(transactionResponse));
+    	   	    			
     	}	    	    
     }
+    
+    private boolean chargeAndProcessTransaction(Product product, CreditCard creditCard, User user, JSONResponse kbaUrlResponse, AuthNetAccount account) {
+    	CreateTransactionResponse response = (CreateTransactionResponse)creditCardService.charge(product.getSalePrice(), creditCard, account);
+	   	JSONResponse transactionResponse = creditCardService.checkTransaction(response);
+	   	if (transactionResponse instanceof MessageResponse) {
+	   		
+	   		//save credit card 
+        	creditCard.setUser(user);
+        	creditCardService.save(creditCard);
+        	
+        	String transactionId = creditCardService.getTransactionId(response);
+	   		//save transaction
+	   		Transaction transaction = new Transaction(user, creditCard, product, product.getSalePrice(), 
+	   				transactionId, TransactionStatus.SUCCESSFUL);
+	   		transactionService.save(transaction);
+	   		
+	   		//save kba questions url for user
+	   		CreditReportSuccessResponse reportResponse = (CreditReportSuccessResponse)kbaUrlResponse;
+    		KBAQuestions kbaQuestions = new KBAQuestions(reportResponse.getReportUrl(), user);
+    		user.setKbaQuestions(kbaQuestions);
+    		userService.update(user);
+    		
+    		//assign default product to subscription        	    	
+        	Logger.info("Product to be purchased after end of the Trial period: " + product);
+    		
+    		//subscribe user
+    		Subscription subscription = new Subscription(user, creditCard, product, 
+    				SubscriptionStatus.TRIAL, LocalDateTime.now(), LocalDateTime.now());
+    		subscriptionService.save(subscription);
+    		        			
+    		//TODO subscribe user 
+    		/*Akka.system().scheduler().schedule(
+                    Duration.create(5, TimeUnit.SECONDS), //Initial delay 0 milliseconds
+                    Duration.create(10, TimeUnit.SECONDS),     //Frequency 30 minutes
+                    new CreditCardChargeJob(),
+                    Akka.system().dispatcher()
+            );*/
+	   		
+    		//clear session
+    		session().remove("userEmail");
+    		session().remove("productId");
+    		 
+	   		return true;
+	   		
+	   	}
+	   	else return false;
+    }
+    
 }

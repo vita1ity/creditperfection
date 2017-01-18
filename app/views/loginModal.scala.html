@@ -15,6 +15,7 @@
 			            </div>
 	        			<div class="modal-body">    
 	        			   
+	        			   
 	        			   <div class="row" id="forgot-pass-alert-box">
 					      	
 					      	</div>      
@@ -51,6 +52,16 @@
 			                <h4 class="title">Login</h4>
 			            </div>
 		                <div class="modal-body">    
+		                
+		                	@if(session.get("sessionExpired") == "true") {
+	        			   	<div class="row" id="sessionExpired">
+					      		<div class="alert alert-warning">
+									<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+									<span id="alert-message">Your session has expired. Please login again.</span>
+								</div>
+					      	</div>	
+	        			   }
+		                
 		                	<div class="row" id="login-alert-box">
 					      	
 					      	</div>   

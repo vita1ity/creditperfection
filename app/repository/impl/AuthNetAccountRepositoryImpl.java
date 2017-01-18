@@ -50,6 +50,12 @@ public class AuthNetAccountRepositoryImpl implements AuthNetAccountRepository {
 		return accountList;
 	}
 
+	@Override
+	public AuthNetAccount getAccountByPriority(int priority) {
+		AuthNetAccount authNetAccount = find.where().eq("priority", priority).findUnique();
+		return authNetAccount;
+	}
+
 	
 	
 }

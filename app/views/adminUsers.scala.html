@@ -1,5 +1,6 @@
 @(user: models.User, users: java.util.List[models.User], states: Array[models.enums.State], numberOfPages: java.lang.Integer,
-displayedPages: Array[Int], currentPage: java.lang.Integer)
+displayedPages: Array[Int], currentPage: java.lang.Integer,
+allUsers: java.util.List[models.User], allProducts: java.util.List[models.Product], allStatuses: Array[models.enums.SubscriptionStatus])
 <!DOCTYPE html>
 <html>
 <head>
@@ -332,7 +333,7 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 							</form>
 					      
 					      
-					      <form class="form-horizontal edit-form subscription-form hidden" role="form">
+					      <form class="form-horizontal edit-form subscription-form search-result-subscriptions hidden" role="form">
 					      		<hr class="separator">
 					      		<hr class="separator">
 							    <h3 class="text-center title margin-top">Subscription Info:</h3>
@@ -567,6 +568,8 @@ displayedPages: Array[Int], currentPage: java.lang.Integer)
 		        </div>
 		    </div>
 		</div>
+		
+		@adminSubscriptionModals.render(allUsers, allProducts, allStatuses)
 		
 		<div class="push"></div>
 		

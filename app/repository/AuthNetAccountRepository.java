@@ -22,4 +22,6 @@ public interface AuthNetAccountRepository {
 
 	List<AuthNetAccount> getEnabled();
 
+	AuthNetAccount getAccountByPriority(int priority);
+
 }

@@ -47,7 +47,7 @@ public class AuthNetAccountServiceTest {
 	public void testGetById() {
 		
 		AuthNetAccount authNetAccount = new AuthNetAccountBuilder().build();
-		
+	
 		when(accountRepositoryMock.getById(anyLong())).thenReturn(authNetAccount);
 		
 		AuthNetAccount account = accountService.getById(0);

@@ -148,6 +148,8 @@ $(document).ready(function() {
 		$('#userSubscriptionEdit > option').each(function() {
 			
 			if (this.value == userId) {
+				
+				$('#userSubscriptionEdit').val(userId).trigger('change');
 				$(this).attr("selected", "selected");
 			}
 			
@@ -156,6 +158,9 @@ $(document).ready(function() {
 		$('#productSubscriptionEdit > option').each(function() {
 			
 			if (this.value == productId) {
+				
+				$('#productSubscriptionEdit').val(productId).trigger('change');
+				
 				$(this).attr("selected", "selected");
 			}
 			
@@ -164,7 +169,12 @@ $(document).ready(function() {
 		
 		$('#statusSubscriptionEdit > option').each(function() {
 			
+			//TODO fix selected
+			
 			if (this.value == status) {
+				
+				$('#statusSubscriptionEdit').val(status).trigger('change'); 
+				
 				$(this).attr("selected", "selected");
 			}
 			
@@ -340,8 +350,12 @@ $(document).ready(function() {
 			
 			showSuccessAlert(data.message);
 	    
-	    	$(panel).hide();
-	    	
+			if ($(panel).find('.search-result-subscriptions').length !== 0) {
+				$(panel).find('.search-result-subscriptions').hide();
+			}
+			else {
+				$(panel).hide();
+			}
 	    	$('#deleteSubscription').modal('toggle');
 	    	
 	    	$("html, body").animate({ scrollTop: 0 }, "slow");
@@ -493,7 +507,15 @@ $(document).ready(function() {
 		    	var lastDateStr = lastPaymentDate[0] + "-" + lastPaymentDate[1] + "-" + lastPaymentDate[2] + "T" + 
 		    	lastPaymentDate[3] + ":" + lastPaymentDate[4] + ":" + lastPaymentDate[5];
 		    	$('.subscription-date:last').text(dateStr);
-		    	$('.last-payment-date').text(lastDateStr);
+		    	$('.last-payment-date:last').text(lastDateStr);
+		    	
+		    	if (status == 'PENDING') {
+			    	$('.cancel-subscription:last').removeClass('hidden');
+		    		
+		    	}
+		    	else {
+		    		$('.cancel-subscription:last').addClass('hidden');
+		    	}
 		    	
 			}
 			

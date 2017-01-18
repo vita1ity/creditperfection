@@ -329,7 +329,8 @@ public class SignUpFlowControllerTest extends ControllerTestBase {
 	public void testPayment_Success() {
 		CreateTransactionResponse response = new CreateTransactionResponse();
 		MessageResponse successfulResponse = new MessageResponse("SUCCESS", "Successful Credit Card Transaction");
-		when(creditCardServiceMock.charge(1.0, testCreditCard)).thenReturn(response);
+		
+		when(creditCardServiceMock.charge(1.0, testCreditCard, Matchers.any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(Matchers.any())).thenReturn(successfulResponse);
 		when(creditCardServiceMock.createCreditCard(Matchers.any())).thenReturn(testCreditCard);
 		
@@ -454,7 +455,7 @@ public class SignUpFlowControllerTest extends ControllerTestBase {
 				
 		CreateTransactionResponse response = new CreateTransactionResponse();
 		ErrorResponse errorResponse = new ErrorResponse("ERROR", "111", "Transaction Failed");
-		when(creditCardServiceMock.charge(1.0, testCreditCard)).thenReturn(response);
+		when(creditCardServiceMock.charge(1.0, testCreditCard, Matchers.any(AuthNetAccount.class))).thenReturn(response);
 		when(creditCardServiceMock.checkTransaction(Matchers.any())).thenReturn(errorResponse);
 		when(creditCardServiceMock.createCreditCard(Matchers.any())).thenReturn(testCreditCard);
 		

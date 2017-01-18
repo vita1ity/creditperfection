@@ -157,6 +157,8 @@ $(document).ready(function() {
 		$('#userTransactionEdit > option').each(function() {
 			
 			if (this.value == userId) {
+				
+				$('#userTransactionEdit').val(userId).trigger('change');
 				$(this).attr("selected", "selected");
 			}
 			
@@ -165,6 +167,7 @@ $(document).ready(function() {
 		$('#productTransactionEdit > option').each(function() {
 			
 			if (this.value == productId) {
+				$('#productTransactionEdit').val(productId).trigger('change');
 				$(this).attr("selected", "selected");
 			}
 			
@@ -177,6 +180,7 @@ $(document).ready(function() {
 		$('#statusTransactionEdit > option').each(function() {
 			
 			if (this.value == status) {
+				$('#statusTransactionEdit').val(status).trigger('change');
 				$(this).attr("selected", "selected");
 			}
 			

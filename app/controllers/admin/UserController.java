@@ -13,10 +13,12 @@ import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import errors.ValidationError;
 import forms.UserSearchForm;
+import models.Product;
 import models.SecurityRole;
 import models.Subscription;
 import models.User;
 import models.enums.State;
+import models.enums.SubscriptionStatus;
 import models.json.MessageResponse;
 import models.json.ObjectCreatedResponse;
 import models.json.PagedObjectResponse;
@@ -30,6 +32,7 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import services.ProductService;
 import services.RoleService;
 import services.UserService;
 import utils.Tokener;
@@ -52,6 +55,9 @@ public class UserController extends Controller {
 	
 	@Inject
 	private CacheApi cache;
+	
+	@Inject
+	private ProductService productService;
 
 	//users	
 	public Result users() {
@@ -88,7 +94,11 @@ public class UserController extends Controller {
 		
 		List<User> users = usersPage.getList();
 		
-		return ok(views.html.adminUsers.render(user, users, states, numberOfPages, displayedPages, currentPage));
+		List<User> allUsers = userService.getAll();
+		List<Product> allProducts = productService.getAll();
+		SubscriptionStatus[] allStatuses = SubscriptionStatus.values(); 
+		
+		return ok(views.html.adminUsers.render(user, users, states, numberOfPages, displayedPages, currentPage, allUsers, allProducts, allStatuses));
 	}
 	
 	public Result getUsers(int page) {

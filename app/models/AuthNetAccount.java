@@ -27,6 +27,9 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 	 
 	 private boolean isEnabled;
 	 
+	 @Column(unique = true)
+	 private Integer priority;
+	 
 	 public AuthNetAccount() {
 		 
 	 }
@@ -91,11 +94,19 @@ public class AuthNetAccount extends Model implements Comparable<AuthNetAccount> 
 	public void setIsEnabled(boolean isEnabled) {
 		this.isEnabled = isEnabled;
 	}
+	
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
 
 	@Override
 	public String toString() {
 		return "AuthorizeNetAccount [id=" + id + ", name=" + name + ", description=" + description + ", loginId="
-				+ loginId + ", transactionKey=" + transactionKey + "isLAstUsed = " + isLastUsed + ", isEnabled = " + isEnabled + "]";
+				+ loginId + ", transactionKey=" + transactionKey + "isLAstUsed = " + isLastUsed + ", isEnabled = " + isEnabled + ", priority = " + priority + "]";
 	}
 	 
 
