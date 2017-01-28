@@ -177,7 +177,7 @@ public class CreditCardChargeJob implements Runnable {
 		//transaction failed for the second time. subscription cannot be renewed. make user inactive and cancel the subscription
 		if (s.getStatus().equals(SubscriptionStatus.RENEW_FAILED)) {
 			User user = s.getUser(); 
-    		mailService.sendTransactionFailedNotification(user);
+    		
     		user.setActive(false);
     		
     		userService.update(user);
@@ -189,7 +189,9 @@ public class CreditCardChargeJob implements Runnable {
 		}
 		//transaction failed for the first time. keep subscription active but change status to indicate failure
 		else {
+			User user = s.getUser();
 			s.setStatus(SubscriptionStatus.RENEW_FAILED);
+			mailService.sendTransactionFailedNotification(user);
 		}
 		
 		

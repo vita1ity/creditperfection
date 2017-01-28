@@ -1,3 +1,4 @@
+
 package org.crama.creditperfection.test.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;

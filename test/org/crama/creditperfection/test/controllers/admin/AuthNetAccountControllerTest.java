@@ -121,6 +121,7 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    
 	    JsonNode responseNode = Json.parse(contentAsString(result));
 	    
+
 	    assertTrue(responseNode.isArray());
 	    ArrayNode responseArrayNode = (ArrayNode) responseNode;
 	    
@@ -287,4 +288,6 @@ public class AuthNetAccountControllerTest extends ControllerTestBase {
 	    assertEquals(responseNode.get("status").asText(), "ERROR");	
 	    assertEquals(responseNode.get("message").asText(), "Error occured while deleting the Merchant Account");
 	}
+	
+	
 }
