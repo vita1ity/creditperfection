@@ -265,13 +265,9 @@ public class CreditCardChargeJob implements Runnable {
 	    				break;
 	    			default:
 	    				Logger.error("Wrong subscription renew failed date: " + renewFailedDate);
-	    				break;
-	    			
+	    				break;   			
 	    		}
     		}
-    		
     	}
     }
-    
-    
 }

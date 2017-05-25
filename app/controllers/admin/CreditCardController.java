@@ -135,11 +135,8 @@ public class CreditCardController extends Controller {
 		}
 		else {
 			return badRequest(Json.toJson(new MessageResponse("ERROR", "Error occured while deleting the Credit Card")));
-		}
-		
-		
-	}
-	
+		}	
+	}	
 	public Result getUserCreditCards() {
 		
 		DynamicForm form = formFactory.form().bindFromRequest();
@@ -153,9 +150,7 @@ public class CreditCardController extends Controller {
 		
 		for (CreditCard creditCard: userCreditCards) {
 			Logger.info("Credit Card: " + creditCard);
-		}
-		
+		}	
 		return ok(Json.toJson(userCreditCards));
 	}
-	
 }
